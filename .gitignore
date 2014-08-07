@@ -1,0 +1,7 @@
+ipch/
+*.user
+*.sdf
+*.suo
+*.opensdf
+.DS_STORE
+Binaries/
