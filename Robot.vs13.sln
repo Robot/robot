@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Robot", "Source\Robot.vs13.vcxproj", "{18FA4B6A-BB03-4F80-92C2-D6237372FE11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug-dll|Win32 = Debug-dll|Win32
+		Debug-dll|Win64 = Debug-dll|Win64
+		Debug-lib|Win32 = Debug-lib|Win32
+		Debug-lib|Win64 = Debug-lib|Win64
+		Release-dll|Win32 = Release-dll|Win32
+		Release-dll|Win64 = Release-dll|Win64
+		Release-lib|Win32 = Release-lib|Win32
+		Release-lib|Win64 = Release-lib|Win64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-dll|Win32.ActiveCfg = Debug-dll|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-dll|Win32.Build.0 = Debug-dll|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-dll|Win64.ActiveCfg = Debug-dll|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-dll|Win64.Build.0 = Debug-dll|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-lib|Win32.ActiveCfg = Debug-lib|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-lib|Win32.Build.0 = Debug-lib|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-lib|Win64.ActiveCfg = Debug-lib|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Debug-lib|Win64.Build.0 = Debug-lib|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-dll|Win32.ActiveCfg = Release-dll|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-dll|Win32.Build.0 = Release-dll|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-dll|Win64.ActiveCfg = Release-dll|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-dll|Win64.Build.0 = Release-dll|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-lib|Win32.ActiveCfg = Release-lib|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-lib|Win32.Build.0 = Release-lib|Win32
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-lib|Win64.ActiveCfg = Release-lib|x64
+		{18FA4B6A-BB03-4F80-92C2-D6237372FE11}.Release-lib|Win64.Build.0 = Release-lib|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
