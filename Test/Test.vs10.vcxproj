@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DLL|Win32">
       <Configuration>DLL</Configuration>
@@ -35,99 +35,64 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\LICENSE" />
-    <None Include="..\Makefile" />
-    <None Include="..\.gitignore" />
-    <None Include="..\README.md" />
+    <ClInclude Include="Targa.h" />
+    <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bounds.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="Enum.h" />
-    <ClInclude Include="Global.h" />
-    <ClInclude Include="Hash.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="Keyboard.h" />
-    <ClInclude Include="Memory.h" />
-    <ClInclude Include="Module.h" />
-    <ClInclude Include="Mouse.h" />
-    <ClInclude Include="Point.h" />
-    <ClInclude Include="Process.h" />
-    <ClInclude Include="Range.h" />
-    <ClInclude Include="Robot.h" />
-    <ClInclude Include="Screen.h" />
-    <ClInclude Include="Size.h" />
-    <ClInclude Include="Taskbar.h" />
-    <ClInclude Include="Types.h" />
-    <ClInclude Include="Window.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Bounds.cc" />
-    <ClCompile Include="Color.cc" />
-    <ClCompile Include="Hash.cc" />
-    <ClCompile Include="Image.cc" />
     <ClCompile Include="Keyboard.cc" />
+    <ClCompile Include="Main.cc" />
     <ClCompile Include="Memory.cc" />
     <ClCompile Include="Module.cc" />
     <ClCompile Include="Mouse.cc" />
-    <ClCompile Include="Point.cc" />
     <ClCompile Include="Process.cc" />
-    <ClCompile Include="Range.cc" />
     <ClCompile Include="Screen.cc" />
-    <ClCompile Include="Size.cc" />
+    <ClCompile Include="Targa.cc" />
     <ClCompile Include="Taskbar.cc" />
+    <ClCompile Include="Types.cc" />
     <ClCompile Include="Window.cc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{18FA4B6A-BB03-4F80-92C2-D6237372FE11}</ProjectGuid>
+    <ProjectGuid>{CE14C8BC-C0FC-4779-8C4D-5544D62885D9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Robot</RootNamespace>
-    <ProjectName>Robot</ProjectName>
+    <RootNamespace>Test</RootNamespace>
+    <ProjectName>Test</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLL|Win32'">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLL|x64'">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLLd|Win32'">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLLd|x64'">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='LIB|Win32'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='LIB|x64'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='LIBd|Win32'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='LIBd|x64'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -199,15 +164,18 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG;BUILDING_ROBOT_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG;USING_ROBOT_SHARED</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -217,15 +185,18 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG;BUILDING_ROBOT_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG;USING_ROBOT_SHARED</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -233,11 +204,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>UNICODE;WIN32;DEBUG;BUILDING_ROBOT_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;WIN32;DEBUG;USING_ROBOT_SHARED</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -245,11 +219,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>UNICODE;WIN32;DEBUG;BUILDING_ROBOT_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;WIN32;DEBUG;USING_ROBOT_SHARED</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -260,18 +237,21 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB|x64'">
@@ -281,18 +261,21 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIBd|Win32'">
@@ -300,14 +283,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>UNICODE;WIN32;DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIBd|x64'">
@@ -315,14 +301,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>UNICODE;WIN32;DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

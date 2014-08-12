@@ -11,23 +11,17 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_ARGS_H
-#define ROBOT_ARGS_H
-
-#include "Global.h"
-namespace Robot {
+#include "Test.h"
 
 
 
 //----------------------------------------------------------------------------//
-// Classes                                                                    //
+// Functions                                                                  //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class ROBOT_EXPORT Args
+bool TestScreen (void)
 {
-};
-
-} // namespace Robot
-#endif // ROBOT_ARGS_H
+	return true;
+}

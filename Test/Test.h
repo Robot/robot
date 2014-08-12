@@ -11,18 +11,39 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_TYPES_H
-#define ROBOT_TYPES_H
+#ifndef ROBOT_TEST_H
+#define ROBOT_TEST_H
 
-#include "Enum.h"
-#include "Hash.h"
+#ifdef VLD_LEAK_TEST
+	// Use for MSVC VLD leak testing
+	#define VLD_AGGREGATE_DUPLICATES
+	#include "vld.h"
+#endif
 
-#include "Color.h"
-#include "Image.h"
+#include <iostream>
+using std::cout;
+using std::endl;
 
-#include "Range.h"
-#include "Point.h"
-#include "Size.h"
-#include "Bounds.h"
+#include <cstring>
+using std::strcmp;
 
-#endif // ROBOT_TYPES_H
+#include "../Source/Robot.h"
+using namespace Robot;
+
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
+bool TestTypes    (void);
+bool TestKeyboard (void);
+bool TestMouse    (void);
+bool TestTaskbar  (void);
+bool TestProcess  (void);
+bool TestWindow   (void);
+bool TestModule   (void);
+bool TestMemory   (void);
+bool TestScreen   (void);
+
+#endif // ROBOT_TEST_H

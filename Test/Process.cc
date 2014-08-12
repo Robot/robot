@@ -11,18 +11,17 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_TYPES_H
-#define ROBOT_TYPES_H
+#include "Test.h"
 
-#include "Enum.h"
-#include "Hash.h"
 
-#include "Color.h"
-#include "Image.h"
 
-#include "Range.h"
-#include "Point.h"
-#include "Size.h"
-#include "Bounds.h"
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
 
-#endif // ROBOT_TYPES_H
+////////////////////////////////////////////////////////////////////////////////
+
+bool TestProcess (void)
+{
+	return true;
+}

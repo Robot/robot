@@ -17,9 +17,6 @@
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Args.h">
-      <Filter>Types</Filter>
-    </ClInclude>
     <ClInclude Include="Bounds.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -79,9 +76,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Args.cc">
-      <Filter>Types</Filter>
-    </ClCompile>
     <ClCompile Include="Bounds.cc">
       <Filter>Types</Filter>
     </ClCompile>
