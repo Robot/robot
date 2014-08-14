@@ -11,19 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\LICENSE" />
-    <None Include="..\Makefile" />
-    <None Include="..\.gitignore" />
-    <None Include="..\README.md" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Bounds.h">
       <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="Color.h">
-      <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Enum.h">
       <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">

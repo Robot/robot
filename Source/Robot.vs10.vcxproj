@@ -35,15 +35,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\LICENSE" />
-    <None Include="..\Makefile" />
-    <None Include="..\.gitignore" />
-    <None Include="..\README.md" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Bounds.h" />
     <ClInclude Include="Color.h" />
-    <ClInclude Include="Enum.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Image.h" />

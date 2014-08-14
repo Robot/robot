@@ -24,11 +24,31 @@
 using std::cout;
 using std::endl;
 
+#include <fstream>
+using std::fstream;
+using std::ofstream;
+using std::ifstream;
+
 #include <cstring>
 using std::strcmp;
 
 #include "../Source/Robot.h"
 using namespace Robot;
+
+
+
+//----------------------------------------------------------------------------//
+// Macros                                                                     //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define VERIFY( cond )				\
+	if (!(cond))					\
+	{								\
+		cout << #cond " Failed\n";	\
+		return false;				\
+	}
 
 
 

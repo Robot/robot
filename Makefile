@@ -10,53 +10,6 @@
 makepp_no_builtin = 1
 
 ##----------------------------------------------------------------------------##
-## Variables                                                                  ##
-##----------------------------------------------------------------------------##
-
-UNAME = $(shell uname -s)
-
-ifeq ($(UNAME), Darwin)
-	CXX    = clang++
-	OUTPUT = Binaries/Mac/
-else
-	CXX    = g++
-	OUTPUT = Binaries/Linux/
-endif
-
-ifeq ($(mode), debug)
-	LIBRARY  = libRobotd.a
-	OBJECT   = $(OUTPUT)Robotd/
-	CXXFLAGS = -std=c++0x -Wall -pedantic-errors -fno-rtti -O0 -g
-
-	ifeq ($(UNAME), Darwin)
-		CXXFLAGS += -stdlib=libc++
-	endif
-
-else
-	LIBRARY  = libRobot.a
-	OBJECT   = $(OUTPUT)Robot/
-	CXXFLAGS = -std=c++0x -Wall -pedantic-errors -fno-rtti -O3
-
-	ifeq ($(UNAME), Darwin)
-		CXXFLAGS += -stdlib=libc++
-	else
-		CXXFLAGS += -s
-	endif
-
-endif
-
-SRC = Source/
-
-SOURCES = $(shell find $(SRC) -name "*.cc")
-HEADERS = $(shell find $(SRC) -name "*.h")
-OBJECTS = $(patsubst $(SRC)%.cc, $(OBJECT)%.o, $(SOURCES))
-
-INSTALL_INC = /usr/local/include/Robot/
-INSTALL_LIB = /usr/local/lib/
-
-
-
-##----------------------------------------------------------------------------##
 ## Help                                                                       ##
 ##----------------------------------------------------------------------------##
 
@@ -65,14 +18,15 @@ INSTALL_LIB = /usr/local/lib/
 help:
 	@echo
 	@echo "WELCOME TO ROBOT"
-	@echo "================"
+	@echo "----------------"
 	@echo
 	@echo "MAKE"
 	@echo "  $$ make help    - Prints out these help instructions"
-	@echo "  $$ make build   - Builds this project as a static library"
-	@echo "  $$ make clean   - Cleans and removes all generated files"
-	@echo "  $$ make install - Installs this library onto your system"
-	@echo "  $$ make remove  - Removes this library from your system"
+	@echo "  $$ make build   - Builds Robot as a static library"
+	@echo "  $$ make clean   - Cleans and removes generated files"
+	@echo "  $$ make install - Installs Robot onto your system"
+	@echo "  $$ make remove  -  Removes Robot from your system"
+	@echo "  $$ make test    - Builds the Robot testing framework"
 	@echo
 	@echo "MODES"
 	@echo "  This project can be built using debug or release settings"
@@ -89,26 +43,26 @@ help:
 ## Build                                                                      ##
 ##----------------------------------------------------------------------------##
 
-.PHONY: all _init build clean
+.PHONY: all _init build test clean
 
-$(OBJECT)%.o: $(SRC)%.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-all: build
+all: build test
 
 _init:
 ifeq ($(mode), debug)
-	@echo "Building library using debug settings"
+	@echo "Building with debug settings"
 else
-	@echo "Building library using release settings"
+	@echo "Building with release settings"
 endif
-	mkdir -p $(OUTPUT) $(OBJECT)
 
-build: _init $(OBJECTS)
-	ar rcs $(OUTPUT)$(LIBRARY) $(OBJECTS)
+build: _init
+	cd Source; make _build=Robot --no-print-directory build
+	
+test: _init
+	cd   Test; make _build=Robot --no-print-directory build
 
 clean:
-	rm -rf $(OUTPUT)
+	cd Source; make _build=Robot --no-print-directory clean
+	cd   Test; make _build=Robot --no-print-directory clean
 
 
 
@@ -118,11 +72,8 @@ clean:
 
 .PHONY: install remove
 
-install: build $(HEADERS) $(OUTPUT)$(LIBRARY)
-	mkdir -p $(INSTALL_INC) $(INSTALL_LIB)
-	install -p -m 0644 $(HEADERS) $(INSTALL_INC)
-	install -p -m 0644 $(OUTPUT)$(LIBRARY) $(INSTALL_LIB)
+install:
+	cd Source; make _build=Robot --no-print-directory install
 
 remove:
-	rm -rf $(INSTALL_INC)
-	rm -f $(INSTALL_LIB)$(LIBRARY)
+	cd Source; make _build=Robot --no-print-directory remove
