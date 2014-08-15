@@ -12,8 +12,107 @@
 //----------------------------------------------------------------------------//
 
 #include "Range.h"
+#include <ctime>
 namespace Robot {
 
 
+
+//----------------------------------------------------------------------------//
+// Constructors                                                         Range //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+Range::Range (int32 value)
+{
+	Min = value;
+	Max = value;
+
+	mState = (uint32) time (nullptr) & 0x7FFFFFFF;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Range::Range (int32 min, int32 max)
+{
+	Min = min;
+	Max = max;
+
+	mState = (uint32) time (nullptr) & 0x7FFFFFFF;
+}
+
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                            Range //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+int32 Range::GetRange (void) const
+{
+	return Max - Min;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Range::SetRange (int32 value)
+{
+	Min = value;
+	Max = value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Range::SetRange (int32 min, int32 max)
+{
+	Min = min;
+	Max = max;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int32 Range::GetRandom (void) const
+{
+	// Check bounds
+	if (Min >= Max)
+		return Min;
+
+	// Increment random generator state using LCG
+	*const_cast<uint32*> (&mState) =
+		(mState * 1103515245 + 12345) & 0x7FFFFFFF;
+
+	// Generate value between the range
+	return mState % (Max - Min) + Min;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Range::Contains (int32 value, bool inclusive) const
+{
+	return inclusive ?
+		Min <= value && value <= Max :
+		Min <  value && value <  Max;
+}
+
+
+
+//----------------------------------------------------------------------------//
+// Operators                                                            Range //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Range::operator == (const Range& range) const
+{
+	return Min == range.Min && Max == range.Max;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Range::operator != (const Range& range) const
+{
+	return Min != range.Min || Max != range.Max;
+}
 
 } // namespace Robot

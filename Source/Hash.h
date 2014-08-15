@@ -27,6 +27,30 @@ namespace Robot {
 
 class ROBOT_EXPORT Hash
 {
+public:
+	// Constructors
+	explicit	Hash			(void);
+	explicit	Hash			(const char* file);
+	explicit	Hash			(const uint8* data,
+								 uintptr dataLength);
+
+public:
+	// Functions
+	bool		Append			(const char* file);
+	void		Append			(const uint8* data,
+								 uintptr dataLength);
+
+public:
+	// Operators
+	bool		operator ==		(uint32 hash) const;
+	bool		operator !=		(uint32 hash) const;
+
+	bool		operator ==		(const Hash& hash) const;
+	bool		operator !=		(const Hash& hash) const;
+
+public:
+	// Properties
+	uint32		Result;			// Rolling checksum value
 };
 
 } // namespace Robot

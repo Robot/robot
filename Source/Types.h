@@ -14,7 +14,6 @@
 #ifndef ROBOT_TYPES_H
 #define ROBOT_TYPES_H
 
-#include "Enum.h"
 #include "Hash.h"
 
 #include "Color.h"

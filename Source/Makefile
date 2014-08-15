@@ -45,8 +45,8 @@ else
 
 endif
 
-SOURCES = $(shell find -name "*.cc")
-HEADERS = $(shell find -name "*.h" )
+SOURCES = $(shell find ./ -name "*.cc")
+HEADERS = $(shell find ./ -name "*.h" )
 OBJECTS = $(patsubst %.cc, $(OBJECT)%.o, $(SOURCES))
 
 INSTALL_LIB = /usr/local/lib/
