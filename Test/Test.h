@@ -46,7 +46,9 @@ using namespace Robot;
 #define VERIFY( cond )				\
 	if (!(cond))					\
 	{								\
-		cout << #cond " Failed\n";	\
+		cout << #cond " Failed\n"	\
+			 << __FILE__ << ":"		\
+			 << __LINE__ << "\n\n";	\
 		return false;				\
 	}
 
