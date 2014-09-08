@@ -136,12 +136,12 @@ typedef double				real64;		// 64-bit real value
 	typedef  int64			 intptr;	//   Signed pointer integer
 	typedef uint64			uintptr;	// Unsigned pointer integer
 
-#else // ROBOT_ARCH_64
+#else
 
 	typedef  int32			 intptr;	//   Signed pointer integer
 	typedef uint32			uintptr;	// Unsigned pointer integer
 
-#endif // ROBOT_ARCH_64
+#endif
 
 } // namespace Robot
 #endif // ROBOT_GLOBAL_H

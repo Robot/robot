@@ -17,6 +17,9 @@
     <ClInclude Include="Color.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>Types</Filter>
+    </ClInclude>
     <ClInclude Include="Global.h">
       <Filter>Types</Filter>
     </ClInclude>
