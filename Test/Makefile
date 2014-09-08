@@ -33,6 +33,7 @@ ifeq ($(mode), debug)
 		CXXFLAGS += -stdlib=libc++
 		 LDFLAGS += -framework ApplicationServices
 	else
+		CXXFLAGS += -pthread
 		 LDFLAGS += -lX11 -lXtst
 	endif
 
@@ -46,7 +47,7 @@ else
 		CXXFLAGS += -stdlib=libc++
 		 LDFLAGS += -framework ApplicationServices
 	else
-		CXXFLAGS += -s
+		CXXFLAGS += -pthread -s
 		 LDFLAGS += -lX11 -lXtst
 	endif
 

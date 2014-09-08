@@ -21,6 +21,7 @@
 #endif
 
 #include <iostream>
+using std::cin;
 using std::cout;
 using std::endl;
 
@@ -29,8 +30,19 @@ using std::fstream;
 using std::ofstream;
 using std::ifstream;
 
+#include <string>
 #include <cstring>
+using std::string;
 using std::strcmp;
+
+#if (_MSC_VER != 1600)
+	#include <thread>
+	using std::thread;
+#endif
+
+#include <vector>
+using std::vector;
+using std::make_pair;
 
 #include "../Source/Robot.h"
 using namespace Robot;
