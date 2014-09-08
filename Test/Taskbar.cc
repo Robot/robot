@@ -35,8 +35,6 @@ bool TestTaskbar (void)
 	VERIFY ( Taskbar::GetLocation() == Taskbar::Bottom);
 	VERIFY (!Taskbar::IsAutoHide ());
 
-	cout << ">> Success\n\n";
-
 #endif
 #ifdef ROBOT_OS_WIN
 
@@ -68,8 +66,8 @@ bool TestTaskbar (void)
 	cout << " ("
 		 << b.X << ", " << b.Y << ", "
 		 << b.W << ", " << b.H << ") "
-		 << (h ? "Auto-Hides\n\n" : "\n\n");
+		 << (h ? "Auto-Hides\n\n" : "\n");
 #endif
 
-	return true;
+	cout << ">> Success\n\n"; return true;
 }

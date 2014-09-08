@@ -21,7 +21,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestGlobal (void)
+static bool TestGlobal (void)
 {
 	VERIFY (sizeof ( int8 ) == 1);
 	VERIFY (sizeof ( int16) == 2);
@@ -54,7 +54,76 @@ bool TestGlobal (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestHash (void)
+enum TestEnum1
+{
+	Enum1Value1,
+	Enum1Value2,
+	Enum1Value3,
+	Enum1Value4,
+};
+
+enum TestEnum2
+{
+	Enum2Value1,
+	Enum2Value2,
+};
+
+namespace Robot
+{
+	ROBOT_ENUM (TestEnum1)
+	{
+		ROBOT_ENUM_MAP (Enum1Value1, "ENUM1Value1");
+		ROBOT_ENUM_MAP (Enum1Value2, "ENUM1Value2");
+		ROBOT_ENUM_MAP (Enum1Value3, "ENUM1Value3");
+		ROBOT_ENUM_MAP (Enum1Value4, "ENUM1Value4");
+	}
+
+	ROBOT_ENUM (TestEnum2)
+	{
+		ROBOT_ENUM_MAP (Enum2Value1);
+		ROBOT_ENUM_MAP (Enum2Value2);
+	}
+}
+
+bool TestEnum (void)
+{
+	VERIFY (Enum<TestEnum1>::Size() == 4);
+	VERIFY (Enum<TestEnum2>::Size() == 2);
+
+	VERIFY (Enum<TestEnum1>::Parse ("ENUM1Value1") == Enum1Value1);
+	VERIFY (Enum<TestEnum1>::Parse ("ENUM1Value2") != Enum1Value3);
+	VERIFY (Enum<TestEnum1>::Parse ("ENUM1Value3") != Enum1Value2);
+	VERIFY (Enum<TestEnum1>::Parse ("ENUM1Value4") == Enum1Value4);
+	VERIFY (Enum<TestEnum2>::Parse ("Enum2Value1") == Enum2Value1);
+	VERIFY (Enum<TestEnum2>::Parse ("Enum2Value2") == Enum2Value2);
+
+	VERIFY (Enum<TestEnum1>::Parse (Enum1Value1) == "ENUM1Value1");
+	VERIFY (Enum<TestEnum1>::Parse (Enum1Value2) != "ENUM1Value3");
+	VERIFY (Enum<TestEnum1>::Parse (Enum1Value3) != "ENUM1Value2");
+	VERIFY (Enum<TestEnum1>::Parse (Enum1Value4) == "ENUM1Value4");
+	VERIFY (Enum<TestEnum2>::Parse (Enum2Value1) == "Enum2Value1");
+	VERIFY (Enum<TestEnum2>::Parse (Enum2Value2) == "Enum2Value2");
+
+	VERIFY (Enum<TestEnum1>::Parse ("BadValue") == (TestEnum1) -1);
+	VERIFY (Enum<TestEnum2>::Parse ("BadValue") == (TestEnum2) -1);
+
+	VERIFY (Enum<TestEnum1>::Parse ((TestEnum1) 9).empty());
+	VERIFY (Enum<TestEnum2>::Parse ((TestEnum2) 9).empty());
+
+	VERIFY (Enum<Button>::Parse ("LEFT"  ) == ButtonLeft  );
+	VERIFY (Enum<Button>::Parse ("MID"   ) == ButtonMid   );
+	VERIFY (Enum<Button>::Parse ("MIDDLE") == ButtonMiddle);
+	VERIFY (Enum<Button>::Parse ("RIGHT" ) == ButtonRight );
+
+	VERIFY (Enum<Button>::Parse (ButtonX1) == "X1");
+	VERIFY (Enum<Button>::Parse (ButtonX2) == "X2");
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+static bool TestHash (void)
 {
 	Hash h1 ((uint8*) "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 26);
 	Hash h2 ((uint8*) "PZNXECYBMOVHUWSGIKRFLAQDTJ", 26);
@@ -169,7 +238,7 @@ bool TestHash (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestColor (void)
+static bool TestColor (void)
 {
 	Color c1;
 	Color c2 (0xDC195A);
@@ -212,7 +281,7 @@ bool TestColor (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Image TestGetImage (void)
+static Image TestGetImage (void)
 {
 	Image i (2, 2);
 	i.GetData()[0] = 0x00808080;
@@ -222,7 +291,7 @@ Image TestGetImage (void)
 	return i;
 }
 
-bool TestImage (void)
+static bool TestImage (void)
 {
 	Image i1;
 	Image i2 (0);
@@ -398,7 +467,7 @@ bool TestImage (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestRange (void)
+static bool TestRange (void)
 {
 	Range r1;
 	Range r2 ( 5    );
@@ -545,7 +614,7 @@ bool TestRange (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestBounds (void)
+static bool TestBounds (void)
 {
 	Point p1;
 	Point p2 ( 5    );
@@ -880,6 +949,7 @@ bool TestTypes (void)
 {
 	cout << "BEGIN TYPES TESTING\n------------------------------\n";
 	if (!TestGlobal()) { cout << ">> Global Failed\n\n"; return false; }
+	if (!TestEnum  ()) { cout << ">> Enum Failed  \n\n"; return false; }
 	if (!TestHash  ()) { cout << ">> Hash Failed  \n\n"; return false; }
 	if (!TestColor ()) { cout << ">> Color Failed \n\n"; return false; }
 	if (!TestImage ()) { cout << ">> Image Failed \n\n"; return false; }
