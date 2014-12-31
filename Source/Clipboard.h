@@ -11,20 +11,23 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef ROBOT_CLIPBOARD_H
+#define ROBOT_CLIPBOARD_H
 
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "Types.h"
+namespace Robot {
 
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
 
-#include "Screen.h"
-#include "Window.h"
 
-#include "Clipboard.h"
-#include "Taskbar.h"
+//----------------------------------------------------------------------------//
+// Classes                                                                    //
+//----------------------------------------------------------------------------//
 
-#endif // ROBOT_H
+////////////////////////////////////////////////////////////////////////////////
+
+class ROBOT_EXPORT Clipboard
+{
+};
+
+} // namespace Robot
+#endif // ROBOT_CLIPBOARD_H

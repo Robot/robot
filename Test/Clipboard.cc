@@ -11,20 +11,17 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#include "Test.h"
 
-#include "Keyboard.h"
-#include "Mouse.h"
 
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
 
-#include "Screen.h"
-#include "Window.h"
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
 
-#include "Clipboard.h"
-#include "Taskbar.h"
+////////////////////////////////////////////////////////////////////////////////
 
-#endif // ROBOT_H
+bool TestClipboard (void)
+{
+	return true;
+}

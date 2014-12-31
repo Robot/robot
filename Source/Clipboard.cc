@@ -11,20 +11,9 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
-
-#include "Keyboard.h"
-#include "Mouse.h"
-
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
-
-#include "Screen.h"
-#include "Window.h"
-
 #include "Clipboard.h"
-#include "Taskbar.h"
+namespace Robot {
 
-#endif // ROBOT_H
+
+
+} // namespace Robot

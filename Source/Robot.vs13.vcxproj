@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bounds.h" />
+    <ClInclude Include="Clipboard.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="Global.h" />
@@ -57,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bounds.cc" />
+    <ClCompile Include="Clipboard.cc" />
     <ClCompile Include="Color.cc" />
     <ClCompile Include="Hash.cc" />
     <ClCompile Include="Image.cc" />

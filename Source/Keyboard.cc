@@ -245,9 +245,9 @@ ROBOT_ENUM (Key)
 // Locals                                                                     //
 //----------------------------------------------------------------------------//
 
-////////////////////////////////////////////////////////////////////////////////
-
 #ifdef ROBOT_OS_LINUX
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	static bool IsXTestAvailable (void)
 	{
@@ -840,23 +840,35 @@ bool Keyboard::GetState (KeyState& result)
 
 void Keyboard::Delay (const Range& delay)
 {
-	if (delay == 0) return;
+	// Generate a random range
+	int32 delay = d.GetRandom();
 
-#ifdef ROBOT_OS_LINUX
+	if (delay > 5)
+	{
+	#ifdef ROBOT_OS_LINUX
 
-	usleep (delay.GetRandom() * 1000);
+		usleep (delay * 1000);
 
-#endif
-#ifdef ROBOT_OS_MAC
+	#endif
+	#ifdef ROBOT_OS_MAC
 
-	usleep (delay.GetRandom() * 1000);
+		usleep (delay * 1000);
 
-#endif
-#ifdef ROBOT_OS_WIN
+	#endif
+	#ifdef ROBOT_OS_WIN
 
-	Sleep (delay.GetRandom());
+		Sleep (delay);
 
-#endif
+	#endif
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Keyboard::Delay
+	(uint32 minimum, uint32 maximum)
+{
+	Delay (Range (minimum, maximum));
 }
 
 } // namespace Robot

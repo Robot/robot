@@ -39,6 +39,7 @@
     <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Clipboard.cc" />
     <ClCompile Include="Keyboard.cc" />
     <ClCompile Include="Main.cc" />
     <ClCompile Include="Memory.cc" />

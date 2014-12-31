@@ -11,6 +11,9 @@
     <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Clipboard.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
     <ClCompile Include="Keyboard.cc">
       <Filter>Tests</Filter>
     </ClCompile>

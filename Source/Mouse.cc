@@ -63,9 +63,9 @@ ROBOT_ENUM (Button)
 // Locals                                                                     //
 //----------------------------------------------------------------------------//
 
-////////////////////////////////////////////////////////////////////////////////
-
 #ifdef ROBOT_OS_LINUX
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	static bool IsXTestAvailable (void)
 	{
@@ -101,10 +101,9 @@ ROBOT_ENUM (Button)
 	}
 
 #endif
-
-////////////////////////////////////////////////////////////////////////////////
-
 #ifdef ROBOT_OS_MAC
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	static uint64 GetPreciseTime (void)
 	{
@@ -740,23 +739,35 @@ bool Mouse::GetState (ButtonState& result)
 
 void Mouse::Delay (const Range& delay)
 {
-	if (delay == 0) return;
+	// Generate a random range
+	int32 delay = d.GetRandom();
 
-#ifdef ROBOT_OS_LINUX
+	if (delay > 5)
+	{
+	#ifdef ROBOT_OS_LINUX
 
-	usleep (delay.GetRandom() * 1000);
+		usleep (delay * 1000);
 
-#endif
-#ifdef ROBOT_OS_MAC
+	#endif
+	#ifdef ROBOT_OS_MAC
 
-	usleep (delay.GetRandom() * 1000);
+		usleep (delay * 1000);
 
-#endif
-#ifdef ROBOT_OS_WIN
+	#endif
+	#ifdef ROBOT_OS_WIN
 
-	Sleep (delay.GetRandom());
+		Sleep (delay);
 
-#endif
+	#endif
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Mouse::Delay
+	(uint32 minimum, uint32 maximum)
+{
+	Delay (Range (minimum, maximum));
 }
 
 } // namespace Robot

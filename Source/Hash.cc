@@ -91,8 +91,7 @@ Hash::Hash (void)
 
 Hash::Hash (const char* file)
 {
-	Result = 0;
-	Append (file);
+	Result = 0; Append (file);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,9 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+#include <iomanip>
+using std::setw;
+
 #include <fstream>
 using std::fstream;
 using std::ofstream;
@@ -70,14 +73,15 @@ using namespace Robot;
 // Functions                                                                  //
 //----------------------------------------------------------------------------//
 
-bool TestTypes    (void);
-bool TestKeyboard (void);
-bool TestMouse    (void);
-bool TestTaskbar  (void);
-bool TestProcess  (void);
-bool TestWindow   (void);
-bool TestModule   (void);
-bool TestMemory   (void);
-bool TestScreen   (void);
+bool TestTypes     (void);
+bool TestKeyboard  (void);
+bool TestMouse     (void);
+bool TestProcess   (void);
+bool TestModule    (void);
+bool TestMemory    (void);
+bool TestScreen    (void);
+bool TestWindow    (void);
+bool TestClipboard (void);
+bool TestTaskbar   (void);
 
 #endif // ROBOT_TEST_H

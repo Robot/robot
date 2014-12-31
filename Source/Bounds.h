@@ -31,7 +31,7 @@ class ROBOT_EXPORT Bounds
 {
 public:
 	// Constructors
-	Bounds						(void);
+	Bounds						(int32 value = 0);
 
 	Bounds						(int32 x, int32 y,
 								 int32 w, int32 h);
@@ -53,8 +53,10 @@ public:
 	void		SetRight		(int32 r);
 	void		SetBottom		(int32 b);
 
-	void		SetLTRB			(int32 l, int32 t,
-								 int32 r, int32 b);
+	void		GetLTRB			(int32& l, int32& t,
+								 int32& r, int32& b);
+	void		SetLTRB			(int32  l, int32  t,
+								 int32  r, int32  b);
 
 	bool		Contains		(const  Point&  p,
 								 bool inclusive = true) const;

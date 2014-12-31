@@ -807,6 +807,10 @@ static bool TestBounds (void)
 	Bounds b4 (-8, -4, -3, -7);
 	Bounds b5 (p3, s3);
 	Bounds b6 (p4, s4);
+	Bounds b7 (20    );
+	Bounds b8 (20, 40);
+	int32 bl1, bt1, br1, bb1;
+	int32 bl2, bt2, br2, bb2;
 
 	VERIFY (b1.X ==  0 && b1.Y ==  0 && b1.W ==  0 && b1.H ==  0);
 	VERIFY (b2.X ==  2 && b2.Y ==  8 && b2.W ==  7 && b2.H ==  3);
@@ -814,6 +818,8 @@ static bool TestBounds (void)
 	VERIFY (b4.X == -8 && b4.Y == -4 && b4.W == -3 && b4.H == -7);
 	VERIFY (b5.X ==  0 && b5.Y ==  8 && b5.W == -4 && b5.H ==  0);
 	VERIFY (b6.X == -4 && b6.Y ==  0 && b6.W ==  0 && b6.H ==  8);
+	VERIFY (b7.X == 20 && b7.Y == 20 && b7.W == 20 && b7.H == 20);
+	VERIFY (b8.X == 20 && b8.Y == 20 && b8.W == 40 && b8.H == 40);
 
 	VERIFY ( b1.IsEmpty());
 	VERIFY (!b2.IsEmpty());
@@ -821,6 +827,8 @@ static bool TestBounds (void)
 	VERIFY (!b4.IsEmpty());
 	VERIFY ( b5.IsEmpty());
 	VERIFY ( b6.IsEmpty());
+	VERIFY (!b7.IsEmpty());
+	VERIFY (!b8.IsEmpty());
 
 	VERIFY (b1.GetLeft () ==   0); VERIFY (b1.GetTop   () ==   0);
 	VERIFY (b1.GetRight() ==   0); VERIFY (b1.GetBottom() ==   0);
@@ -834,6 +842,10 @@ static bool TestBounds (void)
 	VERIFY (b5.GetRight() ==  -4); VERIFY (b5.GetBottom() ==   8);
 	VERIFY (b6.GetLeft () ==  -4); VERIFY (b6.GetTop   () ==   0);
 	VERIFY (b6.GetRight() ==  -4); VERIFY (b6.GetBottom() ==   8);
+	VERIFY (b7.GetLeft () ==  20); VERIFY (b7.GetTop   () ==  20);
+	VERIFY (b7.GetRight() ==  40); VERIFY (b7.GetBottom() ==  40);
+	VERIFY (b8.GetLeft () ==  20); VERIFY (b8.GetTop   () ==  20);
+	VERIFY (b8.GetRight() ==  60); VERIFY (b8.GetBottom() ==  60);
 
 	b1.SetLeft (4); b2.SetTop (-6); b3.SetRight (7); b4.SetBottom (-2);
 	b5.SetLeft (8); b5.SetTop (-2); b6.SetRight (6); b6.SetBottom (-3);
@@ -847,9 +859,13 @@ static bool TestBounds (void)
 
 	b1.SetLTRB (-6, 8, 4, -2);
 	b2.SetLTRB (-5, 9, 3, -3);
+	b1.GetLTRB (bl1, bt1, br1, bb1);
+	b2.GetLTRB (bl2, bt2, br2, bb2);
 
 	VERIFY (b1.X == -6 && b1.Y ==  8 && b1.W == 10 && b1.H == -10);
 	VERIFY (b2.X == -5 && b2.Y ==  9 && b2.W ==  8 && b2.H == -12);
+	VERIFY (bl1  == -6 && bt1  ==  8 && br1  ==  4 && bb1  ==  -2);
+	VERIFY (bl2  == -5 && bt2  ==  9 && br2  ==  3 && bb2  == - 3);
 
 	p1 = Point (-6, 12);
 	p2 = Point ( 3,  4);

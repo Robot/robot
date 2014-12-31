@@ -24,12 +24,12 @@ namespace Robot {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Bounds::Bounds (void)
+Bounds::Bounds (int32 value)
 {
-	X = 0;
-	Y = 0;
-	W = 0;
-	H = 0;
+	X = value;
+	Y = value;
+	W = value;
+	H = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,19 @@ void Bounds::SetBottom (int32 b)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Bounds::SetLTRB (int32 l, int32 t, int32 r, int32 b)
+void Bounds::GetLTRB (int32& l,
+  int32& t, int32& r, int32& b)
+{
+	l = X;
+	t = Y;
+	r = X + W;
+	b = Y + H;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Bounds::SetLTRB (int32 l,
+	int32 t, int32 r, int32 b)
 {
 	X = l;
 	Y = t;
