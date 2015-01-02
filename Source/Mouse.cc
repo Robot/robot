@@ -740,26 +740,24 @@ bool Mouse::GetState (ButtonState& result)
 void Mouse::Delay (const Range& delay)
 {
 	// Generate a random range
-	int32 delay = d.GetRandom();
+	int32 d = delay.GetRandom();
+	if (d <= 5) return;
 
-	if (delay > 5)
-	{
-	#ifdef ROBOT_OS_LINUX
+#ifdef ROBOT_OS_LINUX
 
-		usleep (delay * 1000);
+	usleep (d * 1000);
 
-	#endif
-	#ifdef ROBOT_OS_MAC
+#endif
+#ifdef ROBOT_OS_MAC
 
-		usleep (delay * 1000);
+	usleep (d * 1000);
 
-	#endif
-	#ifdef ROBOT_OS_WIN
+#endif
+#ifdef ROBOT_OS_WIN
 
-		Sleep (delay);
+	Sleep (d);
 
-	#endif
-	}
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
