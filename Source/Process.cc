@@ -26,17 +26,35 @@ using std::regex_match;
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	#include <wait.h>
+	#include <dirent.h>
+	#include <unistd.h>
+	#include <cstring>
+	#include <X11/Xlib.h>
+
+	// Reference default display
+	 extern Display* Robot_Display;
+	#define gDisplay Robot_Display
+
+	// Path to proc directory
+	#define PROC_PATH "/proc/"
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	// Apple process API
+	#include <libproc.h>
+	#include <ApplicationServices/ApplicationServices.h>
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	#define NOMINMAX
+	#define WIN32_LEAN_AND_MEAN
+	#include <Windows.h>
+
+	// Win process API
+	#include <Psapi.h>
 
 #endif
 namespace Robot {
@@ -47,10 +65,38 @@ namespace Robot {
 // Constructors                                                       Process //
 //----------------------------------------------------------------------------//
 
-Process::Process (int32 pid)
-{
-	// TODO:
-}
+#ifdef ROBOT_OS_LINUX
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	Process::Process (int32 pid) :
+		mPID (0) { Open (pid); }
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	Process::Process (int32 pid) :
+		mPID (0) { Open (pid); }
+
+#endif
+#ifdef ROBOT_OS_WIN
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	Process::Process (int32 pid) : mHandle
+	(new uintptr (0), [](uintptr* handle)
+	{
+		// Manually close process handle
+		CloseHandle ((HANDLE) (*handle));
+
+		// Free memory
+		delete handle;
+
+	}) { Open (pid); }
+
+#endif
 
 
 
@@ -67,20 +113,33 @@ bool Process::Open (int32 pid)
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	if (pid > 0 && (kill (pid, 0) == 0 || errno != ESRCH))
+	{
+		mPID = pid;
+		return true;
+	}
+
 	return false;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	if (pid > 0 && (kill (pid, 0) == 0 || errno != ESRCH))
+	{
+		mPID = pid;
+		return true;
+	}
+
 	return false;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return false;
+	*mHandle = (uintptr) OpenProcess (PROCESS_VM_READ |
+		PROCESS_VM_WRITE  | PROCESS_QUERY_INFORMATION |
+		PROCESS_TERMINATE | PROCESS_VM_OPERATION, FALSE, pid);
+
+	return *mHandle != 0;
 
 #endif
 }
@@ -91,17 +150,21 @@ void Process::Close (void)
 {
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	mPID = 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	mPID = 0;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	// Manually close process handle
+	CloseHandle ((HANDLE) *mHandle);
+
+	// Reset process handle
+	*mHandle = (uintptr) 0;
 
 #endif
 }
@@ -112,20 +175,19 @@ bool Process::IsValid (void) const
 {
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
-	return false;
+	return mPID > 0 &&
+		(kill (mPID, 0) == 0 || errno != ESRCH);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return false;
+	return mPID > 0 &&
+		(kill (mPID, 0) == 0 || errno != ESRCH);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return false;
+	return *mHandle != 0;
 
 #endif
 }
@@ -139,19 +201,42 @@ bool Process::Is64Bit (void) const
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
-	return false;
+	#ifdef ROBOT_ARCH_64
+		return true;
+	#else
+		return false;
+	#endif
+
+	// TODO: Better implementation
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return false;
+	#ifdef ROBOT_ARCH_64
+		return true;
+	#else
+		return false;
+	#endif
+
+	// TODO: Better implementation
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	SYSTEM_INFO info = { 0 };
+	// Retrieve the system info
+	GetNativeSystemInfo (&info);
+
+	// Check whether the OS is 64-bit
+	if (info.wProcessorArchitecture ==
+		PROCESSOR_ARCHITECTURE_AMD64)
+	{
+		BOOL result = FALSE;
+		return IsWow64Process ((HANDLE)
+			*mHandle, &result) != FALSE
+			&& result == FALSE;
+	}
+
 	return false;
 
 #endif
@@ -166,20 +251,17 @@ int32 Process::GetPID (void) const
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
-	return 0;
+	return mPID;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return 0;
+	return mPID;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return 0;
+	return GetProcessId ((HANDLE) *mHandle);
 
 #endif
 }
@@ -190,20 +272,17 @@ uintptr Process::GetHandle (void) const
 {
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
 	return 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
 	return 0;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return 0;
+	return *mHandle;
 
 #endif
 }
@@ -221,8 +300,13 @@ Memory Process::GetMemory (void) const
 
 string Process::GetName (void) const
 {
-	// TODO:
-	return string();
+	// Retrieve process path
+	string path = GetPath();
+
+	// Retrieve the file part of the path
+	auto last = path.find_last_of ('/');
+	if (last == string::npos) return path;
+	else return path.substr (last + 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,20 +318,63 @@ string Process::GetPath (void) const
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	char exe[  32];
+	char lnk[4096];
+
+	// Build path to the process executable (exe)
+	snprintf (exe, 32, PROC_PATH "%d/exe", mPID);
+
+	// Read symbolic link of the executable
+	ssize_t len = readlink (exe, lnk, 4095);
+
+	if (len > 0)
+	{
+		// Null terminate
+		lnk[len] = '\0';
+		return string (lnk);
+	}
+
 	return string();
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return string();
+	char path[PROC_PIDPATHINFO_MAXSIZE];
+
+	if (proc_pidpath (mPID, path,
+		PROC_PIDPATHINFO_MAXSIZE) <= 0)
+		return string();
+
+	return string (path);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return string();
+	DWORD size = MAX_PATH;
+	TCHAR path[MAX_PATH];
+
+	if (!QueryFullProcessImageName
+		((HANDLE) *mHandle, 0, path,
+		&size)) return string();
+
+	#ifdef UNICODE
+
+		char conv[MAX_PATH];
+		if (!WideCharToMultiByte (CP_UTF8, 0,
+			path, size + 1, conv, MAX_PATH,
+			nullptr, nullptr)) return string();
+
+		string res (conv);
+
+	#else
+
+		string res (path);
+
+	#endif
+
+	// Convert any backslashes to normal slashes
+	replace (res.begin(), res.end(), '\\', '/');
+	return res;
 
 #endif
 }
@@ -261,17 +388,22 @@ void Process::Exit (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	kill (mPID, SIGTERM);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	kill (mPID, SIGTERM);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	WindowList result = GetWindows();
+
+	// Close every window
+	for (uintptr i = 0; i <
+		result.size(); ++i)
+		result[i].Close();
 
 #endif
 }
@@ -285,17 +417,18 @@ void Process::Kill (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	kill (mPID, SIGKILL);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	kill (mPID, SIGKILL);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	TerminateProcess
+		((HANDLE) *mHandle, -1);
 
 #endif
 }
@@ -309,20 +442,19 @@ bool Process::HasExited (void) const
 
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
 	return false;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
 	return false;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return false;
+	DWORD code = -1;
+	return GetExitCodeProcess ((HANDLE) *mHandle,
+		&code) == FALSE || code != STILL_ACTIVE;
 
 #endif
 }
@@ -389,21 +521,89 @@ ProcessList Process::GetList (const char* name)
 {
 	ProcessList result;
 
+	// Check if the name is empty
+	bool empty = name == nullptr;
+	regex regexp; if (!empty) {
+		// Attempt to set a case-insensitive regex
+		try { regexp = regex (name, regex::icase); }
+		catch (...) { return result; }
+	}
+
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	DIR* dir = opendir (PROC_PATH);
+	struct dirent* entry = nullptr;
+
+	// Iterate through the entire proc directory
+	while ((entry = readdir (dir)) != nullptr)
+	{
+		// Check if this directory is all numbers
+		if (strspn (entry->d_name, "0123456789")
+			!= strlen (entry->d_name)) continue;
+
+		// Get the process id as integer
+		int32 pid = atoi (entry->d_name);
+
+		Process process;
+		// Attempt to open and match current process
+		if (process.Open (pid) && (empty == true ||
+			regex_match (process.GetName(), regexp)))
+		{
+			// Append process to result
+			result.push_back (process);
+		}
+	}
+
+	closedir (dir);
 	return result;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	pid_t list[4096];
+	// Get current process list
+	int32 size  = proc_listpids
+		(PROC_ALL_PIDS, 0, list, sizeof (list));
+	if (size <= 0) return result;
+
+	// Loop through all system processes
+	int32 count = size / sizeof (int32);
+	for (uintptr i = 0; i < count; ++i)
+	{
+		Process process;
+		// Attempt to open and match current process
+		if (process.Open (list[i]) && (empty == true ||
+			regex_match (process.GetName(), regexp)))
+		{
+			// Append process to result
+			result.push_back (process);
+		}
+	}
+
 	return result;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	// Get current process list
+	DWORD list[4096], size = 0;
+	if (!EnumProcesses (list, sizeof (list), &size))
+		return result;
+
+	// Loop through all system processes
+	DWORD count = size / sizeof (DWORD);
+	for (uintptr i = 0; i < count; ++i)
+	{
+		Process process;
+		// Attempt to open and match current process
+		if (process.Open (list[i]) && (empty == true ||
+			regex_match (process.GetName(), regexp)))
+		{
+			// Append process to result
+			result.push_back (process);
+		}
+	}
+
 	return result;
 
 #endif
@@ -415,20 +615,18 @@ Process Process::GetCurrent (void)
 {
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
-	return Process();
+	return Process (getpid());
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return Process();
+	return Process (getpid());
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return Process();
+	return Process
+		(GetCurrentProcessId());
 
 #endif
 }
