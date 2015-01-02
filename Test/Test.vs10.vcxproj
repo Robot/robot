@@ -248,7 +248,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Robot.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
@@ -272,7 +272,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Robot.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Robot.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>
@@ -290,7 +290,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Robotd.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
@@ -308,7 +308,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Robotd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Robotd.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>
