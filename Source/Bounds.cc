@@ -232,4 +232,4 @@ bool Bounds::operator != (const Bounds& bounds) const
 		   W != bounds.W || H != bounds.H;
 }
 
-} // namespace Robot
+}

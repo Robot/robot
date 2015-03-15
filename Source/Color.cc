@@ -32,7 +32,8 @@ Color::Color (uint32 argb)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Color::Color (uint8 r, uint8 g, uint8 b, uint8 a)
+Color::Color (uint8 r, uint8 g,
+			  uint8 b, uint8 a)
 {
 	A = a;
 	R = r;
@@ -85,4 +86,4 @@ bool Color::operator != (const Color& color) const
 		   G != color.G || B != color.B;
 }
 
-} // namespace Robot
+}

@@ -28,35 +28,30 @@ namespace Robot {
 class ROBOT_EXPORT Taskbar
 {
 public:
-	// Types
 	enum Location { Left, Top, Right, Bottom };
 
 private:
-	// Constructors
-	 Taskbar						(void);
-	~Taskbar						(void);
-	 Taskbar						(const Taskbar&  taskbar);
-	 Taskbar						(      Taskbar&& taskbar);
+	 Taskbar							(void);
+	~Taskbar							(void);
+	 Taskbar							(const Taskbar&  taskbar);
+	 Taskbar							(      Taskbar&& taskbar);
 
 public:
-	// Functions
-	static bool		Synchronize		(void);
+	static bool			Synchronize		(void);
 
-	static Bounds	GetBounds		(void) { return mBounds;   }
-	static Location	GetLocation		(void) { return mLocation; }
-	static bool		IsAutoHide		(void) { return mAutoHide; }
-
-private:
-	// Operators
-	Taskbar&		operator =		(const Taskbar&  taskbar);
-	Taskbar&		operator =		(      Taskbar&& taskbar);
+	static Bounds		GetBounds		(void) { return mBounds;   }
+	static Location		GetLocation		(void) { return mLocation; }
+	static bool			IsAutoHide		(void) { return mAutoHide; }
 
 private:
-	// Fields
-	static Bounds	mBounds;		// Position and size
-	static Location	mLocation;		// Taskbar location
-	static bool		mAutoHide;		// Taskbar auto hides
+	Taskbar&			operator =		(const Taskbar&  taskbar);
+	Taskbar&			operator =		(      Taskbar&& taskbar);
+
+private:
+	static Bounds		mBounds;		// Position and size
+	static Location		mLocation;		// Taskbar location
+	static bool			mAutoHide;		// Taskbar auto hides
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_TASKBAR_H

@@ -78,4 +78,4 @@ bool Taskbar::Synchronize (void)
 #endif
 }
 
-} // namespace Robot
+}

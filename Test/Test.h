@@ -21,6 +21,7 @@
 #endif
 
 #include <iostream>
+using std::hex;
 using std::cin;
 using std::cout;
 using std::endl;

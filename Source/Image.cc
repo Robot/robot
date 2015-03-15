@@ -30,10 +30,10 @@ namespace Robot {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define RESET( target )				\
-	(target).mWidth  = 0;			\
-	(target).mHeight = 0;			\
-	(target).mLength = 0;			\
+#define RESET( target )			\
+	(target).mWidth  = 0;		\
+	(target).mHeight = 0;		\
+	(target).mLength = 0;		\
 	(target).mData   = nullptr;
 
 
@@ -254,4 +254,4 @@ bool Image::operator != (const Image& image) const
 		   memcmp (mData, image.mData, mWidth * mHeight * sizeof (uint32)) != 0;
 }
 
-} // namespace Robot
+}

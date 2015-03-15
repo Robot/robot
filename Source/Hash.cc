@@ -125,7 +125,8 @@ bool Hash::Append (const char* file)
 	{
 		// Read file in buffered chunks
 		data.read ((char*) buffer, 4096);
-		Append (buffer, (uintptr) data.gcount());
+		auto c = (uintptr) data.gcount();
+		Append (buffer, c);
 	}
 
 	// Close file
@@ -189,4 +190,4 @@ bool Hash::operator != (const Hash& hash) const
 	return Result != hash.Result;
 }
 
-} // namespace Robot
+}

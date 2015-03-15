@@ -29,5 +29,5 @@ class ROBOT_EXPORT Clipboard
 {
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_CLIPBOARD_H

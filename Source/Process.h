@@ -63,11 +63,9 @@ typedef std::vector<Process> ProcessList;
 class ROBOT_EXPORT Process
 {
 public:
-	// Constructors
 	explicit			Process			(int32 pid = 0);
 
 public:
-	// Functions
 	bool				 Open			(int32 pid);
 	void				Close			(void);
 
@@ -92,7 +90,6 @@ public:
 	static Process		GetCurrent		(void);
 
 public:
-	// Operators
 	bool				operator ==		(const Process& process) const;
 	bool				operator !=		(const Process& process) const;
 
@@ -100,7 +97,6 @@ public:
 	bool				operator !=		(int32 pid) const;
 
 private:
-	// Fields
 #ifdef ROBOT_OS_LINUX
 
 	int32 mPID;							// The process ID
@@ -122,5 +118,5 @@ private:
 	#pragma warning (pop)
 #endif
 
-} // namespace Robot
+}
 #endif // ROBOT_PROCESS_H

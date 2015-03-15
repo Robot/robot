@@ -57,11 +57,9 @@ typedef std::unordered_map<Button, bool, std::hash<int>> ButtonState;
 class ROBOT_EXPORT Mouse
 {
 public:
-	// Constructors
 	Mouse							(void);
 
 public:
-	// Functions
 	void			Click			(Button button) const;
 	void			Press			(Button button) const;
 	void			Release			(Button button) const;
@@ -81,9 +79,8 @@ public:
 									 uint32 maximum);
 
 public:
-	// Properties
 	Range			AutoDelay;		// Auto delay range
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_MOUSE_H

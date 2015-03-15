@@ -78,7 +78,7 @@ int32 Range::GetRandom (void) const
 	if (Min >= Max)
 		return Min;
 
-	// Increment random generator state using LCG
+	// Increment generator using LCG
 	*const_cast<uint32*> (&mState) =
 		(mState * 1103515245 + 12345) & 0x7FFFFFFF;
 
@@ -115,4 +115,4 @@ bool Range::operator != (const Range& range) const
 	return Min != range.Min || Max != range.Max;
 }
 
-} // namespace Robot
+}

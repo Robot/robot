@@ -29,5 +29,5 @@ class ROBOT_EXPORT Screen
 {
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_SCREEN_H

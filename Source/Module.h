@@ -29,5 +29,5 @@ class ROBOT_EXPORT Module
 {
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_MODULE_H

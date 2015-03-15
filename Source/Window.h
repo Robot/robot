@@ -29,5 +29,5 @@ class ROBOT_EXPORT Window
 {
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_WINDOW_H

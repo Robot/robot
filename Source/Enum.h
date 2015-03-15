@@ -129,5 +129,5 @@ private:
 	#pragma warning (pop)
 #endif
 
-} // namespace Robot
+}
 #endif // ROBOT_ENUM_H

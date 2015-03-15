@@ -31,7 +31,6 @@ namespace Robot {
 class ROBOT_EXPORT Image
 {
 public:
-	// Constructors
 				 Image			(void);
 				~Image			(void);
 
@@ -42,7 +41,6 @@ public:
 	explicit	 Image			(uint16 w, uint16 h);
 
 public:
-	// Functions
 	bool		IsValid			(void) const;
 
 	void		Create			(const  Size&  size);
@@ -58,7 +56,6 @@ public:
 	Color		GetPixel		(uint16 x, uint16 y) const;
 
 public:
-	// Operators
 	Image&		operator =		(const Image&  image);
 	Image&		operator =		(      Image&& image);
 
@@ -66,12 +63,11 @@ public:
 	bool		operator !=		(const Image& image) const;
 
 private:
-	// Fields
 	uint16		mWidth;			// Bitmap width
 	uint16		mHeight;		// Bitmap height
 	uint32		mLength;		// Pixel data length
 	uint32*		mData;			// Pixel data (ARGB)
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_IMAGE_H

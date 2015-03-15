@@ -143,5 +143,5 @@ typedef double				real64;		// 64-bit real value
 
 #endif
 
-} // namespace Robot
+}
 #endif // ROBOT_GLOBAL_H

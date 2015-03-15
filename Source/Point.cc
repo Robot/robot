@@ -116,4 +116,4 @@ Point Point::operator - (void) const
 	return Point (-X, -Y);
 }
 
-} // namespace Robot
+}

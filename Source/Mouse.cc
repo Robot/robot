@@ -768,4 +768,4 @@ void Mouse::Delay
 	Delay (Range (minimum, maximum));
 }
 
-} // namespace Robot
+}

@@ -419,11 +419,9 @@ typedef std::unordered_map<Key, bool, std::hash<int>> KeyState;
 class ROBOT_EXPORT Keyboard
 {
 public:
-	// Constructors
 	Keyboard						(void);
 
 public:
-	// Functions
 	void			Click			(Key keycode) const;
 	void			Press			(Key keycode) const;
 	void			Release			(Key keycode) const;
@@ -440,9 +438,8 @@ public:
 									 uint32 maximum);
 
 public:
-	// Properties
 	Range			AutoDelay;		// Auto delay range
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_KEYBOARD_H

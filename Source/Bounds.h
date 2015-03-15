@@ -30,7 +30,6 @@ namespace Robot {
 class ROBOT_EXPORT Bounds
 {
 public:
-	// Constructors
 	Bounds						(int32 value = 0);
 
 	Bounds						(int32 x, int32 y,
@@ -40,7 +39,6 @@ public:
 								 const  Size& s);
 
 public:
-	// Functions
 	bool		IsEmpty			(void) const;
 
 	int32		GetLeft			(void) const;
@@ -64,25 +62,23 @@ public:
 								 bool inclusive = true) const;
 
 	Point		GetPoint		(void) const;
-	void		SetPoint		(const  Point&  p);
-	void		SetPoint		(int32 x, int32 y);
+	void		SetPoint		(const    Point& p);
+	void		SetPoint		(int32 x, int32  y);
 
 	Size		GetSize			(void) const;
-	void		SetSize			(const   Size&  s);
+	void		SetSize			(const    Size& s);
 	void		SetSize			(int32 w, int32 h);
 
 public:
-	// Operators
 	bool		operator ==		(const Bounds& bounds) const;
 	bool		operator !=		(const Bounds& bounds) const;
 
 public:
-	// Properties
 	int32		X;				// Top-left X coordinate
 	int32		Y;				// Top-left Y coordinate
 	int32		W;				// Total bounds width
 	int32		H;				// Total bounds height
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_BOUNDS_H

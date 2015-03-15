@@ -665,4 +665,4 @@ bool Process::operator != (int32 pid) const
 	return GetPID() != pid;
 }
 
-} // namespace Robot
+}

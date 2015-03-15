@@ -109,4 +109,4 @@ bool Size::operator != (const Size& size) const
 	return W != size.W || H != size.H;
 }
 
-} // namespace Robot
+}

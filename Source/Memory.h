@@ -29,5 +29,5 @@ class ROBOT_EXPORT Memory
 {
 };
 
-} // namespace Robot
+}
 #endif // ROBOT_MEMORY_H

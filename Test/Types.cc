@@ -543,7 +543,7 @@ static bool TestRange (void)
 	int32 min8 = 99; int32 max8 = -99;
 	int32 min9 = 99; int32 max9 = -99;
 
-	for (int32 i = 0; i < 9999; ++i)
+	for (int32 i = 0; i < 99999; ++i)
 	{
 		int32 rand1 = r1.GetRandom();
 		int32 rand2 = r2.GetRandom();
