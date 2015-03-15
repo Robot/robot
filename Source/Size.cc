@@ -47,7 +47,7 @@ Size::Size (int32 w, int32 h)
 
 bool Size::IsEmpty (void) const
 {
-	return W == 0 || H == 0;
+	return W == 0 && H == 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

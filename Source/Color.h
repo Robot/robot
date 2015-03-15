@@ -41,10 +41,10 @@ public:
 	bool		operator !=		(const Color& color) const;
 
 public:
-	uint8		A;				// Color alpha channel
-	uint8		R;				// Color red   channel
-	uint8		G;				// Color green channel
 	uint8		B;				// Color blue  channel
+	uint8		G;				// Color green channel
+	uint8		R;				// Color red   channel
+	uint8		A;				// Color alpha channel
 };
 
 }
