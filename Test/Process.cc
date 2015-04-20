@@ -91,8 +91,8 @@ static bool TestSelect (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	cout << "Open gedit and input PID: "; cin.getline (input1, 32);
-	cout << "Open emacs and input PID: "; cin.getline (input2, 32);
+	cout << "Open Leafpad and input PID: "; cin.getline (input1, 32);
+	cout << "Open gedit   and input PID: "; cin.getline (input2, 32);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -124,11 +124,11 @@ static bool TestSelect (void)
 	VERIFY (p2.GetHandle() == 0);
 	VERIFY (p1.GetHandle() == p2.GetHandle());
 
-	VERIFY (p1.GetName().compare (0, 5, "gedit") == 0);
-	VERIFY (p2.GetName().compare (0, 5, "emacs") == 0);
+	VERIFY (p1.GetName() == "leafpad");
+	VERIFY (p2.GetName() == "gedit"  );
 
-	VERIFY (p1.GetPath().compare (0, 14, "/usr/bin/gedit") == 0);
-	VERIFY (p2.GetPath().compare (0, 14, "/usr/bin/emacs") == 0);
+	VERIFY (p1.GetPath() == "/usr/bin/leafpad");
+	VERIFY (p2.GetPath() == "/usr/bin/gedit"  );
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -242,7 +242,7 @@ static bool TestGetList (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	cout << "Open a couple gedits & emacs and press enter\n";
+	cout << "Open a couple Leafpads & gedits and press enter\n";
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -271,15 +271,6 @@ static bool TestGetList (void)
 	procs1 = Process::GetList (".*a.*");
 	procs2 = Process::GetList (".*A.*");
 	cout << "List *a* - " << procs1.size() << endl;
-
-#ifdef ROBOT_OS_LINUX
-
-	// FIXME: Compiler issue workaround
-	procs2 = Process::GetList (".*a.*");
-
-#endif
-
-	VERIFY (procs1.size() !=             0);
 	VERIFY (procs1.size() == procs2.size());
 
 	for (uintptr i = 0; i < procs1.size(); ++i)
@@ -287,11 +278,8 @@ static bool TestGetList (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	procs1 = Process::GetList (".*gedit.*|.*emacs.*");
-	procs2 = Process::GetList (".*eMacs.*|.*gEdit.*");
-
-	// FIXME: Compiler issue workaround
-	procs2 = Process::GetList (".*emacs.*|.*gedit.*");
+	procs1 = Process::GetList (".*leafpad.*|.*gedit.*");
+	procs2 = Process::GetList (".*gEdit.*|.*Leafpad.*");
 
 #endif
 #ifdef ROBOT_OS_MAC
