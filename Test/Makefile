@@ -26,7 +26,7 @@ endif
 ifeq ($(mode), debug)
 	BINARY   = $(OUTPUT)Testd.bin
 	OBJECT   = $(OUTPUT)Testd/
-	CXXFLAGS = -std=c++0x -fno-rtti -O0 -g
+	CXXFLAGS = -std=c++11 -fno-rtti -O0 -g
 	 LDFLAGS = -L$(OUTPUT) -lRobotd
 
 	ifeq ($(UNAME), Darwin)
@@ -40,7 +40,7 @@ ifeq ($(mode), debug)
 else
 	BINARY   = $(OUTPUT)Test.bin
 	OBJECT   = $(OUTPUT)Test/
-	CXXFLAGS = -std=c++0x -fno-rtti -O3
+	CXXFLAGS = -std=c++11 -fno-rtti -O3
 	 LDFLAGS = -L$(OUTPUT) -lRobot
 
 	ifeq ($(UNAME), Darwin)

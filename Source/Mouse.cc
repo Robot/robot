@@ -41,25 +41,6 @@ namespace Robot {
 
 
 //----------------------------------------------------------------------------//
-// Declarations                                                        Button //
-//----------------------------------------------------------------------------//
-
-////////////////////////////////////////////////////////////////////////////////
-
-ROBOT_ENUM (Button)
-{
-	ROBOT_ENUM_MAP (ButtonLeft,		"LEFT"		);
-	ROBOT_ENUM_MAP (ButtonMid,		"MID"		);
-	ROBOT_ENUM_MAP (ButtonMiddle,	"MIDDLE"	);
-	ROBOT_ENUM_MAP (ButtonRight,	"RIGHT"		);
-
-	ROBOT_ENUM_MAP (ButtonX1,		"X1"		);
-	ROBOT_ENUM_MAP (ButtonX2,		"X2"		);
-}
-
-
-
-//----------------------------------------------------------------------------//
 // Locals                                                                     //
 //----------------------------------------------------------------------------//
 
@@ -115,6 +96,25 @@ ROBOT_ENUM (Button)
 	}
 
 #endif
+
+
+
+//----------------------------------------------------------------------------//
+// Declarations                                                        Button //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+ROBOT_ENUM (Button)
+{
+	ROBOT_ENUM_MAP (ButtonLeft,		"LEFT"		);
+	ROBOT_ENUM_MAP (ButtonMid,		"MID"		);
+	ROBOT_ENUM_MAP (ButtonMiddle,	"MIDDLE"	);
+	ROBOT_ENUM_MAP (ButtonRight,	"RIGHT"		);
+
+	ROBOT_ENUM_MAP (ButtonX1,		"X1"		);
+	ROBOT_ENUM_MAP (ButtonX2,		"X2"		);
+}
 
 
 

@@ -56,26 +56,104 @@ namespace Robot {
 
 #ifdef ROBOT_OS_LINUX
 
-	#define SET_KEY_STATE( keycode )									\
-		key = XKeysymToKeycode (gDisplay, keycode);						\
-		result[keycode] =												\
+	#define SET_KEY_STATE( keycode )								\
+		key = XKeysymToKeycode (gDisplay, keycode);					\
+		result[keycode] =											\
 			(keys[key / 8] & (1 << (key % 8))) != 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	#define SET_KEY_STATE( keycode )									\
-		result[keycode] = CGEventSourceKeyState							\
-			(kCGEventSourceStateHIDSystemState,							\
+	#define SET_KEY_STATE( keycode )								\
+		result[keycode] = CGEventSourceKeyState						\
+			(kCGEventSourceStateHIDSystemState,						\
 			(CGKeyCode) keycode);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define SET_KEY_STATE( keycode )									\
+	#define SET_KEY_STATE( keycode )								\
 		result[keycode] = GetAsyncKeyState (keycode) != 0;
 
 #endif
+
+
+
+//----------------------------------------------------------------------------//
+// Locals                                                                     //
+//----------------------------------------------------------------------------//
+
+#ifdef ROBOT_OS_LINUX
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	static bool IsXTestAvailable (void)
+	{
+		// If XTest extensions are available
+		static bool sXTestAvailable = false;
+
+		// If not checked yet
+		if (!sXTestAvailable)
+		{
+			// Check for a valid X-Window display
+			if (gDisplay == nullptr) return false;
+
+			// Check for XTest extension
+			int32 major, minor, evt, error;
+			if (!XQueryExtension (gDisplay,
+				XTestExtensionName, &major,
+				&evt, &error)) return false;
+
+			// Check the XTest version value
+			if (!XTestQueryExtension (gDisplay,
+				&evt, &error, &major, &minor))
+				return false;
+
+			// We require XTest version 2.2 in order to work properly
+			if (major < 2 || (major == 2 && minor < 2)) return false;
+
+			// Perform a test grab and finish
+			XTestGrabControl (gDisplay, True);
+			sXTestAvailable = true;
+		}
+
+		return sXTestAvailable;
+	}
+
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+
+static void CancelMods (int8* modkeys, int8 group, KeyList& result)
+{
+	if (modkeys[0] == group)
+	{
+		// Append single alt modifier release command
+		result.push_back (make_pair (false, KeyAlt));
+		modkeys[0] = -1;
+	}
+
+	if (modkeys[1] == group)
+	{
+		// Append single control modifier release command
+		result.push_back (make_pair (false, KeyControl));
+		modkeys[1] = -1;
+	}
+
+	if (modkeys[2] == group)
+	{
+		// Append single shift modifier release command
+		result.push_back (make_pair (false, KeyShift));
+		modkeys[2] = -1;
+	}
+
+	if (modkeys[3] == group)
+	{
+		// Append single system modifier release command
+		result.push_back (make_pair (false, KeySystem));
+		modkeys[3] = -1;
+	}
+}
 
 
 
@@ -237,84 +315,6 @@ ROBOT_ENUM (Key)
 	ROBOT_ENUM_MAP (KeyCapsLock,	"CAPSLOCK"	);
 	ROBOT_ENUM_MAP (KeyScrollLock,	"SCROLLLOCK");
 	ROBOT_ENUM_MAP (KeyNumLock,		"NUMLOCK"	);
-}
-
-
-
-//----------------------------------------------------------------------------//
-// Locals                                                                     //
-//----------------------------------------------------------------------------//
-
-#ifdef ROBOT_OS_LINUX
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	static bool IsXTestAvailable (void)
-	{
-		// If XTest extensions are available
-		static bool sXTestAvailable = false;
-
-		// If not checked yet
-		if (!sXTestAvailable)
-		{
-			// Check for a valid X-Window display
-			if (gDisplay == nullptr) return false;
-
-			// Check for XTest extension
-			int32 major, minor, evt, error;
-			if (!XQueryExtension (gDisplay,
-				XTestExtensionName, &major,
-				&evt, &error)) return false;
-
-			// Check the XTest version value
-			if (!XTestQueryExtension (gDisplay,
-				&evt, &error, &major, &minor))
-				return false;
-
-			// We require XTest version 2.2 in order to work properly
-			if (major < 2 || (major == 2 && minor < 2)) return false;
-
-			// Perform a test grab and finish
-			XTestGrabControl (gDisplay, True);
-			sXTestAvailable = true;
-		}
-
-		return sXTestAvailable;
-	}
-
-#endif
-
-////////////////////////////////////////////////////////////////////////////////
-
-static void CancelMods (int8* modkeys, int8 group, KeyList& result)
-{
-	if (modkeys[0] == group)
-	{
-		// Append single alt modifier release command
-		result.push_back (make_pair (false, KeyAlt));
-		modkeys[0] = -1;
-	}
-
-	if (modkeys[1] == group)
-	{
-		// Append single control modifier release command
-		result.push_back (make_pair (false, KeyControl));
-		modkeys[1] = -1;
-	}
-
-	if (modkeys[2] == group)
-	{
-		// Append single shift modifier release command
-		result.push_back (make_pair (false, KeyShift));
-		modkeys[2] = -1;
-	}
-
-	if (modkeys[3] == group)
-	{
-		// Append single system modifier release command
-		result.push_back (make_pair (false, KeySystem));
-		modkeys[3] = -1;
-	}
 }
 
 
@@ -556,8 +556,8 @@ bool Keyboard::Compile (const char* keys, KeyList& result)
 				if ((int32) key == -1) return false;
 				int32 keyCount = 1; if (cFlag)
 				{
-					// Convert count parameter to integer
-					keyCount = strtol (count, nullptr, 10);
+					keyCount = (int32) strtol
+						(count, nullptr, 10);
 
 					// Ensure count value is within range
 					if (keyCount < 0 || keyCount > 99)

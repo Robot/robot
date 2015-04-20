@@ -26,19 +26,19 @@ endif
 ifeq ($(mode), debug)
 	LIBRARY  = libRobotd.a
 	OBJECT   = $(OUTPUT)Robotd/
-	CXXFLAGS = -std=c++0x -Wall -pedantic-errors -fno-rtti -O0 -g
+	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O0 -g
 
 	ifeq ($(UNAME), Darwin)
-		CXXFLAGS += -stdlib=libc++
+		CXXFLAGS += -stdlib=libc++ -x objective-c++
 	endif
 
 else
 	LIBRARY  = libRobot.a
 	OBJECT   = $(OUTPUT)Robot/
-	CXXFLAGS = -std=c++0x -Wall -pedantic-errors -fno-rtti -O3
+	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O3
 
 	ifeq ($(UNAME), Darwin)
-		CXXFLAGS += -stdlib=libc++
+		CXXFLAGS += -stdlib=libc++ -x objective-c++
 	else
 		CXXFLAGS += -s
 	endif

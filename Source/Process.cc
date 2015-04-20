@@ -491,28 +491,11 @@ ModuleList Process::GetModules (const char* name) const
 
 WindowList Process::GetWindows (const char* title) const
 {
-	WindowList result;
-	// Check the process validity
-	if (!IsValid()) return result;
+	// Check whether process is valid
+	if (!IsValid()) return WindowList();
 
-#ifdef ROBOT_OS_LINUX
-
-	// NYI: Not yet implemented
-	return result;
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	// NYI: Not yet implemented
-	return result;
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	// NYI: Not yet implemented
-	return result;
-
-#endif
+	// Get results via a private window call
+	return Window::GetList (title, GetPID());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -520,7 +503,6 @@ WindowList Process::GetWindows (const char* title) const
 ProcessList Process::GetList (const char* name)
 {
 	ProcessList result;
-
 	// Check if the name is empty
 	bool empty = name == nullptr;
 	regex regexp; if (!empty) {
