@@ -14,20 +14,35 @@
 #include "Timer.h"
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	#include <time.h>
+	#include <unistd.h>
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	#include <unistd.h>
+	#include <mach/mach_time.h>
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	#define NOMINMAX
+	#define WIN32_LEAN_AND_MEAN
+	#include <Windows.h>
 
 #endif
 namespace Robot {
+
+
+
+//----------------------------------------------------------------------------//
+// Locals                                                                     //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+static const uint64 gInvalid
+		= 0x8000000000000000;
 
 
 
@@ -39,7 +54,7 @@ namespace Robot {
 
 Timer::Timer (void)
 {
-	// TODO:
+	mStarted = gInvalid;
 }
 
 
@@ -52,65 +67,85 @@ Timer::Timer (void)
 
 void Timer::Start (void)
 {
-	// TODO:
+	mStarted = GetCpuTime();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Timer::Reset (void)
 {
-	// TODO:
+	mStarted = gInvalid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uint64 Timer::Restart (void)
 {
-	// TODO:
-	return 0;
+	// Check if timer started
+	if (mStarted == gInvalid)
+	{
+		mStarted = GetCpuTime();
+		return 0;
+	}
+
+	else
+	{
+		uint64 old = mStarted;
+		mStarted = GetCpuTime();
+		return mStarted - old;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uint64 Timer::GetElapsed (void) const
 {
-	// TODO:
-	return 0;
+	// Check if timer started
+	if (mStarted == gInvalid)
+		return 0;
+
+	return GetCpuTime() - mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::HasStarted (void) const
 {
-	// TODO:
-	return false;
+	return mStarted != gInvalid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::HasExpired (uint64 time) const
 {
-	// TODO:
-	return false;
+	// Check if timer started
+	if (mStarted == gInvalid)
+		return true;
+
+	return GetElapsed() > time;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Timer::Sleep (const Range& time)
 {
+	// Generate a random range
+	int32 d = time.GetRandom();
+	if (d <= 5) return;
+
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
+	usleep (d * 1000);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
+	usleep (d * 1000);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
+	::Sleep (d);
 
 #endif
 }
@@ -120,7 +155,7 @@ void Timer::Sleep (const Range& time)
 void Timer::Sleep
 	(uint32 minimum, uint32 maximum)
 {
-	// TODO:
+	Sleep (Range (minimum, maximum));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,20 +164,51 @@ uint64 Timer::GetCpuTime (void)
 {
 #ifdef ROBOT_OS_LINUX
 
-	// TODO:
-	return 0;
+	// Gets the current time and returns it in milliseconds
+	timespec time; clock_gettime  (CLOCK_MONOTONIC, &time);
+	return (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// TODO:
-	return 0;
+	// Initialize the mach timebase info one time
+	static mach_timebase_info_data_t info = { 0 };
+	if (info.denom == 0) mach_timebase_info (&info);
+
+	// Retrieve current absolute time
+	uint64 time = mach_absolute_time();
+
+	// Return the current absolute time in milliseconds
+	return (time * info.numer) / (info.denom * 1000000);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// TODO:
-	return 0;
+	// Initialize timer info once
+	static uint64 frequency = 0;
+	static bool initialized = false;
+
+	if (!initialized)
+	{
+		// Get performance counter frequency
+		initialized = true; LARGE_INTEGER f;
+		if (QueryPerformanceFrequency (&f))
+			frequency = (uint64) f.QuadPart;
+	}
+
+	if (frequency > 0)
+	{
+		// Retrieve performance counter value
+		uint64 time = 0; LARGE_INTEGER counter;
+		if (QueryPerformanceCounter (&counter))
+			time = (uint64) counter.QuadPart;
+
+		// Return result in milliseconds
+		return (time * 1000) / frequency;
+	}
+
+	// Should never happen
+	return GetTickCount64();
 
 #endif
 }
@@ -157,56 +223,61 @@ uint64 Timer::GetCpuTime (void)
 
 uint64 Timer::operator () (void) const
 {
-	// TODO:
-	return 0;
+	// Check if timer started
+	if (mStarted == gInvalid)
+		return 0;
+
+	return GetCpuTime() - mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator < (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	if (timer.mStarted == gInvalid) return false;
+	if (this->mStarted == gInvalid) return true;
+	return mStarted > timer.mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator > (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	if (this->mStarted == gInvalid) return false;
+	if (timer.mStarted == gInvalid) return true;
+	return mStarted < timer.mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator <= (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	if (this->mStarted == gInvalid) return true;
+	if (timer.mStarted == gInvalid) return false;
+	return mStarted >= timer.mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator >= (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	if (timer.mStarted == gInvalid) return true;
+	if (this->mStarted == gInvalid) return false;
+	return mStarted <= timer.mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator == (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	return mStarted == timer.mStarted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Timer::operator != (const Timer& timer) const
 {
-	// TODO:
-	return false;
+	return mStarted != timer.mStarted;
 }
 
 }
