@@ -1944,7 +1944,7 @@ WindowList Window::GetList (const char* title, int32 pid)
 	// Check if the title is empty
 	bool empty = title == nullptr;
 	regex regexp; if (!empty) {
-		// Attempt to set a case-insensitive regex
+		// Attempt to use a case-insensitive regex
 		try { regexp = regex (title, regex::icase); }
 		catch (...) { return result; }
 	}

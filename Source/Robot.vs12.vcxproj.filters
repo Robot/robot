@@ -32,21 +32,6 @@
     <ClInclude Include="Image.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="Point.h">
-      <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Range.h">
-      <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Robot.h">
-      <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Size.h">
-      <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>Types</Filter>
-    </ClInclude>
     <ClInclude Include="Keyboard.h">
       <Filter>Native</Filter>
     </ClInclude>
@@ -59,14 +44,32 @@
     <ClInclude Include="Mouse.h">
       <Filter>Native</Filter>
     </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Types</Filter>
+    </ClInclude>
     <ClInclude Include="Process.h">
       <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="Range.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Robot.h">
+      <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="Screen.h">
       <Filter>Native</Filter>
     </ClInclude>
+    <ClInclude Include="Size.h">
+      <Filter>Types</Filter>
+    </ClInclude>
     <ClInclude Include="Taskbar.h">
       <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Native</Filter>
@@ -88,15 +91,6 @@
     <ClCompile Include="Image.cc">
       <Filter>Types</Filter>
     </ClCompile>
-    <ClCompile Include="Point.cc">
-      <Filter>Types</Filter>
-    </ClCompile>
-    <ClCompile Include="Range.cc">
-      <Filter>Types</Filter>
-    </ClCompile>
-    <ClCompile Include="Size.cc">
-      <Filter>Types</Filter>
-    </ClCompile>
     <ClCompile Include="Keyboard.cc">
       <Filter>Native</Filter>
     </ClCompile>
@@ -109,13 +103,25 @@
     <ClCompile Include="Mouse.cc">
       <Filter>Native</Filter>
     </ClCompile>
+    <ClCompile Include="Point.cc">
+      <Filter>Types</Filter>
+    </ClCompile>
     <ClCompile Include="Process.cc">
       <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="Range.cc">
+      <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="Screen.cc">
       <Filter>Native</Filter>
     </ClCompile>
+    <ClCompile Include="Size.cc">
+      <Filter>Types</Filter>
+    </ClCompile>
     <ClCompile Include="Taskbar.cc">
+      <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cc">
       <Filter>Native</Filter>
     </ClCompile>
     <ClCompile Include="Window.cc">

@@ -108,7 +108,8 @@ public:
 		for (auto i = mMap.begin();
 			 i != mMap.end(); ++i)
 		{
-			if (i->second == value) return i->first;
+			if (i->second == value)
+				return i->first;
 		}
 
 		// Nothing was found

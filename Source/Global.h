@@ -54,9 +54,7 @@ namespace Robot {
 		#define ROBOT_ARCH_32
 	#endif
 
-#endif
-
-#if defined (__APPLE__) && defined (__MACH__)
+#elif defined (__APPLE__) && defined (__MACH__)
 
 	#define ROBOT_OS_MAC
 	#if defined (__x86_64__)
@@ -65,9 +63,7 @@ namespace Robot {
 		#define ROBOT_ARCH_32
 	#endif
 
-#endif
-
-#if defined (_WIN32)
+#elif defined (_WIN32)
 
 	#define ROBOT_OS_WIN
 	#if defined (_WIN64)
@@ -75,6 +71,10 @@ namespace Robot {
 	#else
 		#define ROBOT_ARCH_32
 	#endif
+
+#else
+
+	#error Your operating system is not supported
 
 #endif
 

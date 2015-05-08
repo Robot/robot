@@ -53,6 +53,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Size.h" />
     <ClInclude Include="Taskbar.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -72,6 +73,7 @@
     <ClCompile Include="Screen.cc" />
     <ClCompile Include="Size.cc" />
     <ClCompile Include="Taskbar.cc" />
+    <ClCompile Include="Timer.cc" />
     <ClCompile Include="Window.cc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

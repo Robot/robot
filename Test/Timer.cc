@@ -11,21 +11,17 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#include "Test.h"
 
-#include "Keyboard.h"
-#include "Mouse.h"
 
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
 
-#include "Window.h"
-#include "Screen.h"
-#include "Taskbar.h"
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
 
-#include "Timer.h"
-#include "Clipboard.h"
+////////////////////////////////////////////////////////////////////////////////
 
-#endif // ROBOT_H
+bool TestTimer (void)
+{
+	return true;
+}

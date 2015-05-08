@@ -9,6 +9,7 @@
   <ItemGroup>
     <ClInclude Include="Targa.h" />
     <ClInclude Include="Test.h" />
+    <ClInclude Include="lodepng.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cc">
@@ -18,9 +19,6 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="Memory.cc">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="Module.cc">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="Mouse.cc">
@@ -35,13 +33,17 @@
     <ClCompile Include="Taskbar.cc">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
     <ClCompile Include="Types.cc">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="Window.cc">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="Targa.cc" />
     <ClCompile Include="Main.cc" />
+    <ClCompile Include="Targa.c" />
+    <ClCompile Include="lodepng.cc" />
   </ItemGroup>
 </Project>

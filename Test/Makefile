@@ -40,7 +40,7 @@ ifeq ($(mode), debug)
 else
 	BINARY   = $(OUTPUT)Test.bin
 	OBJECT   = $(OUTPUT)Test/
-	CXXFLAGS = -std=c++11 -fno-rtti -O3
+	CXXFLAGS = -std=c++11 -fno-rtti -O3 -DNDEBUG
 	 LDFLAGS = -L$(OUTPUT) -lRobot
 
 	ifeq ($(UNAME), Darwin)
@@ -53,8 +53,8 @@ else
 
 endif
 
-SOURCES = $(shell find ./ -name "*.cc")
-HEADERS = $(shell find ./ -name "*.h" )
+SOURCES = $(shell find ./ -name "*.cc" ! -name "Peon.cc")
+HEADERS = $(shell find ./ -name "*.h")
 OBJECTS = $(patsubst %.cc, $(OBJECT)%.o, $(SOURCES))
 
 
@@ -81,6 +81,7 @@ $(OBJECT)%.o: $(SRC)%.cc
 
 build: _init $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(BINARY) $(OBJECTS) $(LDFLAGS)
+	$(CXX) -std=c++11 -O0 -o $(OUTPUT)Peon.bin Peon.cc
 
 clean:
 	rm -rf $(OUTPUT)

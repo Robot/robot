@@ -15,12 +15,13 @@
 #define ROBOT_TEST_H
 
 #ifdef VLD_LEAK_TEST
-	// Use for MSVC VLD leak testing
+	// Used for MS VC++ leak testing
 	#define VLD_AGGREGATE_DUPLICATES
 	#include "vld.h"
 #endif
 
 #include <iostream>
+using std::dec;
 using std::hex;
 using std::cin;
 using std::cout;
@@ -28,6 +29,7 @@ using std::endl;
 
 #include <iomanip>
 using std::setw;
+using std::setfill;
 
 #include <fstream>
 using std::fstream;
@@ -39,14 +41,19 @@ using std::ifstream;
 using std::string;
 using std::strcmp;
 
+#include <vector>
+using std::vector;
+using std::make_pair;
+
+#include <algorithm>
+using std::sort;
+using std::is_sorted;
+using std::unique;
+
 #if (_MSC_VER != 1600)
 	#include <thread>
 	using std::thread;
 #endif
-
-#include <vector>
-using std::vector;
-using std::make_pair;
 
 #include "../Source/Robot.h"
 using namespace Robot;
@@ -59,14 +66,18 @@ using namespace Robot;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define VERIFY( cond )				\
-	if (!(cond))					\
-	{								\
-		cout << #cond " Failed\n"	\
-			 << __FILE__ << ":"		\
-			 << __LINE__ << "\n\n";	\
-		return false;				\
+#define VERIFY( cond )					\
+	if (!(cond))						\
+	{									\
+		cout << #cond " Failed\n"		\
+			 << __FILE__ << ":"			\
+			 << __LINE__ << "\n\n";		\
+		return false;					\
 	}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define ALL( cont ) cont.begin(), cont.end()
 
 
 
@@ -75,14 +86,14 @@ using namespace Robot;
 //----------------------------------------------------------------------------//
 
 bool TestTypes     (void);
+bool TestTimer     (void);
 bool TestKeyboard  (void);
 bool TestMouse     (void);
 bool TestProcess   (void);
-bool TestModule    (void);
-bool TestMemory    (void);
-bool TestScreen    (void);
 bool TestWindow    (void);
-bool TestClipboard (void);
+bool TestMemory    (void);
 bool TestTaskbar   (void);
+bool TestScreen    (void);
+bool TestClipboard (void);
 
 #endif // ROBOT_TEST_H

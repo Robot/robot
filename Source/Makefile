@@ -35,7 +35,7 @@ ifeq ($(mode), debug)
 else
 	LIBRARY  = libRobot.a
 	OBJECT   = $(OUTPUT)Robot/
-	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O3
+	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O3 -DNDEBUG
 
 	ifeq ($(UNAME), Darwin)
 		CXXFLAGS += -stdlib=libc++ -x objective-c++

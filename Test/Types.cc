@@ -36,18 +36,18 @@ static bool TestGlobal (void)
 	VERIFY (sizeof (real32) == 4);
 	VERIFY (sizeof (real64) == 8);
 
-	#ifdef ROBOT_ARCH_32
+#ifdef ROBOT_ARCH_32
 
-		VERIFY (sizeof ( intptr) == 4);
-		VERIFY (sizeof (uintptr) == 4);
+	VERIFY (sizeof ( intptr) == 4);
+	VERIFY (sizeof (uintptr) == 4);
 
-	#endif
-	#ifdef ROBOT_ARCH_64
+#endif
+#ifdef ROBOT_ARCH_64
 
-		VERIFY (sizeof ( intptr) == 8);
-		VERIFY (sizeof (uintptr) == 8);
+	VERIFY (sizeof ( intptr) == 8);
+	VERIFY (sizeof (uintptr) == 8);
 
-	#endif
+#endif
 
 	uint32 endian = 0x01;
 	// Verify endianness just in case

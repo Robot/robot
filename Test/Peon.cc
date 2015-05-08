@@ -8,24 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------//
-// Prefaces                                                                   //
+// Main                                                                       //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
+////////////////////////////////////////////////////////////////////////////////
 
-#include "Keyboard.h"
-#include "Mouse.h"
-
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
-
-#include "Window.h"
-#include "Screen.h"
-#include "Taskbar.h"
-
-#include "Timer.h"
-#include "Clipboard.h"
-
-#endif // ROBOT_H
+int main (void)
+{
+	return 0;
+}
