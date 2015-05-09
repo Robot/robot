@@ -17,8 +17,10 @@
 #include "Window.h"
 
 #include <algorithm>
-using std::string;
+using std::sort;
 using std::replace;
+using std::unique;
+using std::string;
 
 #include <regex>
 using std::regex;
@@ -30,17 +32,21 @@ using std::regex_match;
 	#include <dirent.h>
 	#include <unistd.h>
 	#include <cstring>
-	#include <X11/Xlib.h>
 
-	// Reference default display
-	 extern Display* Robot_Display;
-	#define gDisplay Robot_Display
+	#include <fstream>
+	using std::ios;
+	using std::ifstream;
+	using std:: fstream;
+	using std:: getline;
 
+	#include <sys/utsname.h>
 	// Path to proc directory
 	#define PROC_PATH "/proc/"
 
 #endif
 #ifdef ROBOT_OS_MAC
+
+	#include <sys/utsname.h>
 
 	// Apple process API
 	#include <libproc.h>
@@ -62,41 +68,63 @@ namespace Robot {
 
 
 //----------------------------------------------------------------------------//
-// Constructors                                                       Process //
+// Classes                                                            Process //
 //----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+struct Process::Data
+{
+	int32		ProcID;			// The process ID
+
+	string		Name;			// Name of process
+	string		Path;			// Path of process
+
+	bool		Is64Bit;		// Process is 64-Bit
 
 #ifdef ROBOT_OS_LINUX
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Process::Process (int32 pid) :
-		mPID (0) { Open (pid); }
+	uint32		Handle;			// Unused handle
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Process::Process (int32 pid) :
-		mPID (0) { Open (pid); }
+	task_t		Handle;			// The mach task
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Process::Process (int32 pid) : mHandle
-	(new uintptr (0), [](uintptr* handle)
-	{
-		// Manually close process handle
-		CloseHandle ((HANDLE) (*handle));
-
-		// Free memory
-		delete handle;
-
-	}) { Open (pid); }
+	HANDLE		Handle;			// Process handle
 
 #endif
+};
+
+
+
+//----------------------------------------------------------------------------//
+// Constructors                                                       Process //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+Process::Process (int32 pid) : mData (new Process::Data(), [](Process::Data* data)
+{
+#ifdef ROBOT_OS_WIN
+
+	// Close the process handle
+	CloseHandle (data->Handle);
+
+#endif
+
+	// Free data
+	delete data;
+})
+{
+	mData->ProcID  = 0;
+	mData->Handle  = 0;
+	mData->Is64Bit = false;
+	Open (pid);
+}
 
 
 
@@ -115,7 +143,47 @@ bool Process::Open (int32 pid)
 
 	if (pid > 0 && (kill (pid, 0) == 0 || errno != ESRCH))
 	{
-		mPID = pid;
+		// Store the ProcID
+		mData->ProcID = pid;
+
+	#ifdef ROBOT_ARCH_64
+		// Use default setting
+		mData->Is64Bit = true;
+	#endif
+
+		char exe[32], link[4096];
+		// Build path to process's executable link
+		snprintf (exe, 32, PROC_PATH "%d/exe", pid);
+
+		// Determine arch by reading ELF
+		ifstream file (exe, ios::binary);
+		if (file)
+		{
+			// Arch offset
+			file.seekg (4);
+			int8 format = 0;
+
+			if (file >> format)
+				// 64-Bit if the format is 2
+				mData->Is64Bit = format == 2;
+		}
+
+		// Read symbolic link of the executable
+		auto len = readlink (exe, link, 4096);
+
+		if (len > 0)
+		{
+			string name, path (link, (size_t) len);
+
+			// Retrieve the file part of the path
+			auto last = path.find_last_of ('/');
+			if (last == string::npos) name = path;
+			else name = path.substr (last + 1);
+
+			// Store both the name and path values
+			mData->Name = name; mData->Path = path;
+		}
+
 		return true;
 	}
 
@@ -126,7 +194,42 @@ bool Process::Open (int32 pid)
 
 	if (pid > 0 && (kill (pid, 0) == 0 || errno != ESRCH))
 	{
-		mPID = pid;
+		// Store the ProcID
+		mData->ProcID = pid;
+
+	#ifdef ROBOT_ARCH_64
+		// Use default setting
+		mData->Is64Bit = true;
+	#endif
+
+		proc_bsdshortinfo info;
+		// Retrieve BSD info to determine process kind
+		if (proc_pidinfo (pid, PROC_PIDT_SHORTBSDINFO, 0,
+			&info, PROC_PIDT_SHORTBSDINFO_SIZE)) mData->
+			Is64Bit = info.pbsi_flags & PROC_FLAG_LP64;
+
+		// Attempt to retrieve process path
+		char link[PROC_PIDPATHINFO_MAXSIZE];
+		auto len = proc_pidpath (pid, link,
+				  PROC_PIDPATHINFO_MAXSIZE);
+
+		if (len > 0)
+		{
+			string name, path (link, (size_t) len);
+
+			// Retrieve the file part of the path
+			auto last = path.find_last_of ('/');
+			if (last == string::npos) name = path;
+			else name = path.substr (last + 1);
+
+			// Store both the name and path values
+			mData->Name = name; mData->Path = path;
+		}
+
+		// Attempt to retrieve the mach task port for the process
+		if (task_for_pid (mach_task_self(), pid, &mData->Handle))
+			mData->Handle = 0;
+
 		return true;
 	}
 
@@ -135,11 +238,65 @@ bool Process::Open (int32 pid)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	*mHandle = (uintptr) OpenProcess (PROCESS_VM_READ |
-		PROCESS_VM_WRITE  | PROCESS_QUERY_INFORMATION |
-		PROCESS_TERMINATE | PROCESS_VM_OPERATION, FALSE, pid);
+	mData->Handle = OpenProcess (PROCESS_VM_OPERATION |
+		 PROCESS_VM_READ  | PROCESS_QUERY_INFORMATION |
+		 PROCESS_VM_WRITE | PROCESS_TERMINATE, FALSE, pid);
 
-	return *mHandle != 0;
+	// Check if handle is valid
+	if (mData->Handle != nullptr)
+	{
+		// Store the ProcID
+		mData->ProcID = pid;
+
+		// Check if system 64-Bit
+		if (Process::IsSys64Bit())
+		{
+			BOOL is32Bit = TRUE;
+			// Set whether process is 64-Bit
+			mData->Is64Bit = IsWow64Process
+				(mData->Handle, &is32Bit) &&
+				is32Bit == FALSE;
+		}
+
+		DWORD size = MAX_PATH;
+		TCHAR link  [MAX_PATH];
+		string name, path;
+
+		if (QueryFullProcessImageName
+			// Try and get process path name
+			(mData->Handle, 0, link, &size))
+		{
+		#ifdef UNICODE
+
+			char conv[MAX_PATH * 2];
+			size = WideCharToMultiByte (CP_UTF8,
+				0, link, size, conv, MAX_PATH*2,
+				nullptr, nullptr);
+
+			path.append (conv, size);
+
+		#else
+
+			path.append (link, size);
+
+		#endif
+
+			// Convert any backslashes to normal slashes
+			replace (path.begin(), path.end(), '\\', '/');
+
+			// Retrieve the file part of the path
+			auto last = path.find_last_of ('/');
+			if (last == string::npos) name = path;
+			else name = path.substr (last + 1);
+
+			// Store both the name and path values
+			mData->Name = name; mData->Path = path;
+		}
+
+		return true;
+	}
+
+	return false;
 
 #endif
 }
@@ -148,25 +305,19 @@ bool Process::Open (int32 pid)
 
 void Process::Close (void)
 {
-#ifdef ROBOT_OS_LINUX
-
-	mPID = 0;
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	mPID = 0;
-
-#endif
 #ifdef ROBOT_OS_WIN
 
-	// Manually close process handle
-	CloseHandle ((HANDLE) *mHandle);
-
-	// Reset process handle
-	*mHandle = (uintptr) 0;
+	// Close the process handle
+	CloseHandle (mData->Handle);
 
 #endif
+
+	mData->ProcID  = 0;
+	mData->Handle  = 0;
+	mData->Is64Bit = false;
+
+	mData->Name.clear();
+	mData->Path.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,19 +326,21 @@ bool Process::IsValid (void) const
 {
 #ifdef ROBOT_OS_LINUX
 
-	return mPID > 0 &&
-		(kill (mPID, 0) == 0 || errno != ESRCH);
+	return mData->ProcID > 0 &&
+		(kill (mData->ProcID, 0)
+		== 0 || errno != ESRCH);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	return mPID > 0 &&
-		(kill (mPID, 0) == 0 || errno != ESRCH);
+	return mData->ProcID > 0 &&
+		(kill (mData->ProcID, 0)
+		== 0 || errno != ESRCH);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	return *mHandle != 0;
+	return mData->Handle != 0;
 
 #endif
 }
@@ -196,47 +349,31 @@ bool Process::IsValid (void) const
 
 bool Process::Is64Bit (void) const
 {
+	return mData->Is64Bit;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Process::IsDebugged (void) const
+{
 	// Check the process validity
 	if (!IsValid()) return false;
 
 #ifdef ROBOT_OS_LINUX
 
-	#ifdef ROBOT_ARCH_64
-		return true;
-	#else
-		return false;
-	#endif
-
-	// TODO: Better implementation
+	// NYI: Not yet implemented
+	return false;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	#ifdef ROBOT_ARCH_64
-		return true;
-	#else
-		return false;
-	#endif
-
-	// TODO: Better implementation
+	// NYI: Not yet implemented
+	return false;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	SYSTEM_INFO info = { 0 };
-	// Retrieve the system info
-	GetNativeSystemInfo (&info);
-
-	// Check whether the OS is 64-bit
-	if (info.wProcessorArchitecture ==
-		PROCESSOR_ARCHITECTURE_AMD64)
-	{
-		BOOL result = FALSE;
-		return IsWow64Process ((HANDLE)
-			*mHandle, &result) != FALSE
-			&& result == FALSE;
-	}
-
+	// NYI: Not yet implemented
 	return false;
 
 #endif
@@ -246,137 +383,37 @@ bool Process::Is64Bit (void) const
 
 int32 Process::GetPID (void) const
 {
-	// Check process validity
-	if (!IsValid()) return 0;
-
-#ifdef ROBOT_OS_LINUX
-
-	return mPID;
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	return mPID;
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	return GetProcessId ((HANDLE) *mHandle);
-
-#endif
+	return mData->ProcID;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uintptr Process::GetHandle (void) const
 {
-#ifdef ROBOT_OS_LINUX
-
-	return 0;
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	return 0;
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	return *mHandle;
-
-#endif
+	return (uintptr)
+		mData->Handle;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Memory Process::GetMemory (void) const
 {
-	return Memory();
-
 	// NYI: Not yet implemented
+	return Memory();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 string Process::GetName (void) const
 {
-	// Retrieve process path
-	string path = GetPath();
-
-	// Retrieve the file part of the path
-	auto last = path.find_last_of ('/');
-	if (last == string::npos) return path;
-	else return path.substr (last + 1);
+	return mData->Name;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 string Process::GetPath (void) const
 {
-	// Check if the process is valid
-	if (!IsValid()) return string();
-
-#ifdef ROBOT_OS_LINUX
-
-	char exe[  32];
-	char lnk[4096];
-
-	// Build path to the process executable (exe)
-	snprintf (exe, 32, PROC_PATH "%d/exe", mPID);
-
-	// Read symbolic link of the executable
-	ssize_t len = readlink (exe, lnk, 4095);
-
-	if (len > 0)
-	{
-		// Null terminate
-		lnk[len] = '\0';
-		return string (lnk);
-	}
-
-	return string();
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	char path[PROC_PIDPATHINFO_MAXSIZE];
-
-	if (proc_pidpath (mPID, path,
-		PROC_PIDPATHINFO_MAXSIZE) <= 0)
-		return string();
-
-	return string (path);
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	DWORD size = MAX_PATH;
-	TCHAR path[MAX_PATH];
-
-	if (!QueryFullProcessImageName
-		((HANDLE) *mHandle, 0, path,
-		&size)) return string();
-
-	#ifdef UNICODE
-
-		char conv[MAX_PATH];
-		if (!WideCharToMultiByte (CP_UTF8, 0,
-			path, size + 1, conv, MAX_PATH,
-			nullptr, nullptr)) return string();
-
-		string res (conv);
-
-	#else
-
-		string res (path);
-
-	#endif
-
-	// Convert any backslashes to normal slashes
-	replace (res.begin(), res.end(), '\\', '/');
-	return res;
-
-#endif
+	return mData->Path;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -388,22 +425,23 @@ void Process::Exit (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	kill (mPID, SIGTERM);
+	kill (mData->ProcID, SIGTERM);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	kill (mPID, SIGTERM);
+	kill (mData->ProcID, SIGTERM);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	WindowList result = GetWindows();
+	// Get every process window
+	auto list = Window::GetList
+		(nullptr, mData->ProcID);
 
-	// Close every window
-	for (uintptr i = 0; i <
-		result.size(); ++i)
-		result[i].Close();
+	// Close every open window in this process
+	for (uintptr i = 0; i < list.size(); ++i)
+		list[i].Close();
 
 #endif
 }
@@ -417,18 +455,17 @@ void Process::Kill (void)
 
 #ifdef ROBOT_OS_LINUX
 
-	kill (mPID, SIGKILL);
+	kill (mData->ProcID, SIGKILL);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	kill (mPID, SIGKILL);
+	kill (mData->ProcID, SIGKILL);
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	TerminateProcess
-		((HANDLE) *mHandle, -1);
+	TerminateProcess (mData->Handle, -1);
 
 #endif
 }
@@ -453,8 +490,9 @@ bool Process::HasExited (void) const
 #ifdef ROBOT_OS_WIN
 
 	DWORD code = -1;
-	return GetExitCodeProcess ((HANDLE) *mHandle,
-		&code) == FALSE || code != STILL_ACTIVE;
+	return !GetExitCodeProcess
+		(mData->Handle, &code)
+		|| code != STILL_ACTIVE;
 
 #endif
 }
@@ -494,8 +532,8 @@ WindowList Process::GetWindows (const char* title) const
 	// Check whether process is valid
 	if (!IsValid()) return WindowList();
 
-	// Get results via a private window call
-	return Window::GetList (title, GetPID());
+	// Get results using the private window call
+	return Window::GetList (title, mData->ProcID);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -506,7 +544,7 @@ ProcessList Process::GetList (const char* name)
 	// Check if the name is empty
 	bool empty = name == nullptr;
 	regex regexp; if (!empty) {
-		// Attempt to set a case-insensitive regex
+		// Attempt to use a case-insensitive regex
 		try { regexp = regex (name, regex::icase); }
 		catch (...) { return result; }
 	}
@@ -529,7 +567,7 @@ ProcessList Process::GetList (const char* name)
 		Process process;
 		// Attempt to open and match current process
 		if (process.Open (pid) && (empty == true ||
-			regex_match (process.GetName(), regexp)))
+			regex_match (process.mData->Name, regexp)))
 		{
 			// Append process to result
 			result.push_back (process);
@@ -555,7 +593,7 @@ ProcessList Process::GetList (const char* name)
 		Process process;
 		// Attempt to open and match current process
 		if (process.Open (list[i]) && (empty == true ||
-			regex_match (process.GetName(), regexp)))
+			regex_match (process.mData->Name, regexp)))
 		{
 			// Append process to result
 			result.push_back (process);
@@ -579,7 +617,7 @@ ProcessList Process::GetList (const char* name)
 		Process process;
 		// Attempt to open and match current process
 		if (process.Open (list[i]) && (empty == true ||
-			regex_match (process.GetName(), regexp)))
+			regex_match (process.mData->Name, regexp)))
 		{
 			// Append process to result
 			result.push_back (process);
@@ -613,6 +651,42 @@ Process Process::GetCurrent (void)
 #endif
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+bool Process::IsSys64Bit (void)
+{
+	// Initialize only once
+	static int8 is64Bit = -1;
+
+	if (is64Bit == -1)
+	{
+	#if defined (ROBOT_OS_MAC) || \
+		defined (ROBOT_OS_LINUX)
+
+		utsname unameData;
+		uname (&unameData);
+
+		is64Bit = !strcmp (unameData.
+			machine, "x86_64") ? 1:0;
+
+	#endif
+	#ifdef ROBOT_OS_WIN
+
+		SYSTEM_INFO info;
+		// Retrieve the system info
+		GetNativeSystemInfo (&info);
+
+		is64Bit =
+			info.wProcessorArchitecture ==
+			PROCESSOR_ARCHITECTURE_AMD64 ?
+			1 : 0;
+
+	#endif
+	}
+
+	return is64Bit == 1;
+}
+
 
 
 //----------------------------------------------------------------------------//
@@ -623,28 +697,28 @@ Process Process::GetCurrent (void)
 
 bool Process::operator == (const Process& process) const
 {
-	return GetPID() == process.GetPID();
+	return mData->ProcID == process.mData->ProcID;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Process::operator != (const Process& process) const
 {
-	return GetPID() != process.GetPID();
+	return mData->ProcID != process.mData->ProcID;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Process::operator == (int32 pid) const
 {
-	return GetPID() == pid;
+	return mData->ProcID == pid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Process::operator != (int32 pid) const
 {
-	return GetPID() != pid;
+	return mData->ProcID != pid;
 }
 
 }

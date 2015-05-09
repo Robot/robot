@@ -433,10 +433,6 @@ public:
 	static bool		GetState		(Key       keycode);
 	static bool		GetState		(KeyState& result );
 
-	static void		Delay			(const Range& delay);
-	static void		Delay			(uint32 minimum,
-									 uint32 maximum);
-
 public:
 	Range			AutoDelay;		// Auto delay range
 };

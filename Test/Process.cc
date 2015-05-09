@@ -23,17 +23,16 @@
 
 #define TEST_PROCESS									\
 	{													\
-		VERIFY ( procs1[i].IsValid  ());				\
-		VERIFY ( procs2[i].IsValid  ());				\
-		VERIFY (!procs1[i].HasExited());				\
-		VERIFY (!procs2[i].HasExited());				\
+		VERIFY ( list1[i].IsValid  ());					\
+		VERIFY ( list2[i].IsValid  ());					\
+		VERIFY (!list1[i].HasExited());					\
 														\
-		VERIFY ( (procs1[i] == procs2[i]));				\
-		VERIFY (!(procs1[i] != procs2[i]));				\
+		VERIFY ( (list1[i] == list2[i]));				\
+		VERIFY (!(list1[i] != list2[i]));				\
 														\
-		cout << setw (5) << procs1[i].GetPID() << " "	\
-			 << (procs1[i].Is64Bit() ? "x64 " : "x32 ")	\
-			 <<  procs1[i].GetName() << endl;			\
+		cout << setw (6) << list1[i].GetPID() << " "	\
+			 << (list1[i].Is64Bit() ? "x64 " : "x32 ")	\
+			 <<  list1[i].GetName() << endl;			\
 	}
 
 
@@ -133,9 +132,9 @@ static bool TestSelect (void)
 #endif
 #ifdef ROBOT_OS_MAC
 
-	VERIFY (p1.GetHandle() == 0);
-	VERIFY (p2.GetHandle() == 0);
-	VERIFY (p1.GetHandle() == p2.GetHandle());
+	VERIFY (p1.GetHandle() != 0);
+	VERIFY (p2.GetHandle() != 0);
+	VERIFY (p1.GetHandle() != p2.GetHandle());
 
 	VERIFY (p1.GetName() == "TextEdit");
 	VERIFY (p2.GetName() == "Notes"   );
@@ -163,6 +162,9 @@ static bool TestSelect (void)
 
 	VERIFY (p1 == pid1); VERIFY (p1 != 888);
 	VERIFY (p2 == pid2); VERIFY (p2 != 888);
+
+	VERIFY (!(p1 != pid1)); VERIFY (!(p1 == 888));
+	VERIFY (!(p2 != pid2)); VERIFY (!(p2 == 888));
 
 	cout << "Type something in both apps then press enter";
 	getchar();
@@ -203,11 +205,37 @@ static bool TestCurrent (void)
 
 	VERIFY (p1.IsValid()); VERIFY (!p1.HasExited());
 	VERIFY (p2.IsValid()); VERIFY (!p2.HasExited());
-	VERIFY (p1.Is64Bit() == p2.Is64Bit());
 
 	VERIFY (p1.GetPID() == pid);
 	VERIFY (p2.GetPID() == pid);
 
+#ifdef ROBOT_ARCH_32
+
+	VERIFY (!p1.Is64Bit());
+	VERIFY (!p2.Is64Bit());
+
+#endif
+#ifdef ROBOT_ARCH_64
+
+	VERIFY (p1.Is64Bit());
+	VERIFY (p2.Is64Bit());
+
+#endif
+
+#ifdef ROBOT_OS_LINUX
+
+	VERIFY (p1.GetHandle() == 0);
+	VERIFY (p2.GetHandle() == 0);
+	VERIFY (p1.GetHandle() == p2.GetHandle());
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	VERIFY (p1.GetHandle() != 0);
+	VERIFY (p2.GetHandle() != 0);
+	VERIFY (p1.GetHandle() == p2.GetHandle());
+
+#endif
 #ifdef ROBOT_OS_WIN
 
 	VERIFY (p1.GetHandle() != 0);
@@ -223,8 +251,7 @@ static bool TestCurrent (void)
 	VERIFY (p2 == pid); VERIFY (p2 != 888);
 
 	cout << "Verify the following information\n"
-		 << "Path: " << p2.GetPath() << " "
-		 << (p2.Is64Bit() ? "x64\n\n" : "x32\n\n");
+		 << "Path: " << p2.GetPath() << "\n\n";
 
 	p1.Close(); VERIFY (!p1.IsValid());
 	p2.Close(); VERIFY (!p2.IsValid());
@@ -236,7 +263,6 @@ static bool TestCurrent (void)
 
 static bool TestGetList (void)
 {
-	ProcessList procs1, procs2;
 	cout << "Warning: The next set of tests cannot be automated\n"
 		 << "         Please verify the following process lists\n\n";
 
@@ -258,49 +284,64 @@ static bool TestGetList (void)
 
 	getchar();
 
-	procs1 = Process::GetList (    );
-	procs2 = Process::GetList (".*");
-	cout << "List all - " << procs1.size() << endl;
+#if defined (ROBOT_OS_WIN) || \
+	defined (ROBOT_OS_LINUX)
 
-	VERIFY (procs1.size() !=             0);
-	VERIFY (procs1.size() == procs2.size());
+	// This result is unreliable on OSX
+	VERIFY (Process::GetList ("*").empty());
+	VERIFY (Process::GetList (")").empty());
 
-	for (uintptr i = 0; i < procs1.size(); ++i)
+#endif
+
+	ProcessList list1 = Process::GetList (    );
+	ProcessList list2 = Process::GetList (".*");
+	cout << "List all - " << list1.size() << endl;
+
+	VERIFY (list1.size() !=            0);
+	VERIFY (list1.size() == list2.size());
+
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_PROCESS; cout << endl;
 
-	procs1 = Process::GetList (".*a.*");
-	procs2 = Process::GetList (".*A.*");
-	cout << "List *a* - " << procs1.size() << endl;
-	VERIFY (procs1.size() == procs2.size());
+	list1 = Process::GetList (".*a.*");
+	list2 = Process::GetList (".*A.*");
+	cout << "List *a* - " << list1.size() << endl;
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < procs1.size(); ++i)
-		TEST_PROCESS; cout << endl;
+	for (uintptr i = 0; i < list1.size(); ++i)
+	{
+		auto name = list1[i].GetName();
+		VERIFY (name.find ('a') != string::npos ||
+				name.find ('A') != string::npos);
+	}
+
+	cout << "Verified\n\n";
 
 #ifdef ROBOT_OS_LINUX
 
-	procs1 = Process::GetList (".*leafpad.*|.*gedit.*");
-	procs2 = Process::GetList (".*gEdit.*|.*Leafpad.*");
+	list1 = Process::GetList (".*leafpad.*|.*gedit.*");
+	list2 = Process::GetList (".*gEdit.*|.*Leafpad.*");
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	procs1 = Process::GetList (".*textedit.*|.*notes.*");
-	procs2 = Process::GetList (".*Notes.*|.*TextEdit.*");
+	list1 = Process::GetList (".*textedit.*|.*notes.*");
+	list2 = Process::GetList (".*Notes.*|.*TextEdit.*");
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	procs1 = Process::GetList (".*notepad.*|.*wordpad.*");
-	procs2 = Process::GetList (".*WordPad.*|.*NotePad.*");
+	list1 = Process::GetList (".*notepad.*|.*wordpad.*");
+	list2 = Process::GetList (".*WordPad.*|.*NotePad.*");
 
 #endif
 
-	cout << "List apps - " << procs1.size() << endl;
+	cout << "List apps - " << list1.size() << endl;
 
-	VERIFY (procs1.size() !=             0);
-	VERIFY (procs1.size() == procs2.size());
+	VERIFY (list1.size() !=            0);
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < procs1.size(); ++i)
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_PROCESS; cout << endl;
 
 	return true;

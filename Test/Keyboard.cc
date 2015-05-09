@@ -504,7 +504,7 @@ static bool TestCompiler (void)
 
 static void LiveThread (void)
 {
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Click (Key0);
 	k.Click (Key1);
 	k.Click (Key2);
@@ -517,7 +517,7 @@ static void LiveThread (void)
 	k.Click (Key9);
 	k.Click (KeyReturn);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Click (KeyA);
 	k.Click (KeyB);
 	k.Click (KeyC);
@@ -546,7 +546,7 @@ static void LiveThread (void)
 	k.Click (KeyZ);
 	k.Click (KeyReturn);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Press (KeyShift);
 	k.Click (KeyA);
 	k.Click (KeyB);
@@ -577,7 +577,7 @@ static void LiveThread (void)
 	k.Release (KeyShift);
 	k.Click (KeyReturn);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Click (KeyAdd);
 	k.Click (KeySubtract);
 	k.Click (KeyMultiply);
@@ -595,7 +595,7 @@ static void LiveThread (void)
 	k.Click (KeyNum9);
 	k.Click (KeyEnter);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Click (KeyMinus);
 	k.Click (KeyEqual);
 	k.Click (KeyBackspace);
@@ -614,7 +614,7 @@ static void LiveThread (void)
 	k.Click (KeySlash);
 	k.Click (KeyReturn);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Press (KeyShift);
 	k.Click (KeyGrave);
 	k.Click (KeyMinus);
@@ -631,7 +631,7 @@ static void LiveThread (void)
 	k.Release (KeyShift);
 	k.Click (KeyReturn);
 
-	Keyboard::Delay (500);
+	Timer::Sleep (500);
 	k.Click ("+Hello +Robo<<<+(obot)+1~");
 }
 
@@ -691,7 +691,7 @@ static bool TestLive (void)
 
 	cout << "Function Keys";
 	getchar();
-	Keyboard::Delay (2500);
+	Timer::Sleep (2500);
 	k.Click (KeyF1);
 	k.Click (KeyF2);
 	k.Click (KeyF3);
@@ -707,7 +707,7 @@ static bool TestLive (void)
 
 	cout << "Miscellaneous";
 	getchar();
-	Keyboard::Delay (2500);
+	Timer::Sleep (2500);
 	k.Click (KeyPause);
 	k.Click (KeyInsert);
 	k.Click (KeyDelete);
@@ -720,7 +720,7 @@ static bool TestLive (void)
 
 	cout << "Modifiers";
 	getchar();
-	Keyboard::Delay (2500);
+	Timer::Sleep (2500);
 	k.Click (KeyTab);
 	k.Click (KeyAlt);
 	k.Click (KeyLAlt);
@@ -740,7 +740,7 @@ static bool TestLive (void)
 
 	cout << "Arrow Keys";
 	getchar();
-	Keyboard::Delay (2500);
+	Timer::Sleep (2500);
 	k.Click (KeyLeft);
 	k.Click (KeyUp);
 	k.Click (KeyRight);
@@ -748,7 +748,7 @@ static bool TestLive (void)
 
 	cout << "Light Show";
 	getchar();
-	Keyboard::Delay (2500);
+	Timer::Sleep (2500);
 	k.Click (KeyCapsLock);
 	k.Click (KeyCapsLock);
 	k.Click (KeyScrollLock);
@@ -910,7 +910,7 @@ static bool TestGetState (void)
 		if (state[KeyScrollLock	]) cout << "Scroll\t";
 		if (state[KeyNumLock	]) cout << "Num\t";
 
-		cout << endl; Keyboard::Delay (90);
+		cout << endl; Timer::Sleep (90);
 	}
 
 	return true;

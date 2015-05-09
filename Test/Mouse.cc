@@ -31,10 +31,10 @@ static bool TestLive (void)
 	getchar();
 
 	old = Mouse::GetPos();
-	Mouse::SetPos ( 50, 200); Mouse::Delay (1000); p = Mouse::GetPos(); VERIFY (p.X ==  50 && p.Y == 200);
-	Mouse::SetPos (200,  50); Mouse::Delay (1000); p = Mouse::GetPos(); VERIFY (p.X == 200 && p.Y ==  50);
-	Mouse::SetPos (  0,   0); Mouse::Delay (1000); p = Mouse::GetPos(); VERIFY (p.X ==   0 && p.Y ==   0);
-	Mouse::SetPos (old     ); Mouse::Delay (1000); p = Mouse::GetPos(); VERIFY (p == old);
+	Mouse::SetPos ( 50, 200); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X ==  50 && p.Y == 200);
+	Mouse::SetPos (200,  50); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X == 200 && p.Y ==  50);
+	Mouse::SetPos (  0,   0); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X ==   0 && p.Y ==   0);
+	Mouse::SetPos (old     ); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p == old);
 
 	cout << "\nWarning: The next set of tests cannot be automated\n"
 		 << "         Please review the following instructions!\n\n";
@@ -46,14 +46,14 @@ static bool TestLive (void)
 
 	cout << "Scroll";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.ScrollV (1); m.ScrollV (-1); m.ScrollV (-1); m.ScrollV (1);
 	m.ScrollV (3); m.ScrollV (-2); m.ScrollV (-2); m.ScrollV (1);
 	m.ScrollH (2); m.ScrollH (-1); m.ScrollH (-2); m.ScrollH (1);
 
 	cout << "Click";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.Click (ButtonLeft );
 	m.Click (ButtonMid  );
 	m.Click (ButtonRight);
@@ -66,39 +66,39 @@ static bool TestLive (void)
 
 	cout << "Fast Double Click";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.Click (ButtonLeft);
 	m.Click (ButtonLeft);
 
 	cout << "Slow Double Click";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.Click (ButtonLeft);
-	Mouse::Delay (1500);
+	Timer::Sleep (1500);
 	m.Click (ButtonLeft);
 
 	cout << "Click and Drag L";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.Press (ButtonLeft);
-	Mouse::Delay (1000);
+	Timer::Sleep (1000);
 
 	old = Mouse::GetPos();
 	Mouse::SetPos (old - 50);
-	Mouse::Delay (1000);
+	Timer::Sleep (1000);
 
 	Mouse::SetPos (old);
 	m.Release (ButtonLeft);
 
 	cout << "Click and Drag R";
 	getchar();
-	Mouse::Delay (2500);
+	Timer::Sleep (2500);
 	m.Press (ButtonRight);
-	Mouse::Delay (1000);
+	Timer::Sleep (1000);
 
 	old = Mouse::GetPos();
 	Mouse::SetPos (old - 50);
-	Mouse::Delay (1000);
+	Timer::Sleep (1000);
 
 	Mouse::SetPos (old);
 	m.Release (ButtonRight);
@@ -141,7 +141,7 @@ static bool TestGetState (void)
 		if (state[ButtonX1   ]) cout << "X1\t";
 		if (state[ButtonX2   ]) cout << "X2\t";
 
-		cout << endl; Mouse::Delay (90);
+		cout << endl; Timer::Sleep (90);
 	}
 
 	return true;

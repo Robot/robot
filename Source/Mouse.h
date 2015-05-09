@@ -74,10 +74,6 @@ public:
 	static bool		GetState		(Button       button);
 	static bool		GetState		(ButtonState& result);
 
-	static void		Delay			(const Range& delay);
-	static void		Delay			(uint32 minimum,
-									 uint32 maximum);
-
 public:
 	Range			AutoDelay;		// Auto delay range
 };

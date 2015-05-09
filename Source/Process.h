@@ -15,12 +15,9 @@
 #define ROBOT_PROCESS_H
 
 #include "Types.h"
+#include <memory>
 #include <string>
 #include <vector>
-
-#ifdef ROBOT_OS_WIN
-	#include <memory>
-#endif
 
 namespace Robot {
 	class Process;
@@ -71,6 +68,7 @@ public:
 
 	bool				IsValid			(void) const;
 	bool				Is64Bit			(void) const;
+	bool				IsDebugged		(void) const;
 
 	int32				GetPID			(void) const;
 	uintptr				GetHandle		(void) const;
@@ -88,6 +86,7 @@ public:
 	static ProcessList	GetList			(const char* name  = nullptr);
 
 	static Process		GetCurrent		(void);
+	static bool			IsSys64Bit		(void);
 
 public:
 	bool				operator ==		(const Process& process) const;
@@ -97,21 +96,8 @@ public:
 	bool				operator !=		(int32 pid) const;
 
 private:
-#ifdef ROBOT_OS_LINUX
-
-	int32 mPID;							// The process ID
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	int32 mPID;							// The process ID
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	std::shared_ptr<uintptr> mHandle;	// Process handle
-
-#endif
+	struct Data;
+	std::shared_ptr<Data> mData;		// Shared information
 };
 
 #ifdef ROBOT_OS_WIN

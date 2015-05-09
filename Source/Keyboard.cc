@@ -12,6 +12,7 @@
 //----------------------------------------------------------------------------//
 
 #include "Keyboard.h"
+#include "Timer.h"
 
 #include <string>
 using std::make_pair;
@@ -19,7 +20,6 @@ using std::string;
 
 #ifdef ROBOT_OS_LINUX
 
-	#include <unistd.h>
 	#include <X11/extensions/XTest.h>
 
 	// Reference default display
@@ -29,7 +29,6 @@ using std::string;
 #endif
 #ifdef ROBOT_OS_MAC
 
-	#include <unistd.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 #endif
@@ -392,7 +391,7 @@ void Keyboard::Press (Key keycode) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +441,7 @@ void Keyboard::Release (Key keycode) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -834,39 +833,6 @@ bool Keyboard::GetState (KeyState& result)
 	SET_KEY_STATE (KeyNumLock	);
 
 	return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Keyboard::Delay (const Range& delay)
-{
-	// Generate a random range
-	int32 d = delay.GetRandom();
-	if (d <= 5) return;
-
-#ifdef ROBOT_OS_LINUX
-
-	usleep (d * 1000);
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	usleep (d * 1000);
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	Sleep (d);
-
-#endif
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Keyboard::Delay
-	(uint32 minimum, uint32 maximum)
-{
-	Delay (Range (minimum, maximum));
 }
 
 }

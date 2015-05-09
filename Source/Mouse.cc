@@ -12,9 +12,10 @@
 //----------------------------------------------------------------------------//
 
 #include "Mouse.h"
+#include "Timer.h"
+
 #ifdef ROBOT_OS_LINUX
 
-	#include <unistd.h>
 	#include <X11/extensions/XTest.h>
 
 	// Reference default display
@@ -24,8 +25,6 @@
 #endif
 #ifdef ROBOT_OS_MAC
 
-	#include <sys/time.h>
-	#include <unistd.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 #endif
@@ -79,20 +78,6 @@ namespace Robot {
 		}
 
 		return sXTestAvailable;
-	}
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	static uint64 GetPreciseTime (void)
-	{
-		timeval time = { 0 };
-		// Return time in milliseconds
-		gettimeofday (&time, nullptr);
-		return (time.tv_sec  * 1000) +
-			   (time.tv_usec / 1000);
 	}
 
 #endif
@@ -175,8 +160,8 @@ void Mouse::Press (Button button) const
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// Auto double click timer
-	static uint64 elapsed = 0;
+	// Double-click timer
+	static Timer elapsed;
 
 	// Ignore extra buttons
 	if (button == ButtonX1 ||
@@ -213,12 +198,24 @@ void Mouse::Press (Button button) const
 		default: break;
 	}
 
-	// Check for a double click
-	CGEventSetIntegerValueField
-		(evt, kCGMouseEventClickState, (GetPreciseTime() - elapsed) < 500 ? 2 : 1);
+	// Detect double click version
+	if (!elapsed.HasExpired (500))
+	{
+		// TODO: Use system double click
+		// interval instead. See [NSEvent
+		// doubleClickInterval] function.
 
-	// Reset double click timer
-	elapsed = GetPreciseTime();
+		CGEventSetIntegerValueField (evt,
+			kCGMouseEventClickState, 2);
+		elapsed.Reset();
+	}
+
+	else
+	{
+		CGEventSetIntegerValueField (evt,
+			kCGMouseEventClickState, 1);
+		elapsed.Start();
+	}
 
 	// Post mouse event and release
 	CGEventPost (kCGHIDEventTap, evt);
@@ -258,7 +255,7 @@ void Mouse::Press (Button button) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,8 +289,8 @@ void Mouse::Release (Button button) const
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// Auto double click timer
-	static uint64 elapsed = 0;
+	// Double-click timer
+	static Timer elapsed;
 
 	// Ignore extra buttons
 	if (button == ButtonX1 ||
@@ -330,12 +327,24 @@ void Mouse::Release (Button button) const
 		default: break;
 	}
 
-	// Check for a double click
-	CGEventSetIntegerValueField
-		(evt, kCGMouseEventClickState, (GetPreciseTime() - elapsed) < 500 ? 2 : 1);
+	// Detect double click version
+	if (!elapsed.HasExpired (500))
+	{
+		// TODO: Use system double click
+		// interval instead. See [NSEvent
+		// doubleClickInterval] function.
 
-	// Reset double click timer
-	elapsed = GetPreciseTime();
+		CGEventSetIntegerValueField (evt,
+			kCGMouseEventClickState, 2);
+		elapsed.Reset();
+	}
+
+	else
+	{
+		CGEventSetIntegerValueField (evt,
+			kCGMouseEventClickState, 1);
+		elapsed.Start();
+	}
 
 	// Post mouse event and release
 	CGEventPost (kCGHIDEventTap, evt);
@@ -375,7 +384,7 @@ void Mouse::Release (Button button) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -431,7 +440,7 @@ void Mouse::ScrollH (int32 amount) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -487,7 +496,7 @@ void Mouse::ScrollV (int32 amount) const
 
 #endif
 
-	Delay (AutoDelay);
+	Timer::Sleep (AutoDelay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -733,39 +742,6 @@ bool Mouse::GetState (ButtonState& result)
 #endif
 
 	return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Mouse::Delay (const Range& delay)
-{
-	// Generate a random range
-	int32 d = delay.GetRandom();
-	if (d <= 5) return;
-
-#ifdef ROBOT_OS_LINUX
-
-	usleep (d * 1000);
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	usleep (d * 1000);
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	Sleep (d);
-
-#endif
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Mouse::Delay
-	(uint32 minimum, uint32 maximum)
-{
-	Delay (Range (minimum, maximum));
 }
 
 }

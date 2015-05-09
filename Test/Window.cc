@@ -23,21 +23,21 @@
 
 #define TEST_WINDOW										\
 	{													\
-		VERIFY (windows1[i].IsValid());					\
-		VERIFY (windows2[i].IsValid());					\
+		VERIFY (list1[i].IsValid());					\
+		VERIFY (list2[i].IsValid());					\
 														\
-		VERIFY ( (windows1[i] == windows2[i]));			\
-		VERIFY (!(windows1[i] != windows2[i]));			\
+		VERIFY ( (list1[i] == list2[i]));				\
+		VERIFY (!(list1[i] != list2[i]));				\
 														\
-		cout << setw (5) << windows1[i].GetPID  ()		\
-			 << ": "     << windows1[i].GetTitle()		\
+		cout << setw (6) << list1[i].GetPID  ()			\
+			 << ": "     << list1[i].GetTitle()			\
 			 << "\n";									\
 	}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #define MINMAX_TEST( action )							\
-	Mouse::Delay (500);									\
+	Timer::Sleep (500);									\
 	cout << " - " action " = "							\
 		 << (w.IsMinimized() ? " Min " : "!Min ")		\
 		 << (w.IsMaximized() ? " Max " : "!Max ");		\
@@ -149,7 +149,7 @@ static bool TestSelect1 (void)
 	{
 		w1 = Window::GetActive();
 		if (w1 != wx) break;
-		Mouse::Delay (250);
+		Timer::Sleep (250);
 	}
 
 	cout << "Focus 2nd app...\n\n";
@@ -158,7 +158,7 @@ static bool TestSelect1 (void)
 		w2 = Window::GetActive();
 		if (w2 != w1 &&
 			w2 != wx) break;
-		Mouse::Delay (250);
+		Timer::Sleep (250);
 	}
 
 	//----------------------------------------------------------------------------//
@@ -207,7 +207,7 @@ static bool TestSelect1 (void)
 	VERIFY (w2.GetProcess().GetName() == "wordpad.exe");
 
 #endif
-/*
+
 #if defined (ROBOT_OS_LINUX) || \
 	defined (ROBOT_OS_WIN  )
 
@@ -231,7 +231,7 @@ static bool TestSelect1 (void)
 
 	w1.SetTopMost    (true);
 	w2.SetBorderless (true);
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 
 	VERIFY ( w1.IsTopMost()); VERIFY (!w1.IsBorderless());
 	VERIFY (!w2.IsTopMost()); VERIFY ( w2.IsBorderless());
@@ -243,7 +243,7 @@ static bool TestSelect1 (void)
 	w2.SetTopMost    (true );
 	w1.SetBorderless (true );
 	w2.SetBorderless (false);
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 
 	VERIFY (!w1.IsTopMost()); VERIFY ( w1.IsBorderless());
 	VERIFY ( w2.IsTopMost()); VERIFY (!w2.IsBorderless());
@@ -253,7 +253,7 @@ static bool TestSelect1 (void)
 
 	w1.SetBorderless (false);
 	w2.SetTopMost    (false);
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 
 	VERIFY (!w1.IsTopMost()); VERIFY (!w1.IsBorderless());
 	VERIFY (!w2.IsTopMost()); VERIFY (!w2.IsBorderless());
@@ -266,13 +266,13 @@ static bool TestSelect1 (void)
 	//----------------------------------------------------------------------------//
 
 	cout << "Press enter to activate 1st app"; getchar();
-	Window::SetActive (w1); Mouse::Delay (500); VERIFY (Window::GetActive() == w1);
+	Window::SetActive (w1); Timer::Sleep (500); VERIFY (Window::GetActive() == w1);
 
 	cout << "Press enter to activate 2nd app\n"; getchar();
-	Window::SetActive (w2); Mouse::Delay (500); VERIFY (Window::GetActive() == w2);
+	Window::SetActive (w2); Timer::Sleep (500); VERIFY (Window::GetActive() == w2);
 
 	//----------------------------------------------------------------------------//
-*/
+
 	string t1 = w1.GetTitle();
 	string t2 = w2.GetTitle();
 
@@ -281,9 +281,9 @@ static bool TestSelect1 (void)
 
 	w1.SetBounds (100, 100, 250, 300); w1.SetTitle ("Hello");
 	w2.SetBounds (350, 400, 550, 300); w2.SetTitle ("World");
-	Mouse::Delay (500);
-//	VERIFY (w1.GetBounds() == Bounds (100, 100, 250, 300));
-//	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 300));
+	Timer::Sleep (500);
+	VERIFY (w1.GetBounds() == Bounds (100, 100, 250, 300));
+	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 300));
 
 #ifdef ROBOT_OS_MAC
 
@@ -302,7 +302,7 @@ static bool TestSelect1 (void)
 
 	w1.SetBounds (100, 400, 250, 300); w1.SetTitle ("World");
 	w2.SetBounds (350, 100, 550, 300); w2.SetTitle ("Hello");
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == Bounds (100, 400, 250, 300));
 	VERIFY (w2.GetBounds() == Bounds (350, 100, 550, 300));
 
@@ -321,7 +321,7 @@ static bool TestSelect1 (void)
 
 	w1.SetBounds (-50, 400, 250, 300);
 	w2.SetBounds (200, 100, 550, 600);
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == Bounds (-50, 400, 250, 300));
 	VERIFY (w2.GetBounds() == Bounds (200, 100, 550, 600));
 	cout << "Verify window title & arrangement";
@@ -334,7 +334,7 @@ static bool TestSelect1 (void)
 
 	w1.SetClient (100, 100, 250, 300);
 	w2.SetBounds (350, 400, 550, 300);
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 	VERIFY (w1.GetClient() == Bounds (100, 100, 250, 300));
 	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 300));
 	cout << "Verify window title & arrangement";
@@ -345,7 +345,7 @@ static bool TestSelect1 (void)
 	cout << endl;
 	w1.SetBounds (b1); w1.SetTitle (t1.data());
 	w2.SetBounds (b2); w2.SetTitle (t2.data());
-	Mouse::Delay (500);
+	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == b1);
 	VERIFY (w2.GetBounds() == b2);
 
@@ -360,7 +360,7 @@ static bool TestSelect1 (void)
 
 	w1.Close();
 	w2.Close();
-	Mouse::Delay (1000);
+	Timer::Sleep (1000);
 	VERIFY (!w1.IsValid());
 	VERIFY (!w2.IsValid());
 
@@ -400,7 +400,7 @@ static bool TestSelect2 (void)
 	{
 		w = Window::GetActive();
 		if (w != wx) break;
-		Mouse::Delay (250);
+		Timer::Sleep (250);
 	}
 
 #ifdef ROBOT_OS_LINUX
@@ -441,7 +441,7 @@ static bool TestSelect2 (void)
 			 << setw (4) << p1.Y
 			 << endl;
 
-		Mouse::Delay (30);
+		Timer::Sleep (30);
 	}
 
 	cout << endl;
@@ -486,7 +486,7 @@ static bool TestSelect2 (void)
 
 	//----------------------------------------------------------------------------//
 
-	w.Close(); Mouse::Delay (750); VERIFY (!w.IsValid());
+	w.Close(); Timer::Sleep (750); VERIFY (!w.IsValid());
 
 	return true;
 }
@@ -495,7 +495,6 @@ static bool TestSelect2 (void)
 
 static bool TestGetList1 (void)
 {
-	WindowList windows1, windows2;
 	cout << "Warning: The next set of tests cannot be automated\n"
 		 << "         Please verify the following window lists\n\n";
 
@@ -517,57 +516,72 @@ static bool TestGetList1 (void)
 
 	getchar();
 
-	windows1 = Window::GetList (    );
-	windows2 = Window::GetList (".*");
-	cout << "List all - " << windows1.size() << endl;
+#if defined (ROBOT_OS_WIN) || \
+	defined (ROBOT_OS_LINUX)
 
-	VERIFY (windows1.size() !=               0);
-	VERIFY (windows1.size() == windows2.size());
+	// This result is unreliable on OSX
+	VERIFY (Window::GetList ("*").empty());
+	VERIFY (Window::GetList (")").empty());
 
-	for (uintptr i = 0; i < windows1.size(); ++i)
+#endif
+
+	WindowList list1 = Window::GetList (    );
+	WindowList list2 = Window::GetList (".*");
+	cout << "List all - " << list1.size() << endl;
+
+	VERIFY (list1.size() !=            0);
+	VERIFY (list1.size() == list2.size());
+
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_WINDOW; cout << endl;
 
-	windows1 = Window::GetList ("");
-	windows2 = Window::GetList ("");
-	cout << "List \"\" - " << windows1.size() << endl;
-	VERIFY (windows1.size() == windows2.size());
+	list1 = Window::GetList ("");
+	list2 = Window::GetList ("");
+	cout << "List \"\" - " << list1.size() << endl;
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < windows1.size(); ++i)
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_WINDOW; cout << endl;
 
-	windows1 = Window::GetList (".*a.*");
-	windows2 = Window::GetList (".*A.*");
-	cout << "List *a* - " << windows1.size() << endl;
-	VERIFY (windows1.size() == windows2.size());
+	list1 = Window::GetList (".*a.*");
+	list2 = Window::GetList (".*A.*");
+	cout << "List *a* - " << list1.size() << endl;
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < windows1.size(); ++i)
-		TEST_WINDOW; cout << endl;
+	for (uintptr i = 0; i < list1.size(); ++i)
+	{
+		auto title = list1[i].GetTitle();
+		VERIFY (title.find ('a') != string::npos ||
+				title.find ('A') != string::npos);
+	}
+
+	cout << "Verified\n\n";
 
 #ifdef ROBOT_OS_LINUX
 
-	windows1 = Window::GetList (".*(untitled).*|.*gedit.*");
-	windows2 = Window::GetList (".*gEdit.*|.*(Untitled).*");
+	list1 = Window::GetList (".*(untitled).*|.*gedit.*");
+	list2 = Window::GetList (".*gEdit.*|.*(Untitled).*");
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	windows1 = Window::GetList (".*untitled.*|.*notes.*");
-	windows2 = Window::GetList (".*Notes.*|.*Untitled.*");
+	list1 = Window::GetList (".*untitled.*|.*notes.*");
+	list2 = Window::GetList (".*Notes.*|.*Untitled.*");
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	windows1 = Window::GetList (".*notepad.*|.*wordpad.*");
-	windows2 = Window::GetList (".*WordPad.*|.*NotePad.*");
+	list1 = Window::GetList (".*notepad.*|.*wordpad.*");
+	list2 = Window::GetList (".*WordPad.*|.*NotePad.*");
 
 #endif
 
-	cout << "List apps - " << windows1.size() << endl;
+	cout << "List apps - " << list1.size() << endl;
 
-	VERIFY (windows1.size() !=               0);
-	VERIFY (windows1.size() == windows2.size());
+	VERIFY (list1.size() !=            0);
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < windows1.size(); ++i)
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_WINDOW; cout << endl;
 
 	return true;
@@ -577,7 +591,6 @@ static bool TestGetList1 (void)
 
 static bool TestGetList2 (void)
 {
-	WindowList windows1, windows2;
 	cout << "Warning: The next set of tests cannot be automated\n"
 		 << "         Please verify the following window lists\n\n";
 
@@ -590,17 +603,17 @@ static bool TestGetList2 (void)
 	{
 		w = Window::GetActive();
 		if (w != wx) break;
-		Mouse::Delay (250);
+		Timer::Sleep (250);
 	}
 
-	windows1 = w.GetProcess().GetWindows (    );
-	windows2 = w.GetProcess().GetWindows (".*");
-	cout << "List all - " << windows1.size() << endl;
+	WindowList list1 = w.GetProcess().GetWindows (    );
+	WindowList list2 = w.GetProcess().GetWindows (".*");
+	cout << "List all - " << list1.size() << endl;
 
-	VERIFY (windows1.size() !=               0);
-	VERIFY (windows1.size() == windows2.size());
+	VERIFY (list1.size() !=            0);
+	VERIFY (list1.size() == list2.size());
 
-	for (uintptr i = 0; i < windows1.size(); ++i)
+	for (uintptr i = 0; i < list1.size(); ++i)
 		TEST_WINDOW; cout << endl;
 
 	return true;
