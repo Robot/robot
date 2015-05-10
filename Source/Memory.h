@@ -15,7 +15,7 @@
 #define ROBOT_MEMORY_H
 
 #include "Types.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -29,5 +29,5 @@ class ROBOT_EXPORT Memory
 {
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_MEMORY_H

@@ -20,7 +20,7 @@
 using std::memcpy;
 using std::memcmp;
 
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -326,4 +326,4 @@ bool Image::operator != (const Image& image) const
 		   memcmp (mData, image.mData, mLength * sizeof (uint32)) != 0;
 }
 
-}
+ROBOT_NS_END

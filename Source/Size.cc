@@ -13,7 +13,7 @@
 
 #include "Size.h"
 #include "Point.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -109,4 +109,4 @@ bool Size::operator != (const Size& size) const
 	return W != size.W || H != size.H;
 }
 
-}
+ROBOT_NS_END

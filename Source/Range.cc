@@ -13,7 +13,7 @@
 
 #include "Range.h"
 #include <ctime>
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -115,4 +115,4 @@ bool Range::operator != (const Range& range) const
 	return Min != range.Min || Max != range.Max;
 }
 
-}
+ROBOT_NS_END

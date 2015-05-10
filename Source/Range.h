@@ -15,7 +15,7 @@
 #define ROBOT_RANGE_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -54,5 +54,5 @@ private:
 	uint32		mState;			// Random generator state
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_RANGE_H

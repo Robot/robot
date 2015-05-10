@@ -15,7 +15,7 @@
 #define ROBOT_TIMER_H
 
 #include "Types.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -60,5 +60,5 @@ private:
 	uint64			mStarted;		// Time started (milliseconds)
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_TIMER_H

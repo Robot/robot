@@ -13,7 +13,7 @@
 
 #include "Point.h"
 #include "Size.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -116,4 +116,4 @@ Point Point::operator - (void) const
 	return Point (-X, -Y);
 }
 
-}
+ROBOT_NS_END

@@ -12,8 +12,8 @@
 //----------------------------------------------------------------------------//
 
 #include "Screen.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
-}
+ROBOT_NS_END

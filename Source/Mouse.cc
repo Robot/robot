@@ -35,7 +35,7 @@
 	#include <Windows.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -744,4 +744,4 @@ bool Mouse::GetState (ButtonState& result)
 	return true;
 }
 
-}
+ROBOT_NS_END

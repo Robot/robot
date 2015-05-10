@@ -72,8 +72,12 @@ enum TestEnum2
 	Enum2Value2,
 };
 
-namespace Robot
-{
+// CAUTION: Template specializations
+// cannot be in different namespaces
+// when compiling with GCC.
+
+ROBOT_NS_BEGIN
+
 	ROBOT_ENUM (TestEnum1)
 	{
 		ROBOT_ENUM_MAP (Enum1Value1, "ENUM1Value1");
@@ -87,7 +91,8 @@ namespace Robot
 		ROBOT_ENUM_MAP (Enum2Value1);
 		ROBOT_ENUM_MAP (Enum2Value2);
 	}
-}
+
+ROBOT_NS_END
 
 bool TestEnum (void)
 {

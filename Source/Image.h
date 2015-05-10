@@ -15,7 +15,7 @@
 #define ROBOT_IMAGE_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Color;
 	class Size;
 	class Point;
@@ -81,5 +81,5 @@ private:
 	uint32		mLimit;			// Pixel data limit
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_IMAGE_H

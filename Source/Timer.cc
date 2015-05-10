@@ -31,7 +31,7 @@
 	#include <Windows.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -280,4 +280,4 @@ bool Timer::operator != (const Timer& timer) const
 	return mStarted != timer.mStarted;
 }
 
-}
+ROBOT_NS_END

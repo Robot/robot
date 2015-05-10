@@ -15,7 +15,7 @@
 #define ROBOT_HASH_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -49,5 +49,5 @@ public:
 	uint32		Result;			// Rolling checksum value
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_HASH_H

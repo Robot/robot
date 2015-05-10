@@ -56,7 +56,7 @@ using std::unique;
 #endif
 
 #include "../Source/Robot.h"
-using namespace Robot;
+ROBOT_NS_USE_ALL
 
 
 
@@ -71,7 +71,7 @@ using namespace Robot;
 	{									\
 		cout << #cond " Failed\n"		\
 			 << __FILE__ << ":"			\
-			 << __LINE__ << "\n\n";		\
+			 << __LINE__ << "\a\n\n";	\
 		return false;					\
 	}
 

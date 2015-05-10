@@ -22,7 +22,7 @@
 	#include <memory>
 #endif
 
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Process;
 	class Window;
 
@@ -127,5 +127,5 @@ private:
 #endif
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_WINDOW_H

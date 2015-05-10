@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------//
 
 #include "Color.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -86,4 +86,4 @@ bool Color::operator != (const Color& color) const
 		   G != color.G || B != color.B;
 }
 
-}
+ROBOT_NS_END

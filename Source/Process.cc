@@ -63,7 +63,7 @@ using std::regex_match;
 	#include <Psapi.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -721,4 +721,4 @@ bool Process::operator != (int32 pid) const
 	return mData->ProcID != pid;
 }
 
-}
+ROBOT_NS_END

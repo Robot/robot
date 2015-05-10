@@ -18,7 +18,7 @@
 	#include <Windows.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -78,4 +78,4 @@ bool Taskbar::Synchronize (void)
 #endif
 }
 
-}
+ROBOT_NS_END

@@ -44,7 +44,7 @@ using std::regex_match;
 	#include <Windows.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -2084,4 +2084,4 @@ bool Window::operator != (uintptr handle) const
 	return GetHandle() != handle;
 }
 
-}
+ROBOT_NS_END

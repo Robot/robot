@@ -15,7 +15,7 @@
 #define ROBOT_TASKBAR_H
 
 #include "Types.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -53,5 +53,5 @@ private:
 	static bool			mAutoHide;		// Taskbar auto hides
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_TASKBAR_H

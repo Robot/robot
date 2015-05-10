@@ -17,7 +17,7 @@
 #include "Global.h"
 #include <string>
 #include <unordered_map>
-namespace Robot {
+ROBOT_NS_BEGIN
 
 #ifdef ROBOT_OS_WIN
 	#pragma warning (push)
@@ -34,13 +34,13 @@ namespace Robot {
 ////////////////////////////////////////////////////////////////////////////////
 
 #define ROBOT_ENUM( type ) template<> std::unordered_map<std::string, type>    \
-			Robot::Enum<type>::mMap = std::unordered_map<std::string, type>(); \
-			template<> Robot::Enum<type>::Enum (void)
+	ROBOT_NS_PRE (Enum<type>)::mMap = std::unordered_map<std::string, type>(); \
+	template<> ROBOT_NS_PRE (Enum<type>)::Enum (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define _ROBOT_ENUM_MAP_1( value      ) mMap[#value] = value
-#define _ROBOT_ENUM_MAP_2( value, key ) mMap[ key  ] = value
+#define _ROBOT_ENUM_MAP_1( value      ) mMap[#value] = value;
+#define _ROBOT_ENUM_MAP_2( value, key ) mMap[ key  ] = value;
 
 #define _ROBOT_ENUM_SELECT( _1, _2, NAME, ...) NAME
 #define _ROBOT_ENUM_EXPAND( expression ) expression
@@ -130,5 +130,5 @@ private:
 	#pragma warning (pop)
 #endif
 
-}
+ROBOT_NS_END
 #endif // ROBOT_ENUM_H

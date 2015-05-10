@@ -13,7 +13,6 @@
 
 #ifndef ROBOT_GLOBAL_H
 #define ROBOT_GLOBAL_H
-namespace Robot {
 
 
 
@@ -115,8 +114,44 @@ namespace Robot {
 
 
 //----------------------------------------------------------------------------//
+// Namespace                                                                  //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+/// This library requires namespace encapsulation to prevent naming conflicts
+/// with system libraries. To use a different name, modify the ROBOT_NS macro.
+/// The ROBOT_NS_* family of macros can be used to define and use namespaces
+/// without depending on explicit names.
+
+#define ROBOT_NS Robot
+
+#ifdef ROBOT_NS
+
+	#define ROBOT_NS_BEGIN			namespace ROBOT_NS {
+	#define ROBOT_NS_END			}
+
+	#define ROBOT_NS_PRE( name )	ROBOT_NS::name
+	#define ROBOT_NS_FWD( name )	\
+			ROBOT_NS_BEGIN			\
+				class name;			\
+			ROBOT_NS_END
+
+	#define ROBOT_NS_USE_ALL		using namespace ROBOT_NS;
+	#define ROBOT_NS_USE( name )	using ROBOT_NS::name;
+
+#else
+
+	#error This library must be encapsulated in a namespace
+
+#endif
+
+
+
+//----------------------------------------------------------------------------//
 // Types                                                                      //
 //----------------------------------------------------------------------------//
+
+ROBOT_NS_BEGIN
 
 typedef signed char			int8;		// Signed  8-bit integer
 typedef signed short		int16;		// Signed 16-bit integer
@@ -143,5 +178,5 @@ typedef double				real64;		// 64-bit real value
 
 #endif
 
-}
+ROBOT_NS_END
 #endif // ROBOT_GLOBAL_H

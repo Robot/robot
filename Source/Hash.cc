@@ -17,7 +17,7 @@
 using std::ios;
 using std::fstream;
 
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -190,4 +190,4 @@ bool Hash::operator != (const Hash& hash) const
 	return Result != hash.Result;
 }
 
-}
+ROBOT_NS_END

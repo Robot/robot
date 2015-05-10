@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Process;
 	class Memory;
 	class Module;
@@ -104,5 +104,5 @@ private:
 	#pragma warning (pop)
 #endif
 
-}
+ROBOT_NS_END
 #endif // ROBOT_PROCESS_H

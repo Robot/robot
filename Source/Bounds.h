@@ -15,7 +15,7 @@
 #define ROBOT_BOUNDS_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Size;
 	class Point;
 
@@ -104,5 +104,5 @@ public:
 	int32		H;				// Total bounds height
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_BOUNDS_H

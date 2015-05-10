@@ -16,7 +16,7 @@
 
 #include "Types.h"
 #include <unordered_map>
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -78,5 +78,5 @@ public:
 	Range			AutoDelay;		// Auto delay range
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_MOUSE_H

@@ -15,7 +15,7 @@
 #define ROBOT_COLOR_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -47,5 +47,5 @@ public:
 	uint8		A;				// Color alpha channel
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_COLOR_H

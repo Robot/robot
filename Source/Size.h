@@ -15,7 +15,7 @@
 #define ROBOT_SIZE_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Point;
 
 
@@ -51,5 +51,5 @@ public:
 	int32		H;				// Height of the size
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_SIZE_H

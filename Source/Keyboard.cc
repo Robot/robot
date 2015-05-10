@@ -39,7 +39,7 @@ using std::string;
 	#include <Windows.h>
 
 #endif
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -835,4 +835,4 @@ bool Keyboard::GetState (KeyState& result)
 	return true;
 }
 
-}
+ROBOT_NS_END

@@ -15,7 +15,7 @@
 #define ROBOT_SCREEN_H
 
 #include "Types.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -29,5 +29,5 @@ class ROBOT_EXPORT Screen
 {
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_SCREEN_H

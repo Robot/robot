@@ -19,7 +19,7 @@
 using std::min;
 using std::max;
 
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -400,4 +400,4 @@ bool Bounds::operator != (const Bounds& bounds) const
 		   W != bounds.W || H != bounds.H;
 }
 
-}
+ROBOT_NS_END

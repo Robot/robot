@@ -17,7 +17,7 @@
 #include "Types.h"
 #include <vector>
 #include <unordered_map>
-namespace Robot {
+ROBOT_NS_BEGIN
 
 
 
@@ -437,5 +437,5 @@ public:
 	Range			AutoDelay;		// Auto delay range
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_KEYBOARD_H

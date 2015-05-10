@@ -15,7 +15,7 @@
 #define ROBOT_POINT_H
 
 #include "Global.h"
-namespace Robot {
+ROBOT_NS_BEGIN
 	class Size;
 
 
@@ -53,5 +53,5 @@ public:
 	int32		Y;				// Point Y coordinate
 };
 
-}
+ROBOT_NS_END
 #endif // ROBOT_POINT_H
