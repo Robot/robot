@@ -31,8 +31,9 @@ using std::regex_match;
 	#include <wait.h>
 	#include <dirent.h>
 	#include <unistd.h>
-	#include <cstring>
+	#include <sys/stat.h>
 
+	#include <cstring>
 	#include <fstream>
 	using std::ios;
 	using std::ifstream;
@@ -47,10 +48,16 @@ using std::regex_match;
 #ifdef ROBOT_OS_MAC
 
 	#include <sys/utsname.h>
+	#include <mach/task.h>
+	#include <mach/mach_vm.h>
 
 	// Apple process API
 	#include <libproc.h>
 	#include <ApplicationServices/ApplicationServices.h>
+
+	#ifndef EXC_MASK_GUARD
+	#define EXC_MASK_GUARD 0
+	#endif
 
 #endif
 #ifdef ROBOT_OS_WIN
@@ -175,6 +182,44 @@ struct Process::Data
 
 #endif
 };
+
+#ifdef ROBOT_OS_MAC
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	struct AllImageInfo
+	{
+		uint32 Version;
+		uint32 Count;
+
+		union
+		{
+			uint32 Array32;
+			uint64 Array64;
+		};
+
+		uint64 Pad[64];
+	};
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	struct ImageInfo32
+	{
+		uint32 Addr;
+		uint32 Path;
+		uint32 Date;
+	};
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	struct ImageInfo64
+	{
+		uint64 Addr;
+		uint64 Path;
+		uint64 Date;
+	};
+
+#endif
 
 
 
@@ -439,20 +484,60 @@ bool Process::IsDebugged (void) const
 
 #ifdef ROBOT_OS_LINUX
 
-	// NYI: Not yet implemented
+	char status[32];
+	// Build path to the status file
+	snprintf (status, 32, PROC_PATH
+		"%d/status", mData->ProcID);
+
+	// Attempt to open status file
+	fstream file (status, ios::in);
+	if (!file) return false;
+
+	string line;
+	// Create the mappings list
+	while (getline (file, line))
+	{
+		// Check if reached tracer and return result
+		if (line.find ("TracerPid:") != string::npos)
+			return atoi (line.c_str() + 10) != 0;
+	}
+
 	return false;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// NYI: Not yet implemented
+	// Verify whether mach task is valid
+	if (mData->Handle == 0) return false;
+
+	// Based on: stackoverflow.com/questions/2200277
+	exception_mask_t      masks    [EXC_TYPES_COUNT];
+	mach_port_t           ports    [EXC_TYPES_COUNT];
+	exception_behavior_t  behaviors[EXC_TYPES_COUNT];
+	thread_state_flavor_t flavors  [EXC_TYPES_COUNT];
+	mach_msg_type_number_t count = 0;
+
+	static const exception_mask_t excMask =
+		EXC_MASK_ALL & ~(EXC_MASK_RESOURCE | EXC_MASK_GUARD);
+
+	// Get send rights to task's exception ports
+	if (!task_get_exception_ports (mData->Handle,
+		excMask, masks, &count, ports, behaviors, flavors))
+	{
+		// A debugger is present if any mach port is valid
+		for (mach_msg_type_number_t i = 0; i < count; ++i)
+			if (MACH_PORT_VALID (ports[i])) return true;
+	}
+
 	return false;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// NYI: Not yet implemented
-	return false;
+	BOOL res = FALSE;
+	// Is the process being debugged
+	return CheckRemoteDebuggerPresent
+		(mData->Handle, &res) && res;
 
 #endif
 }
@@ -476,8 +561,7 @@ uintptr Process::GetHandle (void) const
 
 Memory Process::GetMemory (void) const
 {
-	// NYI: Not yet implemented
-	return Memory();
+	return Memory (*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -583,24 +667,278 @@ ModuleList Process::GetModules (const char* name) const
 	// Check the process validity
 	if (!IsValid()) return result;
 
+	// Check if the name is empty
+	bool empty = name == nullptr;
+	regex regexp; if (!empty) {
+		// Attempt to use a case-insensitive regex
+		try { regexp = regex (name, regex::icase); }
+		catch (...) { return result; }
+	}
+
 #ifdef ROBOT_OS_LINUX
 
-	// NYI: Not yet implemented
-	return result;
+	char maps[32];
+	// Build path to PID maps file
+	snprintf (maps, 32, PROC_PATH
+		"%d/maps", mData->ProcID);
+
+	// Attempt to open maps file
+	fstream file (maps, ios::in);
+	if (!file) return result;
+
+	// Delegate for processing our modules
+	auto storeModule = [&] (uintptr start,
+		uintptr stop, const string& path)
+	{
+		string name;
+		// Retrieve the file part of the path
+		auto last = path.find_last_of ('/');
+		if (last == string::npos) name = path;
+		else name = path.substr (last + 1);
+
+		// Check if current module name matches
+		if (empty || regex_match (name, regexp))
+		{
+			result.push_back (Module
+				(*this, name, path,
+				start, stop - start));
+		}
+	};
+
+	char currentPath[1024];
+	currentPath[0] = '\0';
+	uintptr currentStart = 0;
+	uintptr currentStop  = 0;
+
+	string line;
+	// Create the mappings list
+	while (getline (file, line))
+	{
+		size_t start; uint32 offset, inode;
+		size_t stop;  uint16 devmaj, devmin;
+		char access[5]; char pathname[1024];
+
+		// Parse the current line into a single complete mapping entry
+		if (sscanf (line.c_str(), "%zx-%zx %4s %x %hx:%hx %u %1023s",
+			&start, &stop, access, &offset, &devmaj, &devmin, &inode,
+			pathname) != 8) continue;
+
+		// Check if module continued from before
+		if (strcmp (currentPath, pathname) == 0)
+			{ currentStop = stop; continue; }
+
+		if (currentStart != 0)
+			storeModule (currentStart, currentStop, currentPath);
+
+		// Check whether the current pathname is valid
+		if (pathname[0] == '\0' || pathname[0] == '[')
+			{ currentStart = 0; currentPath[0] = '\0'; }
+
+		else
+		{
+			currentStart = start;
+			currentStop  = stop;
+			strncpy (currentPath, pathname, 1024);
+			currentPath[1023] = '\0';
+		}
+	}
+
+	if (currentStart != 0)
+		// Append any modules that are at the end of the file
+		storeModule (currentStart, currentStop, currentPath);
+
+	// Sort modules using their address
+	sort (result.begin(), result.end());
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// NYI: Not yet implemented
-	return result;
+	// Verify whether mach task is valid
+	if (mData->Handle == 0) return result;
+
+	task_dyld_info dyldInfo;
+	mach_msg_type_number_t count;
+	count = TASK_DYLD_INFO_COUNT;
+	mach_vm_size_t bytesRead = 0;
+	task_t task = mData->Handle;
+
+	// Find the task's dyld-info address
+	if (task_info (task, TASK_DYLD_INFO,
+		(task_info_t) &dyldInfo, &count))
+		return result;
+
+	// This shouldn't happen, but if it does, avoid overflow
+	if (dyldInfo.all_image_info_size > sizeof (AllImageInfo))
+		return result;
+
+	AllImageInfo allInfo;
+	// Read the all-image-info address
+	if (mach_vm_read_overwrite (task,
+		dyldInfo.all_image_info_addr,
+		dyldInfo.all_image_info_size,
+		(mach_vm_address_t) &allInfo,
+		&bytesRead)) return result;
+
+	if (allInfo.Count == 0 || bytesRead
+		!= dyldInfo.all_image_info_size)
+		return result;
+
+	// Delegate for processing our modules
+	auto storeModule = [&] (uint32 index,
+		uint64 imageAddr, uint64 imagePath)
+	{
+		std::string path; std::string name;
+		// Check if module is executable
+		if (index == 0) path = mData->Path;
+
+		else
+		{
+			char mPath[PATH_MAX];
+			char rPath[PATH_MAX];
+			// Attempt to read the file path of the current image
+			if (mach_vm_read_overwrite (task, (mach_vm_address_t)
+				imagePath, PATH_MAX, (mach_vm_address_t) mPath,
+				&bytesRead) || bytesRead != PATH_MAX) return;
+
+			// Convert path to a canonicalized absolute pathname
+			path = realpath (mPath, rPath) == 0 ? mPath : rPath;
+		}
+
+		// Retrieve the file part of the path
+		auto last = path.find_last_of ('/');
+		if (last == string::npos) name = path;
+		else name = path.substr (last + 1);
+
+		// Check if current module name matches
+		if (empty || regex_match (name, regexp))
+		{
+			result.push_back (Module
+				(*this, name, path,
+				(uintptr) imageAddr, 0));
+		}
+	};
+
+	if (mData->Is64Bit)
+	{
+		// Ensure array is valid
+		if (allInfo.Array64 == 0)
+			return result;
+
+		// Allocate enough data to store entire info array
+		ImageInfo64* info = new ImageInfo64[allInfo.Count];
+
+		// Compute sizes of info array
+		mach_vm_size_t size64 = sizeof
+		(ImageInfo64) * allInfo.Count;
+
+		// Read the entire info array as single read operation
+		if (mach_vm_read_overwrite (task, (mach_vm_address_t)
+			allInfo.Array64, size64, (mach_vm_address_t) info,
+			&bytesRead) == KERN_SUCCESS && bytesRead == size64)
+		{
+			// Iterate through all info array elements
+			for (uint32 i = 0; i < allInfo.Count; ++i)
+			{
+				// Use delegate to process and add our module
+				storeModule (i, info[i].Addr, info[i].Path);
+			}
+		}
+
+		delete[] info;
+	}
+
+	else
+	{
+		// Ensure array is valid
+		if (allInfo.Array32 == 0)
+			return result;
+
+		// Allocate enough data to store entire info array
+		ImageInfo32* info = new ImageInfo32[allInfo.Count];
+
+		// Compute sizes of info array
+		mach_vm_size_t size32 = sizeof
+		(ImageInfo32) * allInfo.Count;
+
+		// Read the entire info array as single read operation
+		if (mach_vm_read_overwrite (task, (mach_vm_address_t)
+			allInfo.Array32, size32, (mach_vm_address_t) info,
+			&bytesRead) == KERN_SUCCESS && bytesRead == size32)
+		{
+			// Iterate through all info array elements
+			for (uint32 i = 0; i < allInfo.Count; ++i)
+			{
+				// Use delegate to process and add our module
+				storeModule (i, info[i].Addr, info[i].Path);
+			}
+		}
+
+		delete[] info;
+	}
+
+	// Sort modules using their address
+	sort (result.begin(), result.end());
+
+	auto iterator =
+		// Remove duplicates in strange cases
+		unique (result.begin(), result.end());
+		result.erase (iterator, result.end());
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// NYI: Not yet implemented
-	return result;
+	// Save current process handle
+	HANDLE handle = mData->Handle;
+
+	// Retrieve current process modules
+	HMODULE list[2048]; DWORD size = 0;
+	if (!EnumProcessModulesEx (handle,
+		list, sizeof (list), &size,
+		LIST_MODULES_ALL)) return result;
+
+	// Loop through every process module
+	DWORD count = size / sizeof (HMODULE);
+	for (DWORD i = 0; i < count; ++i)
+	{
+		std::string path, name;
+		TCHAR modPath[MAX_PATH];
+
+		// Get the current modules path
+		if (GetModuleFileNameEx (handle,
+			list[i], modPath, MAX_PATH))
+		{
+			path = _UTF8Encode (modPath);
+			// Convert any backslashes to normal slashes
+			replace (path.begin(), path.end(), '\\', '/');
+
+			// Retrieve the file part of the path
+			auto last = path.find_last_of ('/');
+			if (last == string::npos) name = path;
+			else name = path.substr (last + 1);
+		}
+
+		// Check if current module name matches
+		if (empty || regex_match (name, regexp))
+		{
+			MODULEINFO info = { 0 };
+			// Attempt to retrieve module info
+			if (GetModuleInformation (handle,
+				list[i], &info, sizeof (info)))
+			{
+				result.push_back
+					(Module (*this, name, path,
+					(uintptr) info.lpBaseOfDll,
+					(uintptr) info.SizeOfImage));
+			}
+		}
+	}
+
+	// Sort modules using their address
+	sort (result.begin(), result.end());
 
 #endif
+
+	return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
