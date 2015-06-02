@@ -26,9 +26,9 @@ using std::regex_match;
 	#include <cstring>
 
 	// Open default display
-	Display* Robot_Display =
+	Display* _Robot_Display =
 		XOpenDisplay (NULL);
-	#define gDisplay Robot_Display
+	#define gDisplay _Robot_Display
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -42,6 +42,7 @@ using std::regex_match;
 	#define NOMINMAX
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
+	using std::wstring;
 
 #endif
 ROBOT_NS_BEGIN
@@ -531,6 +532,14 @@ ROBOT_NS_BEGIN
 
 #endif
 #ifdef ROBOT_OS_WIN
+
+	#ifdef UNICODE
+		extern  string _UTF8Encode (const wstring& value);
+		extern wstring _UTF8Decode (const  string& value);
+	#else
+		extern  string _UTF8Encode (const  string& value);
+		extern  string _UTF8Decode (const  string& value);
+	#endif
 
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -1244,24 +1253,9 @@ string Window::GetTitle (void) const
 #ifdef ROBOT_OS_WIN
 
 	TCHAR name[512];
-	int32 size = GetWindowText
-		((HWND) mHandle, name, 512);
-	if (size <= 0) return string();
-
-	#ifdef UNICODE
-
-		char conv[1024];
-		if (!WideCharToMultiByte (CP_UTF8,
-			0, name, size + 1, conv, 1024,
-			nullptr, nullptr)) return string();
-
-		return string (conv);
-
-	#else
-
-		return string (name);
-
-	#endif
+	return GetWindowText
+		((HWND) mHandle, name, 512) > 0
+		? _UTF8Encode (name) : string();
 
 #endif
 }
@@ -1327,26 +1321,9 @@ void Window::SetTitle (const char* title)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	if (title == nullptr)
-	{
-		// Avoid any errors due to nullptr string
-		SetWindowText ((HWND) mHandle, TEXT (""));
-		return;
-	}
-
-	#ifdef UNICODE
-
-		TCHAR conv[512];
-		if (!MultiByteToWideChar (CP_UTF8, 0,
-			title, -1, conv, 512)) return;
-
-		SetWindowText ((HWND) mHandle, conv);
-
-	#else
-
-		SetWindowText ((HWND) mHandle, title);
-
-	#endif
+	SetWindowText
+		((HWND) mHandle, _UTF8Decode
+		(title ? title : "").c_str());
 
 #endif
 }

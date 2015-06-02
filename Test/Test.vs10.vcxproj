@@ -174,7 +174,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
@@ -195,7 +195,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>
@@ -246,7 +246,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win32\</AdditionalLibraryDirectories>
@@ -270,7 +270,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\Binaries\Win64\</AdditionalLibraryDirectories>

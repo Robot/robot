@@ -23,8 +23,8 @@ using std::string;
 	#include <X11/extensions/XTest.h>
 
 	// Reference default display
-	 extern Display* Robot_Display;
-	#define gDisplay Robot_Display
+	 extern Display* _Robot_Display;
+	#define gDisplay _Robot_Display
 
 #endif
 #ifdef ROBOT_OS_MAC

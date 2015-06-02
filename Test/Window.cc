@@ -300,16 +300,16 @@ static bool TestSelect1 (void)
 	cout << "Verify window title & arrangement";
 	getchar();
 
-	w1.SetBounds (100, 400, 250, 300); w1.SetTitle ("World");
-	w2.SetBounds (350, 100, 550, 300); w2.SetTitle ("Hello");
+	w1.SetBounds (100, 400, 250, 300); w1.SetTitle (nullptr);
+	w2.SetBounds (350, 100, 550, 300); w2.SetTitle (nullptr);
 	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == Bounds (100, 400, 250, 300));
 	VERIFY (w2.GetBounds() == Bounds (350, 100, 550, 300));
 
 #ifndef ROBOT_OS_MAC
 
-	VERIFY (w1.GetTitle() == "World");
-	VERIFY (w2.GetTitle() == "Hello");
+	VERIFY (w1.GetTitle().empty());
+	VERIFY (w2.GetTitle().empty());
 
 #endif
 

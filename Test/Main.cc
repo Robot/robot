@@ -21,7 +21,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int main (int argc, const char** argv)
+int main (int argc, const char* argv[])
 {
 	cout << "\nROBOT TESTING SUITE\n";
 

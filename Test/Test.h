@@ -27,6 +27,9 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+using std::  uppercase;
+using std::nouppercase;
+
 #include <iomanip>
 using std::setw;
 using std::setfill;

@@ -123,7 +123,9 @@
 /// The ROBOT_NS_* family of macros can be used to define and use namespaces
 /// without depending on explicit names.
 
+#ifndef ROBOT_NS
 #define ROBOT_NS Robot
+#endif
 
 #ifdef ROBOT_NS
 

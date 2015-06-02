@@ -61,9 +61,86 @@ using std::regex_match;
 
 	// Win process API
 	#include <Psapi.h>
+	using std::wstring;
 
 #endif
 ROBOT_NS_BEGIN
+
+
+
+//----------------------------------------------------------------------------//
+// Locals                                                                     //
+//----------------------------------------------------------------------------//
+
+#ifdef ROBOT_OS_WIN
+
+	#ifdef UNICODE
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		string _UTF8Encode (const wstring& value)
+		{
+			// Do nothing if parameter is empty
+			if (value.empty()) return string();
+
+			int size = 0;
+			// Compute size of the resulting string
+			size = WideCharToMultiByte (CP_UTF8, 0,
+				&value[0], (int) value.size(),
+				nullptr, 0, nullptr, nullptr);
+
+			string result (size, 0);
+			// Convert wide-string to a UTF8 string
+			size = WideCharToMultiByte (CP_UTF8, 0,
+				&value [0], (int) value.size(),
+				&result[0], size, nullptr, nullptr);
+
+			// Return result if encoding succeeded
+			return size > 0 ? result : string();
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		wstring _UTF8Decode (const string& value)
+		{
+			// Do nothing if parameter is empty
+			if (value.empty()) return wstring();
+
+			int size = 0;
+			// Compute size of resulting string
+			size = MultiByteToWideChar (CP_UTF8,
+				0, &value[0], (int) value.size(),
+				nullptr, 0);
+
+			wstring result (size, 0);
+			// Convert UTF8 string to wide-string
+			size = MultiByteToWideChar (CP_UTF8,
+				0, &value[0], (int) value.size(),
+				&result[0], size);
+
+			// Return result if encoding succeeded
+			return size > 0 ? result : wstring();
+		}
+
+	#else
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		string _UTF8Encode (const string& value)
+		{
+			return value;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		string _UTF8Decode (const string& value)
+		{
+			return value;
+		}
+
+	#endif
+
+#endif
 
 
 
@@ -168,6 +245,11 @@ bool Process::Open (int32 pid)
 				mData->Is64Bit = format == 2;
 		}
 
+	#ifdef ROBOT_ARCH_32
+		// Don't attach to x64 processes from x86 apps
+		if (mData->Is64Bit) { Close(); return false; }
+	#endif
+
 		// Read symbolic link of the executable
 		auto len = readlink (exe, link, 4096);
 
@@ -207,6 +289,11 @@ bool Process::Open (int32 pid)
 		if (proc_pidinfo (pid, PROC_PIDT_SHORTBSDINFO, 0,
 			&info, PROC_PIDT_SHORTBSDINFO_SIZE)) mData->
 			Is64Bit = info.pbsi_flags & PROC_FLAG_LP64;
+
+	#ifdef ROBOT_ARCH_32
+		// Don't attach to x64 processes from x86 apps
+		if (mData->Is64Bit) { Close(); return false; }
+	#endif
 
 		// Attempt to retrieve process path
 		char link[PROC_PIDPATHINFO_MAXSIZE];
@@ -258,6 +345,11 @@ bool Process::Open (int32 pid)
 				is32Bit == FALSE;
 		}
 
+	#ifdef ROBOT_ARCH_32
+		// Don't attach to x64 processes from x86 apps
+		if (mData->Is64Bit) { Close(); return false; }
+	#endif
+
 		DWORD size = MAX_PATH;
 		TCHAR link  [MAX_PATH];
 		string name, path;
@@ -266,21 +358,7 @@ bool Process::Open (int32 pid)
 			// Try and get process path name
 			(mData->Handle, 0, link, &size))
 		{
-		#ifdef UNICODE
-
-			char conv[MAX_PATH * 2];
-			size = WideCharToMultiByte (CP_UTF8,
-				0, link, size, conv, MAX_PATH*2,
-				nullptr, nullptr);
-
-			path.append (conv, size);
-
-		#else
-
-			path.append (link, size);
-
-		#endif
-
+			path = _UTF8Encode (link);
 			// Convert any backslashes to normal slashes
 			replace (path.begin(), path.end(), '\\', '/');
 
