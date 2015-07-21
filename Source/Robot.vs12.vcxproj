@@ -52,7 +52,6 @@
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Size.h" />
-    <ClInclude Include="Taskbar.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Window.h" />
@@ -72,7 +71,6 @@
     <ClCompile Include="Range.cc" />
     <ClCompile Include="Screen.cc" />
     <ClCompile Include="Size.cc" />
-    <ClCompile Include="Taskbar.cc" />
     <ClCompile Include="Timer.cc" />
     <ClCompile Include="Window.cc" />
   </ItemGroup>

@@ -91,8 +91,8 @@
 /// nor USING_ROBOT_SHARED need to be defined.
 
 #if defined (BUILDING_ROBOT_SHARED) && defined (USING_ROBOT_SHARED)
-#error Both BUILDING_ROBOT_SHARED and USING_ROBOT_SHARED are set - please \
-	check the build configuration to ensure that at most one of these is set
+#error Both BUILDING_ROBOT_SHARED and USING_ROBOT_SHARED are defined - please \
+	   check your build configuration to ensure that only one of these is set
 #endif
 
 #ifdef ROBOT_OS_WIN

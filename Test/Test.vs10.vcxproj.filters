@@ -9,7 +9,6 @@
   <ItemGroup>
     <ClInclude Include="Targa.h" />
     <ClInclude Include="Test.h" />
-    <ClInclude Include="lodepng.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cc">
@@ -30,9 +29,6 @@
     <ClCompile Include="Screen.cc">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="Taskbar.cc">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cc">
       <Filter>Tests</Filter>
     </ClCompile>
@@ -43,7 +39,6 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="Main.cc" />
-    <ClCompile Include="Targa.c" />
-    <ClCompile Include="lodepng.cc" />
+    <ClCompile Include="Targa.cc" />
   </ItemGroup>
 </Project>

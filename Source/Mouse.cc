@@ -49,12 +49,13 @@ ROBOT_NS_BEGIN
 
 	static bool IsXTestAvailable (void)
 	{
-		// If XTest extensions are available
-		static bool sXTestAvailable = false;
+		// Initialize only one time
+		static int8 available = -1;
 
 		// If not checked yet
-		if (!sXTestAvailable)
+		if (available == -1)
 		{
+			available = 0;
 			// Check for a valid X-Window display
 			if (gDisplay == nullptr) return false;
 
@@ -74,10 +75,10 @@ ROBOT_NS_BEGIN
 
 			// Perform a test grab and finish
 			XTestGrabControl (gDisplay, True);
-			sXTestAvailable = true;
+			available = 1;
 		}
 
-		return sXTestAvailable;
+		return available == 1;
 	}
 
 #endif

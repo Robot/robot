@@ -35,21 +35,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lodepng.h" />
     <ClInclude Include="Targa.h" />
     <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cc" />
     <ClCompile Include="Keyboard.cc" />
-    <ClCompile Include="lodepng.cc" />
     <ClCompile Include="Main.cc" />
     <ClCompile Include="Memory.cc" />
     <ClCompile Include="Mouse.cc" />
     <ClCompile Include="Process.cc" />
     <ClCompile Include="Screen.cc" />
-    <ClCompile Include="Targa.c" />
-    <ClCompile Include="Taskbar.cc" />
+    <ClCompile Include="Targa.cc" />
     <ClCompile Include="Timer.cc" />
     <ClCompile Include="Types.cc" />
     <ClCompile Include="Window.cc" />

@@ -31,10 +31,10 @@ ifeq ($(mode), debug)
 
 	ifeq ($(UNAME), Darwin)
 		CXXFLAGS += -stdlib=libc++
-		 LDFLAGS += -framework ApplicationServices
+		 LDFLAGS += -framework ApplicationServices -framework AppKit
 	else
 		CXXFLAGS += -pthread
-		 LDFLAGS += -lX11 -lXtst
+		 LDFLAGS += -lX11 -lXtst -lXinerama
 	endif
 
 else
@@ -45,10 +45,10 @@ else
 
 	ifeq ($(UNAME), Darwin)
 		CXXFLAGS += -stdlib=libc++
-		 LDFLAGS += -framework ApplicationServices
+		 LDFLAGS += -framework ApplicationServices -framework AppKit
 	else
 		CXXFLAGS += -pthread -s
-		 LDFLAGS += -lX11 -lXtst
+		 LDFLAGS += -lX11 -lXtst -lXinerama
 	endif
 
 endif

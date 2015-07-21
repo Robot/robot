@@ -23,8 +23,6 @@
 
 #include "Window.h"
 #include "Screen.h"
-#include "Taskbar.h"
-
 #include "Timer.h"
 #include "Clipboard.h"
 

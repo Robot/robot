@@ -21,11 +21,14 @@
 #endif
 
 #include <iostream>
+using std::ios;
 using std::dec;
 using std::hex;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::ostream;
+using std::istream;
 
 using std::  uppercase;
 using std::nouppercase;
@@ -85,6 +88,99 @@ ROBOT_NS_USE_ALL
 
 
 //----------------------------------------------------------------------------//
+// Helpers                                                                    //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Hash& hash)
+{
+	// Save the output state
+	auto state = out.flags();
+
+	out << "0x" << uppercase
+		<< hex  << hash.Result;
+
+	// Restore state
+	out.flags (state);
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Color& color)
+{
+	out << "["
+		<< (int32) color.R << ", "
+		<< (int32) color.G << ", "
+		<< (int32) color.B << ", "
+		<< (int32) color.A << "]";
+
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Image& image)
+{
+	out << "["
+		<< image.GetWidth () << "x"
+		<< image.GetHeight() << " - "
+		<< image.GetLength() << "/"
+		<< image.GetLimit () << "]";
+
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Range& range)
+{
+	out << "["
+		<< range.Min << ", "
+		<< range.Max << ")";
+
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Point& point)
+{
+	out << "["
+		<< point.X << ", "
+		<< point.Y << "]";
+
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Size& size)
+{
+	out << "["
+		<< size.W << ", "
+		<< size.H << "]";
+
+	return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline ostream& operator << (ostream& out, const Bounds& bounds)
+{
+	out << "["
+		<< bounds.X << ", "
+		<< bounds.Y << ", "
+		<< bounds.W << ", "
+		<< bounds.H << "]";
+
+	return out;
+}
+
+
+
+//----------------------------------------------------------------------------//
 // Functions                                                                  //
 //----------------------------------------------------------------------------//
 
@@ -95,7 +191,6 @@ bool TestMouse     (void);
 bool TestProcess   (void);
 bool TestWindow    (void);
 bool TestMemory    (void);
-bool TestTaskbar   (void);
 bool TestScreen    (void);
 bool TestClipboard (void);
 

@@ -67,8 +67,8 @@ int main (int argc, const char* argv[])
 			 << "subsequent tests are cancelled. In order to get started\n"
 			 << "please select the tests you wish to run via the command\n"
 			 << "line. Possible tests  include: types, timer,  keyboard,\n"
-			 << "mouse,  process,  window, memory,  taskbar, screen  and\n"
-			 << "clipboard. Multiple tests can be run at the same time.\n\n";
+			 << "mouse,  process, window,  memory, screen and clipboard.\n"
+			 << "Multiple tests can be run at the same time.\n\n";
 
 		// All the tests have concluded
 		cout << "Press enter to exit\n";
@@ -83,7 +83,6 @@ int main (int argc, const char* argv[])
 	bool process   = false;
 	bool window    = false;
 	bool memory    = false;
-	bool taskbar   = false;
 	bool screen    = false;
 	bool clipboard = false;
 
@@ -100,7 +99,6 @@ int main (int argc, const char* argv[])
 			process   = true;
 			window    = true;
 			memory    = true;
-			taskbar   = true;
 			screen    = true;
 			clipboard = true;
 			break;
@@ -113,7 +111,6 @@ int main (int argc, const char* argv[])
 		if (strcmp (argv[i], "process"  ) == 0) process   = true; else
 		if (strcmp (argv[i], "window"   ) == 0) window    = true; else
 		if (strcmp (argv[i], "memory"   ) == 0) memory    = true; else
-		if (strcmp (argv[i], "taskbar"  ) == 0) taskbar   = true; else
 		if (strcmp (argv[i], "screen"   ) == 0) screen    = true; else
 		if (strcmp (argv[i], "clipboard") == 0) clipboard = true;
 	}
@@ -128,7 +125,6 @@ int main (int argc, const char* argv[])
 		if (process   && !TestProcess  ()) break;
 		if (window    && !TestWindow   ()) break;
 		if (memory    && !TestMemory   ()) break;
-		if (taskbar   && !TestTaskbar  ()) break;
 		if (screen    && !TestScreen   ()) break;
 		if (clipboard && !TestClipboard()) break;
 		res = 0;

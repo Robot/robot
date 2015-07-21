@@ -169,6 +169,25 @@ Color Image::GetPixel (uint16 x, uint16 y) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Image::SetPixel (const Point& point, Color c)
+{
+	return SetPixel (point.X, point.Y, c);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Image::SetPixel (uint16 x, uint16 y, Color c)
+{
+	// Perform simple boundary check
+	if (x >= mWidth || y >= mHeight)
+		return;
+
+	// Set color at the specified coordinate
+	((Color*) mData) [x + (y * mWidth)] = c;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Image::Fill (const Color& color)
 {
 	Fill (color.R, color.G,
@@ -195,7 +214,7 @@ void Image::Fill (uint8 r, uint8 g, uint8 b, uint8 a)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Image::GetSwitched (const char* sw, Image* result) const
+bool Image::Switch (const char* sw, Image* result) const
 {
 	// Check all parameters
 	if (mData  == nullptr ||
@@ -242,7 +261,7 @@ bool Image::GetSwitched (const char* sw, Image* result) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Image::GetMirrored (bool h, bool v, Image* result) const
+bool Image::Mirror (bool h, bool v, Image* result) const
 {
 	// Check whether all parameters are valid
 	if (mData == nullptr || result == nullptr)

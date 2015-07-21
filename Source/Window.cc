@@ -30,6 +30,11 @@ using std::regex_match;
 		XOpenDisplay (NULL);
 	#define gDisplay _Robot_Display
 
+	#ifndef X_HAVE_UTF8_STRING
+		#error It appears that X_HAVE_UTF8_STRING is not defined - \
+			   please verify that your version of XLib is supported
+	#endif
+
 #endif
 #ifdef ROBOT_OS_MAC
 
@@ -437,11 +442,11 @@ ROBOT_NS_BEGIN
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	static Boolean (*_AXIsProcessTrustedWithOptions) (CFDictionaryRef);
+	static Boolean (*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	static CFStringRef* _kAXTrustedCheckOptionPrompt;
+	static CFStringRef* gkAXTrustedCheckOptionPrompt;
 
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -532,6 +537,8 @@ ROBOT_NS_BEGIN
 
 #endif
 #ifdef ROBOT_OS_WIN
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	#ifdef UNICODE
 		extern  string _UTF8Encode (const wstring& value);
@@ -858,7 +865,7 @@ bool Window::IsMaximized (void) const
 #endif
 #ifdef ROBOT_OS_MAC
 
-	return false; // NYI: Not yet implemented
+	return false; // WARNING: Unavailable
 
 #endif
 #ifdef ROBOT_OS_WIN
@@ -1003,20 +1010,7 @@ void Window::SetMaximized (bool state)
 #endif
 #ifdef ROBOT_OS_MAC
 
-	AXUIElementSetAttributeValue (AXElement,
-		kAXMinimizedAttribute, kCFBooleanFalse);
-
-	// Need to maximize window
-	if (state && !IsMaximized())
-	{
-		// NYI: Not yet implemented
-	}
-
-	// Need to restore window
-	if (!state && IsMaximized())
-	{
-		// NYI: Not yet implemented
-	}
+	// WARNING: Unavailable
 
 #endif
 #ifdef ROBOT_OS_WIN
@@ -1865,29 +1859,29 @@ bool Window::IsAxEnabled (bool options)
 		// Validate the handle
 		if (handle != nullptr)
 		{
-			*(void**) (&_AXIsProcessTrustedWithOptions) =
+			*(void**) (&gAXIsProcessTrustedWithOptions) =
 				dlsym (handle, "AXIsProcessTrustedWithOptions");
 
-			_kAXTrustedCheckOptionPrompt = (CFStringRef*)
+			gkAXTrustedCheckOptionPrompt = (CFStringRef*)
 				dlsym (handle, "kAXTrustedCheckOptionPrompt");
 		}
 	});
 
 	// Check for new OSX 10.9 function
-	if (_AXIsProcessTrustedWithOptions)
+	if (gAXIsProcessTrustedWithOptions)
 	{
 		// Check whether to show prompt
 		auto displayPrompt = options ?
 			kCFBooleanTrue : kCFBooleanFalse;
 
 		// Convert display prompt value into a dictionary
-		const void* k[] = { *_kAXTrustedCheckOptionPrompt };
+		const void* k[] = { *gkAXTrustedCheckOptionPrompt };
 		const void* v[] = { displayPrompt };
 		CFDictionaryRef o = CFDictionaryCreate
 			(nullptr, k, v, 1, nullptr, nullptr);
 
 		// Determine whether the process is actually trusted
-		bool result = (*_AXIsProcessTrustedWithOptions) (o);
+		bool result = (*gAXIsProcessTrustedWithOptions) (o);
 
 		// Free memory
 		CFRelease (o);

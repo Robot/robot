@@ -47,22 +47,25 @@ public:
 	void		Create			(uint16 w, uint16 h);
 	void		Destroy			(void);
 
-	uint16		GetWidth		(void) const { return mWidth;	}
-	uint16		GetHeight		(void) const { return mHeight;	}
-	uint32		GetLength		(void) const { return mLength;	}
-	uint32*		GetData			(void) const { return mData;	}
-	uint32		GetLimit		(void) const { return mLimit;	}
+	uint16		GetWidth		(void) const { return mWidth;  }
+	uint16		GetHeight		(void) const { return mHeight; }
+	uint32		GetLength		(void) const { return mLength; }
+	uint32*		GetData			(void) const { return mData;   }
+	uint32		GetLimit		(void) const { return mLimit;  }
 
 	Color		GetPixel		(const Point& point) const;
 	Color		GetPixel		(uint16 x, uint16 y) const;
 
+	void		SetPixel		(const Point& point, Color c);
+	void		SetPixel		(uint16 x, uint16 y, Color c);
+
 	void		Fill			(const Color& color);
 	void		Fill			(uint8 r, uint8 g,
-								 uint8 b, uint8 a);
+								 uint8 b, uint8 a = 255);
 
-	bool		GetSwitched		(const char* sw,
+	bool		Switch			(const char* sw,
 								 Image* result) const;
-	bool		GetMirrored		(bool h, bool v,
+	bool		Mirror			(bool h, bool v,
 								 Image* result) const;
 
 public:

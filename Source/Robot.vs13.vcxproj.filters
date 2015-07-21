@@ -62,9 +62,6 @@
     <ClInclude Include="Size.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="Taskbar.h">
-      <Filter>Native</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Native</Filter>
     </ClInclude>
@@ -117,9 +114,6 @@
     </ClCompile>
     <ClCompile Include="Size.cc">
       <Filter>Types</Filter>
-    </ClCompile>
-    <ClCompile Include="Taskbar.cc">
-      <Filter>Native</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cc">
       <Filter>Native</Filter>
