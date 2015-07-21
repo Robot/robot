@@ -200,11 +200,6 @@ ROBOT_NS_BEGIN
 
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
-// Cannot be included as part of the Screen class due to the use of std::deque.
-
-static ScreenList gScreens;
-
 
 
 //----------------------------------------------------------------------------//
@@ -215,6 +210,7 @@ static ScreenList gScreens;
 
 Bounds Screen::mTotalBounds;
 Bounds Screen::mTotalUsable;
+ScreenList Screen::mScreens;
 
 
 
@@ -254,11 +250,11 @@ bool   Screen::IsLandscape (void) const { return mBounds.W >= mBounds.H; }
 bool Screen::Synchronize (void)
 {
 	// Loop through every available screen value
-	for (uintptr i = 0; i < gScreens.size(); ++i)
-		delete gScreens[i];
+	for (uintptr i = 0; i < mScreens.size(); ++i)
+		delete mScreens[i];
 
 	// Clear screens
-	gScreens.clear();
+	mScreens.clear();
 	mTotalBounds = Bounds();
 	mTotalUsable = Bounds();
 
@@ -300,13 +296,13 @@ bool Screen::Synchronize (void)
 							   info[i].width, info[i].height);
 
 				// Merge any cloned or mirrored screens with the previous one
-				if (j > 0 && gScreens[j-1]->mBounds.Intersects (bounds, false))
+				if (j > 0 && mScreens[j-1]->mBounds.Intersects (bounds, false))
 				{
-					if (gScreens[j  ]->mBounds.W * gScreens[j  ]->mBounds.H >
-						gScreens[j-1]->mBounds.W * gScreens[j-1]->mBounds.H)
+					if (mScreens[j  ]->mBounds.W * mScreens[j  ]->mBounds.H >
+						mScreens[j-1]->mBounds.W * mScreens[j-1]->mBounds.H)
 					{
-						gScreens[j-1]->mBounds = bounds;
-						gScreens[j-1]->mUsable = bounds;
+						mScreens[j-1]->mBounds = bounds;
+						mScreens[j-1]->mUsable = bounds;
 					}
 				}
 
@@ -314,7 +310,7 @@ bool Screen::Synchronize (void)
 				{
 					++j;
 					// Append the current screen to the screens list
-					gScreens.push_back (new Screen (bounds, bounds));
+					mScreens.push_back (new Screen (bounds, bounds));
 				}
 			}
 
@@ -323,7 +319,7 @@ bool Screen::Synchronize (void)
 	}
 
 	// Traditional method
-	if (gScreens.empty())
+	if (mScreens.empty())
 	{
 		isVirtualDesktop = false;
 		// Retrieve default screen of the system
@@ -337,9 +333,9 @@ bool Screen::Synchronize (void)
 								 XHeightOfScreen (screen));
 
 			if (i == primary)
-				gScreens.push_front (new Screen (bounds, bounds));
+				mScreens.push_front (new Screen (bounds, bounds));
 			else
-				gScreens.push_back  (new Screen (bounds, bounds));
+				mScreens.push_back  (new Screen (bounds, bounds));
 		}
 	}
 
@@ -347,7 +343,7 @@ bool Screen::Synchronize (void)
 	if (NET_WORKAREA != None)
 	{
 		// Loop through every available screen value
-		for (uintptr i = 0; i < gScreens.size(); ++i)
+		for (uintptr i = 0; i < mScreens.size(); ++i)
 		{
 			::Window win = XRootWindow
 				(gDisplay, isVirtualDesktop ?
@@ -366,13 +362,13 @@ bool Screen::Synchronize (void)
 				type == XA_CARDINAL && format == 32 && nItems == 4)
 			{
 				int32* usable = (int32*) result;
-				gScreens[i]->mUsable = Bounds
+				mScreens[i]->mUsable = Bounds
 						(usable[0], usable[1],
 						 usable[2], usable[3]);
 
 				if (isVirtualDesktop)
 					// Confine the work area to the current screen
-					gScreens[i]->mUsable &= gScreens[i]->mBounds;
+					mScreens[i]->mUsable &= mScreens[i]->mBounds;
 			}
 
 			// Free the result if it got allocated
@@ -417,7 +413,7 @@ bool Screen::Synchronize (void)
 		Bounds bounds; Bounds usable;
 		NSRect frame = [screen frame];
 
-		if (gScreens.empty())
+		if (mScreens.empty())
 		{
 			NSRect visible = [screen visibleFrame];
 			bounds = Bounds (frame.origin.x, frame.origin.y,
@@ -433,13 +429,13 @@ bool Screen::Synchronize (void)
 		else
 		{
 			bounds = usable = Bounds (frame.origin.x,
-				gScreens[0]->mBounds.H -
+				mScreens[0]->mBounds.H -
 				(frame.origin.y + frame.size.height),
 				frame.size.width, frame.size.height);
 		}
 
 		// Append the current screen to the screens list
-		gScreens.push_back (new Screen (bounds, usable));
+		mScreens.push_back (new Screen (bounds, usable));
 	}
 
 #endif
@@ -447,19 +443,19 @@ bool Screen::Synchronize (void)
 
 	// Populate the screen list with system screens
 	if (EnumDisplayMonitors (0, 0, EnumMonitorsProc,
-		(LPARAM) &gScreens) == FALSE) return false;
+		(LPARAM) &mScreens) == FALSE) return false;
 
 #endif
 
 	// Check if one valid screen exists
-	if (gScreens.empty()) return false;
+	if (mScreens.empty()) return false;
 
 	// Loop through every available screen value
-	for (uintptr i = 0; i < gScreens.size(); ++i)
+	for (uintptr i = 0; i < mScreens.size(); ++i)
 	{
 		// Add to the current running total
-		mTotalBounds |= gScreens[i]->mBounds;
-		mTotalUsable |= gScreens[i]->mUsable;
+		mTotalBounds |= mScreens[i]->mBounds;
+		mTotalUsable |= mScreens[i]->mUsable;
 	}
 
 	return true;
@@ -470,12 +466,12 @@ bool Screen::Synchronize (void)
 Screen* Screen::GetMain (void)
 {
 	// The primary screen is always the first element
-	return gScreens.empty() ? nullptr : gScreens[0];
+	return mScreens.empty() ? nullptr : mScreens[0];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ScreenList Screen::GetList (void) { return gScreens; }
+ScreenList Screen::GetList (void) { return mScreens; }
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -500,14 +496,14 @@ Screen* Screen::GetScreen (const Point& point)
 Screen* Screen::GetScreen (int32 px, int32 py)
 {
 	// Loop through every available screen value
-	for (uintptr i = 0; i < gScreens.size(); ++i)
+	for (uintptr i = 0; i < mScreens.size(); ++i)
 	{
-		if (gScreens[i]->mBounds.Contains (px, py))
-			return gScreens[i];
+		if (mScreens[i]->mBounds.Contains (px, py))
+			return mScreens[i];
 	}
 
 	// The primary screen is always the first element
-	return gScreens.empty() ? nullptr : gScreens[0];
+	return mScreens.empty() ? nullptr : mScreens[0];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -80,6 +80,8 @@ private:
 
 	static Bounds		mTotalBounds;	// System total  bounds
 	static Bounds		mTotalUsable;	// System usable bounds
+
+	static ScreenList	mScreens;		// System screens deque
 };
 
 ROBOT_NS_END
