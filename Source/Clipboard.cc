@@ -317,6 +317,8 @@ bool Clipboard::SetText (const char* text)
 		}
 	}
 
+	// Free memory in case of error
+	if (!result) GlobalFree (memory);
 	return result;
 
 #endif
@@ -551,6 +553,8 @@ bool Clipboard::SetImage (const Image& image)
 	if (EmptyClipboard() && SetClipboardData
 		(CF_BITMAP, bitmap)) result = true;
 
+	// Delete bitmap in case of error
+	if (!result) DeleteObject (bitmap);
 	return result;
 
 #endif
