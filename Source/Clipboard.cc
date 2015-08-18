@@ -307,8 +307,8 @@ bool Clipboard::SetText (const char* text)
 	{
 		if (buffer = (LPTSTR) GlobalLock (memory))
 		{
-			// Copy the clipboard data to buffer
-			memcpy (buffer, data.c_str(), size);
+			// Copy the clipboard data buffer
+			memcpy (buffer, data.data(), size);
 			GlobalUnlock (memory);
 
 			// Empty the clipboard and place the data

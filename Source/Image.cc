@@ -188,38 +188,31 @@ void Image::SetPixel (uint16 x, uint16 y, Color c)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Image::Fill (const Color& color)
+bool Image::Fill (const Color& color)
 {
-	Fill (color.R, color.G,
-		  color.B, color.A);
-}
+	// Check the validity of this image
+	if (mData == nullptr) return false;
 
-////////////////////////////////////////////////////////////////////////////////
-
-void Image::Fill (uint8 r, uint8 g, uint8 b, uint8 a)
-{
-	// Check if the image is valid
-	if (mData == nullptr) return;
-	Color* data = (Color*) mData;
-
-	// Loop data and perform fill function
+	// Loop data and fill contents
+	uint32 argb = color.GetARGB();
 	for (uint32 i = 0; i < mLength; ++i)
-	{
-		data[i].R = r;
-		data[i].G = g;
-		data[i].B = b;
-		data[i].A = a;
-	}
+		mData[i] = argb; return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Image::Switch (const char* sw, Image* result) const
+bool Image::Fill (uint8 r, uint8 g, uint8 b, uint8 a)
 {
-	// Check all parameters
-	if (mData  == nullptr ||
-		sw     == nullptr ||
-		result == nullptr)
+	return Fill (Color (r, g, b, a));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Image::Swap (const char* sw)
+{
+	// Verify parameters
+	if (mData == nullptr ||
+		sw    == nullptr)
 		return false;
 
 	int8 a = -1; int8 r = -1;
@@ -240,20 +233,14 @@ bool Image::Switch (const char* sw, Image* result) const
 
 	// Check for missing channels
 	if (count != 4) return false;
-
-	// Allocate memory on new image
-	result->Create (mWidth, mHeight);
-
-	 Color* tData = (Color*) mData;
-	uint32* rData =  result->mData;
-
-	// Loop data and perform switch copy
+	Color* data = (Color*) mData;
+	// Loop data and perform the switch
 	for (uint32 i = 0; i < mLength; ++i)
 	{
-		rData[i] = (tData[i].A << a) |
-				   (tData[i].R << r) |
-				   (tData[i].G << g) |
-				   (tData[i].B << b);
+		mData[i] = (data[i].A << a) |
+				   (data[i].R << r) |
+				   (data[i].G << g) |
+				   (data[i].B << b);
 	}
 
 	return true;
@@ -261,31 +248,73 @@ bool Image::Switch (const char* sw, Image* result) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Image::Mirror (bool h, bool v, Image* result) const
+bool Image::Flip (bool h, bool v)
 {
-	// Check whether all parameters are valid
-	if (mData == nullptr || result == nullptr)
-		return false;
+	// Check the validity of this image
+	if (mData == nullptr) return false;
+	if ( h &&  v) Flip ();
+	if ( h && !v) FlipH();
+	if (!h &&  v) FlipV();
+	return true;
+}
 
-	// Allocate memory on new image
-	result->Create (mWidth, mHeight);
 
-	uint32* tData =   this->mData;
-	uint32* rData = result->mData;
 
-	// Loop data and perform mirror copy
+//----------------------------------------------------------------------------//
+// Internal                                                             Image //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Image::Flip (void)
+{
+	uint32 length = mLength / 2;
+	// Loop data and perform mirroring
+	for (uint32 i = 0; i < length; ++i)
+	{
+		uint32 f = mLength - 1 - i;
+		uint32 c = mData[i];
+		mData[i] = mData[f];
+		mData[f] = c;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Image::FlipH (void)
+{
+	uint16 width = mWidth / 2;
+	// Loop data and perform mirroring
 	for (uint32 y = 0; y < mHeight; ++y)
 	{
-		uint32 yy = v ? mHeight - 1 - y : y;
-		for (uint32 x = 0; x < mWidth; ++x)
+		for (uint32 x = 0; x < width; ++x)
 		{
-			uint32 xx = h ? mWidth - 1 - x : x;
-			rData[x  + (y  * mWidth)] =
-			tData[xx + (yy * mWidth)];
+			uint32 f = mWidth - 1 - x;
+			uint32 a = mData[x + (y * mWidth)];
+			uint32 b = mData[f + (y * mWidth)];
+			mData[x + (y * mWidth)] = b;
+			mData[f + (y * mWidth)] = a;
 		}
 	}
+}
 
-	return true;
+////////////////////////////////////////////////////////////////////////////////
+
+void Image::FlipV (void)
+{
+	uint16 height = mHeight / 2;
+	// Loop data and perform the mirror
+	for (uint32 y = 0; y < height; ++y)
+	{
+		uint32 f = mHeight - 1 - y;
+		for (uint32 x = 0; x < mWidth; ++x)
+		{
+			uint32 a = mData[x + (y * mWidth)];
+			uint32 b = mData[x + (f * mWidth)];
+			mData[x + (y * mWidth)] = b;
+			mData[x + (f * mWidth)] = a;
+		}
+	}
 }
 
 

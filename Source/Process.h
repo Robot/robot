@@ -72,7 +72,6 @@ public:
 
 	int32				GetPID			(void) const;
 	uintptr				GetHandle		(void) const;
-	Memory				GetMemory		(void) const;
 
 	std::string			GetName			(void) const;
 	std::string			GetPath			(void) const;

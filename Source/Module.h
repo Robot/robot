@@ -51,6 +51,11 @@ public:
 		uintptr			Base;			// Base address of the segment
 		uintptr			Size;			// Virtual size of the segment
 
+		bool			operator <		(uintptr address) const;
+		bool			operator >		(uintptr address) const;
+		bool			operator <=		(uintptr address) const;
+		bool			operator >=		(uintptr address) const;
+
 		bool			operator <		(const Segment& segment) const;
 		bool			operator >		(const Segment& segment) const;
 		bool			operator <=		(const Segment& segment) const;
@@ -85,6 +90,11 @@ public:
 	SegmentList			GetSegments		(void) const;
 
 public:
+	bool				operator <		(uintptr address) const;
+	bool				operator >		(uintptr address) const;
+	bool				operator <=		(uintptr address) const;
+	bool				operator >=		(uintptr address) const;
+
 	bool				operator <		(const Module& module) const;
 	bool				operator >		(const Module& module) const;
 	bool				operator <=		(const Module& module) const;

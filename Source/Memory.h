@@ -85,6 +85,11 @@ public:
 		bool			Private;		// If the region is private
 		bool			Guarded;		// If the region is guarded
 
+		bool			operator <		(uintptr address) const;
+		bool			operator >		(uintptr address) const;
+		bool			operator <=		(uintptr address) const;
+		bool			operator >=		(uintptr address) const;
+
 		bool			operator <		(const Region& region) const;
 		bool			operator >		(const Region& region) const;
 		bool			operator <=		(const Region& region) const;
@@ -109,10 +114,8 @@ public:
 	typedef std::vector<Region> RegionList;
 
 public:
-	Memory								(void);
-
-private:
-	Memory								(Process process);
+	explicit			Memory			(const Process&
+										 p = Process());
 
 public:
 	bool				IsValid			(void) const;
@@ -149,6 +152,7 @@ public:
 	bool				IsCaching		(void) const;
 	uintptr				GetCacheSize	(void) const;
 
+	uintptr				GetPtrSize		(void) const;
 	uintptr				GetMinAddress	(void) const;
 	uintptr				GetMaxAddress	(void) const;
 	uintptr				GetPageSize		(void) const;

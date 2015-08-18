@@ -59,14 +59,17 @@ public:
 	void		SetPixel		(const Point& point, Color c);
 	void		SetPixel		(uint16 x, uint16 y, Color c);
 
-	void		Fill			(const Color& color);
-	void		Fill			(uint8 r, uint8 g,
+	bool		Fill			(const Color& color);
+	bool		Fill			(uint8 r, uint8 g,
 								 uint8 b, uint8 a = 255);
 
-	bool		Switch			(const char* sw,
-								 Image* result) const;
-	bool		Mirror			(bool h, bool v,
-								 Image* result) const;
+	bool		Swap			(const char* sw);
+	bool		Flip			(bool h, bool v);
+
+private:
+	void		Flip			(void);
+	void		FlipH			(void);
+	void		FlipV			(void);
 
 public:
 	Image&		operator =		(const Image&  image);

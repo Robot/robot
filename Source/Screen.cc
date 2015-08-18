@@ -522,7 +522,7 @@ bool Screen::GrabScreen (Image& image,
 	int32 x, int32 y, int32 w, int32 h,
 	const Window& window)
 {
-	if (w < 0 || h < 0)
+	if (w <= 0 || h <= 0)
 	{
 		// Get the size of windows' client
 		Bounds bounds = window.GetClient();
@@ -533,8 +533,8 @@ bool Screen::GrabScreen (Image& image,
 		}
 
 		// Compute bounds values
-		if (w < 0) w = bounds.W;
-		if (h < 0) h = bounds.H;
+		if (w <= 0) w = bounds.W;
+		if (h <= 0) h = bounds.H;
 	}
 
 	if (w <= 0 || h <= 0) return false;

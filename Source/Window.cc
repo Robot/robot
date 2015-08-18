@@ -1258,15 +1258,14 @@ string Window::GetTitle (void) const
 
 void Window::SetTitle (const char* title)
 {
-	// Check window validity
-	if (!IsValid()) return;
+	// Check window & title validity
+	if (!title || !IsValid()) return;
 
 #ifdef ROBOT_OS_LINUX
 
 	// Ignore X errors
 	XDismissErrors xe;
 
-	if (title == nullptr) title = "";
 	// Convert title into non-const
 	uint8* converted = (uint8*) title;
 	int32  conLength =  strlen (title);
@@ -1300,8 +1299,7 @@ void Window::SetTitle (const char* title)
 
 	// Try to convert title into string reference
 	CFStringRef name = CFStringCreateWithCString
-		(nullptr, title == nullptr ? "" : title,
-		kCFStringEncodingUTF8);
+		(nullptr, title, kCFStringEncodingUTF8);
 
 	if (name != nullptr)
 	{
@@ -1315,9 +1313,8 @@ void Window::SetTitle (const char* title)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	SetWindowText
-		((HWND) mHandle, _UTF8Decode
-		(title ? title : "").c_str());
+	SetWindowText ((HWND) mHandle,
+		_UTF8Decode (title).data());
 
 #endif
 }

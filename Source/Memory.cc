@@ -231,6 +231,34 @@ bool Memory::Stats::operator != (const Stats& stats) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool Memory::Region::operator < (uintptr address) const
+{
+	return Start < address;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Memory::Region::operator > (uintptr address) const
+{
+	return Start > address;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Memory::Region::operator <= (uintptr address) const
+{
+	return Start <= address;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Memory::Region::operator >= (uintptr address) const
+{
+	return Start >= address;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 bool Memory::Region::operator < (const Region& region) const
 {
 	return Start < region.Start;
@@ -305,48 +333,9 @@ bool Memory::Region::operator != (const Region& region) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Memory::Memory (void) : mData (new Memory::Data(), [](Memory::Data* data)
-{
-	// Delete the memory cache
-	if (data->Cache != nullptr)
-		delete[] data->Cache;
-
-#ifdef ROBOT_OS_LINUX
-
-	// Close memory file if open
-	if (data->MemoryFile != -1)
-		close (data->MemoryFile);
-
-#endif
-
-	// Free data
-	delete data;
-})
-{
-	mData->Cache        = nullptr;
-	mData->Next         =  0;
-
-	mData->BlockLength  =  0;
-	mData->BlockBuffer  =  0;
-
-	mData->  CacheSize  =  0;
-	mData->EnlargeSize  =  0;
-	mData->MaximumSize  =  0;
-
-	mData->SystemReads  =  0;
-	mData->CachedReads  =  0;
-	mData->SystemWrites =  0;
-	mData->AccessWrites =  0;
-
-	mData-> ReadErrors  =  0;
-	mData->WriteErrors  =  0;
-
-	mData->MemoryFile   = -1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-Memory::Memory (Process p) : mData (new Memory::Data(), [](Memory::Data* data)
+Memory::Memory (const Process& p)
+	  : mData (new Memory::Data(),
+	  [] (Memory::Data* data)
 {
 	// Delete the memory cache
 	if (data->Cache != nullptr)
@@ -661,7 +650,7 @@ Memory::RegionList Memory::GetRegions
 	{
 		size_t begin, end;
 		// Parse current line into single mapping entry
-		if (sscanf (line.c_str(), "%zx-%zx %4s", &begin,
+		if (sscanf (line.data(), "%zx-%zx %4s", &begin,
 			&end, mapping.Access) != 3) return result;
 
 		// Ignore any invalid memory regions
@@ -1158,6 +1147,13 @@ uintptr Memory::GetCacheSize (void) const
 {
 	// Return the cache size
 	return mData->CacheSize;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+uintptr Memory::GetPtrSize (void) const
+{
+	return mData->Proc.Is64Bit() ? 8 : 4;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

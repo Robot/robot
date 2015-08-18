@@ -58,6 +58,17 @@ ROBOT_NS_BEGIN
 
 template <typename Type> class Enum
 {
+public:
+	//----------------------------------------------------------------------------//
+	// Types                                                                      //
+	//----------------------------------------------------------------------------//
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	typedef std::unordered_map<std::string, Type> ValueMap;
+
+
+
 private:
 	//----------------------------------------------------------------------------//
 	// Constructors                                                               //
@@ -116,6 +127,16 @@ public:
 		return std::string();
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
+	static const ValueMap& GetMap (void)
+	{
+		// Initialize the static parser
+		if (mMap.empty()) Enum<Type>();
+
+		return mMap;
+	}
+
 
 
 private:
@@ -123,7 +144,7 @@ private:
 	// Fields                                                                     //
 	//----------------------------------------------------------------------------//
 
-	static std::unordered_map<std::string, Type> mMap;
+	static ValueMap mMap;
 };
 
 #ifdef ROBOT_OS_WIN

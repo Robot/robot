@@ -499,7 +499,7 @@ bool Process::IsDebugged (void) const
 	{
 		// Check if reached tracer and return result
 		if (line.find ("TracerPid:") != string::npos)
-			return atoi (line.c_str() + 10) != 0;
+			return atoi (line.data() + 10) != 0;
 	}
 
 	return false;
@@ -555,13 +555,6 @@ uintptr Process::GetHandle (void) const
 {
 	return (uintptr)
 		mData->Handle;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-Memory Process::GetMemory (void) const
-{
-	return Memory (*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -719,7 +712,7 @@ ModuleList Process::GetModules (const char* name) const
 		char access[5]; char pathname[1024];
 
 		// Parse the current line into a single complete mapping entry
-		if (sscanf (line.c_str(), "%zx-%zx %4s %x %hx:%hx %u %1023s",
+		if (sscanf (line.data(), "%zx-%zx %4s %x %hx:%hx %u %1023s",
 			&start, &stop, access, &offset, &devmaj, &devmin, &inode,
 			pathname) != 8) continue;
 

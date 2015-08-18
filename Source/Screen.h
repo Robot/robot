@@ -70,8 +70,8 @@ public:
 										 const Window& window = Window());
 
 	static bool			GrabScreen		(Image& image,
-										 int32 x =  0, int32 y =  0,
-										 int32 w = -1, int32 h = -1,
+										 int32 x = 0, int32 y = 0,
+										 int32 w = 0, int32 h = 0,
 										 const Window& window = Window());
 
 	static Bounds		GetTotalBounds	(void);
