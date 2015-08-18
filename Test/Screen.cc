@@ -31,8 +31,8 @@ static bool TestInvalid (void)
 
 	VERIFY (Screen::GetTotalBounds() == b1);
 	VERIFY (Screen::GetTotalUsable() == b1);
-	VERIFY (Screen::GetMain() == nullptr );
-	VERIFY (Screen::GetList().size() == 0);
+	VERIFY (Screen::GetMain()            == nullptr);
+	VERIFY (Screen::GetList().size()     == 0      );
 	VERIFY (Screen::GetScreen (Window()) == nullptr);
 	VERIFY (Screen::GetScreen (Point ()) == nullptr);
 	VERIFY (Screen::GetScreen (  0,   0) == nullptr);
@@ -83,8 +83,8 @@ static bool TestInvalid (void)
 
 static bool TestAero (void)
 {
-#if defined (ROBOT_OS_MAC) || \
-	defined (ROBOT_OS_LINUX)
+#if defined (ROBOT_OS_LINUX) || \
+	defined (ROBOT_OS_MAC  )
 
 	VERIFY (Screen::IsCompositing());
 
@@ -255,9 +255,6 @@ static bool TestGrab (void)
 	Window window;
 	VERIFY (Screen::Synchronize());
 
-	VERIFY (!Screen::GrabScreen (image1, 0, 0, 0, 0        )); VERIFY (!image1.IsValid());
-	VERIFY (!Screen::GrabScreen (image1, 0, 0, 0, 0, window)); VERIFY (!image1.IsValid());
-
 	auto test = [&] (const char* name, int32 x, int32 y, int32 w, int32 h) -> bool
 	{
 		Bounds bounds (x, y, w, h);
@@ -272,18 +269,18 @@ static bool TestGrab (void)
 
 	//----------------------------------------------------------------------------//
 
-	test ("01.tga",    0,    0,   -1,   -1);
-	test ("02.tga",    0,    0,   50,  150);
-	test ("03.tga",  -50, -150,   -1,   -1);
-	test ("04.tga",  -50, -150,  150,  250);
-	test ("05.tga",   50,  150,   -1,   -1);
-	test ("06.tga",   50,  150,   50,  150);
-	test ("07.tga", 4000, 2000,   -1,   -1);
-	test ("08.tga", 4000, 2000,   50,  150);
-	test ("09.tga",    0,    0, 4000, 2000);
-	test ("10.tga",  -50, -150, 4000, 2000);
-	test ("11.tga",   50,  150, 4000, 2000);
-	test ("12.tga", 4000, 2000, 4000, 2000);
+	test ("0-01.tga",    0,    0,    0,    0);
+	test ("0-02.tga",    0,    0,   50,  150);
+	test ("0-03.tga",  -50, -150,   -1,   -1);
+	test ("0-04.tga",  -50, -150,  150,  250);
+	test ("0-05.tga",   50,  150,   -1,   -1);
+	test ("0-06.tga",   50,  150,   50,  150);
+	test ("0-07.tga", 4000, 2000,   -1,   -1);
+	test ("0-08.tga", 4000, 2000,   50,  150);
+	test ("0-09.tga",    0,    0, 4000, 2000);
+	test ("0-10.tga",  -50, -150, 4000, 2000);
+	test ("0-11.tga",   50,  150, 4000, 2000);
+	test ("0-12.tga", 4000, 2000, 4000, 2000);
 
 	cout << "Please verify saved images\n"; getchar();
 
@@ -317,18 +314,18 @@ static bool TestGrab (void)
 	}
 
 	window = w;
-	test ("01.tga",    0,    0,   -1,   -1);
-	test ("02.tga",    0,    0,   50,  150);
-	test ("03.tga",  -50, -150,   -1,   -1);
-	test ("04.tga",  -50, -150,  150,  250);
-	test ("05.tga",   50,  150,   -1,   -1);
-	test ("06.tga",   50,  150,   50,  150);
-	test ("07.tga", 4000, 2000,   -1,   -1);
-	test ("08.tga", 4000, 2000,   50,  150);
-	test ("09.tga",    0,    0, 4000, 2000);
-	test ("10.tga",  -50, -150, 4000, 2000);
-	test ("11.tga",   50,  150, 4000, 2000);
-	test ("12.tga", 4000, 2000, 4000, 2000);
+	test ("1-01.tga",    0,    0,   -1,   -1);
+	test ("1-02.tga",    0,    0,   50,  150);
+	test ("1-03.tga",  -50, -150,   -1,   -1);
+	test ("1-04.tga",  -50, -150,  150,  250);
+	test ("1-05.tga",   50,  150,   -1,   -1);
+	test ("1-06.tga",   50,  150,   50,  150);
+	test ("1-07.tga", 4000, 2000,   -1,   -1);
+	test ("1-08.tga", 4000, 2000,   50,  150);
+	test ("1-09.tga",    0,    0, 4000, 2000);
+	test ("1-10.tga",  -50, -150, 4000, 2000);
+	test ("1-11.tga",   50,  150, 4000, 2000);
+	test ("1-12.tga", 4000, 2000, 4000, 2000);
 
 	cout << "Please verify saved images\n"; getchar();
 	return true;

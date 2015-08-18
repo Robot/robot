@@ -190,14 +190,10 @@ static bool TestHash (void)
 
 	h1 = Hash(); VERIFY (h1.Result == 0);
 
-	h1.Append ((uint8*) "z=6x_p2-8F--=IYi%;jZ3*+i", 24);
-	VERIFY (h1.Result == 0x7192FCF6);
-	h1.Append ((uint8*) "32Yl1+*%%I_S:5;4.=8805|v", 22);
-	VERIFY (h1.Result == 0xD54939BF);
-	h1.Append ((uint8*) "_3hdn-!nAA!+B~+:l;7Oz..K", 22);
-	VERIFY (h1.Result == 0x913291BB);
-	h1.Append ((uint8*) "0+g|1|T324G;=~=.~^.i;aZn", 23);
-	VERIFY (h1.Result == 0xC68E47A2);
+	h1.Append ((uint8*) "z=6x_p2-8F--=IYi%;jZ3*+i", 24); VERIFY (h1.Result == 0x7192FCF6);
+	h1.Append ((uint8*) "32Yl1+*%%I_S:5;4.=8805|v", 22); VERIFY (h1.Result == 0xD54939BF);
+	h1.Append ((uint8*) "_3hdn-!nAA!+B~+:l;7Oz..K", 22); VERIFY (h1.Result == 0x913291BB);
+	h1.Append ((uint8*) "0+g|1|T324G;=~=.~^.i;aZn", 23); VERIFY (h1.Result == 0xC68E47A2);
 
 	h1.Result = 0; h2.Result = 0; h3.Result = 0;
 	h4.Result = 0; h5.Result = 0; h6.Result = 0;
@@ -521,34 +517,31 @@ static bool TestImage1 (void)
 static bool TestImage2 (void)
 {
 	Image i1, i2 (2, 3);
-	i2.GetData()[0] = 0x00FF0000;
-	i2.GetData()[1] = 0x0000FF00;
-	i2.GetData()[2] = 0x000000FF;
-	i2.GetData()[3] = 0xFFFF0000;
-	i2.GetData()[4] = 0xFF00FF00;
-	i2.GetData()[5] = 0xFF0000FF;
+	uint32* data = i2.GetData();
+	data[0] = 0x00FF0000;
+	data[1] = 0x0000FF00;
+	data[2] = 0x000000FF;
+	data[3] = 0xFFFF0000;
+	data[4] = 0xFF00FF00;
+	data[5] = 0xFF0000FF;
 
-	VERIFY (!i2.Switch (nullptr, nullptr));
-	VERIFY (!i2.Switch ( "argb", nullptr));
-	VERIFY (!i2.Switch (nullptr,     &i1));
-	VERIFY (!i1.Switch ( "argb",     &i1));
+	VERIFY (!i1.Fill (0x00, 0x00, 0x00, 0x00));
+	VERIFY (!i2.Swap (nullptr));
+	VERIFY (!i1.Swap (nullptr));
+	VERIFY (!i1.Swap ( "argb"));
+	VERIFY (!i1.Flip (false, false));
 
-	i1.Fill (0x00, 0x00, 0x00, 0x00);
-	VERIFY (!i2.Mirror (false, false, nullptr));
-	VERIFY (!i1.Mirror (false, false,     &i1));
+	VERIFY (!i2.Swap (""     ));
+	VERIFY (!i2.Swap ("gb"   ));
+	VERIFY (!i2.Swap ("r"    ));
+	VERIFY (!i2.Swap ("agb"  ));
+	VERIFY (!i2.Swap ("x"    ));
+	VERIFY (!i2.Swap ("airgb"));
+	VERIFY (!i2.Swap ("aargb"));
+	VERIFY (!i2.Swap ("argbr"));
 
-	VERIFY (!i2.Switch ("",      &i1));
-	VERIFY (!i2.Switch ("gb",    &i1));
-	VERIFY (!i2.Switch ("r",     &i1));
-	VERIFY (!i2.Switch ("agb",   &i1));
-	VERIFY (!i2.Switch ("x",     &i1));
-	VERIFY (!i2.Switch ("airgb", &i1));
-	VERIFY (!i2.Switch ("aargb", &i1));
-	VERIFY (!i2.Switch ("argbr", &i1));
-
-	VERIFY (i2.Switch ("argb", &i1));
-	uint32* data = i1.GetData();
-	VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Swap ("argb"));
 	VERIFY (data[0] == 0x00FF0000);
 	VERIFY (data[1] == 0x0000FF00);
 	VERIFY (data[2] == 0x000000FF);
@@ -556,9 +549,8 @@ static bool TestImage2 (void)
 	VERIFY (data[4] == 0xFF00FF00);
 	VERIFY (data[5] == 0xFF0000FF);
 
-	VERIFY (i2.Switch ("rgba", &i1));
-	VERIFY (data == i1.GetData());
-	VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Swap ("rgba"));
 	VERIFY (data[0] == 0xFF000000);
 	VERIFY (data[1] == 0x00FF0000);
 	VERIFY (data[2] == 0x0000FF00);
@@ -566,9 +558,8 @@ static bool TestImage2 (void)
 	VERIFY (data[4] == 0x00FF00FF);
 	VERIFY (data[5] == 0x0000FFFF);
 
-	VERIFY (i2.Switch ("abgr", &i1));
-	VERIFY (data == i1.GetData());
-	VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Swap ("abgr"));
 	VERIFY (data[0] == 0x000000FF);
 	VERIFY (data[1] == 0x0000FF00);
 	VERIFY (data[2] == 0x00FF0000);
@@ -576,9 +567,8 @@ static bool TestImage2 (void)
 	VERIFY (data[4] == 0xFF00FF00);
 	VERIFY (data[5] == 0xFFFF0000);
 
-	VERIFY (i2.Switch ("bgra", &i1));
-	VERIFY (data == i1.GetData());
-	VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Swap ("bgra"));
 	VERIFY (data[0] == 0x0000FF00);
 	VERIFY (data[1] == 0x00FF0000);
 	VERIFY (data[2] == 0xFF000000);
@@ -590,53 +580,66 @@ static bool TestImage2 (void)
 	VERIFY (data == i1.GetData());
 	VERIFY (i1.GetLimit () == 6);
 
-	i1.Fill (0x00, 0x00, 0x00, 0x00);
+	VERIFY (i1.Fill (0x00, 0x00, 0x00, 0x00));
 	VERIFY (data[0] == 0x00000000);
 	VERIFY (data[1] == 0x00000000);
 	VERIFY (data[2] == 0x00000000);
 	VERIFY (data[3] == 0x00000000);
 
-	i1.Fill (0xFF, 0x00, 0xFF, 0x00);
+	VERIFY (i1.Fill (0xFF, 0x00, 0xFF, 0x00));
 	VERIFY (data[0] == 0x00FF00FF);
 	VERIFY (data[1] == 0x00FF00FF);
 	VERIFY (data[2] == 0x00FF00FF);
 	VERIFY (data[3] == 0x00FF00FF);
 
-	i1.Fill (0x00, 0xFF, 0x00);
+	VERIFY (i1.Fill (0x00, 0xFF, 0x00));
 	VERIFY (data[0] == 0xFF00FF00);
 	VERIFY (data[1] == 0xFF00FF00);
 	VERIFY (data[2] == 0xFF00FF00);
 	VERIFY (data[3] == 0xFF00FF00);
 
-	i1.Fill (0x80, 0x08, 0x80, 0x08);
+	VERIFY (i1.Fill (0x80, 0x08, 0x80, 0x08));
 	VERIFY (data[0] == 0x08800880);
 	VERIFY (data[1] == 0x08800880);
 	VERIFY (data[2] == 0x08800880);
 	VERIFY (data[3] == 0x08800880);
 
-	VERIFY (i2.Mirror (false, false, &i1));
-	VERIFY (data == i1.GetData());  VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Flip (false, false));
 	VERIFY (data[0] == 0x00FF0000); VERIFY (data[1] == 0x0000FF00);
 	VERIFY (data[2] == 0x000000FF); VERIFY (data[3] == 0xFFFF0000);
 	VERIFY (data[4] == 0xFF00FF00); VERIFY (data[5] == 0xFF0000FF);
 
-	VERIFY (i2.Mirror (true, false, &i1));
-	VERIFY (data == i1.GetData());  VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Flip (true, false));
 	VERIFY (data[0] == 0x0000FF00); VERIFY (data[1] == 0x00FF0000);
 	VERIFY (data[2] == 0xFFFF0000); VERIFY (data[3] == 0x000000FF);
 	VERIFY (data[4] == 0xFF0000FF); VERIFY (data[5] == 0xFF00FF00);
 
-	VERIFY (i2.Mirror (false, true, &i1));
-	VERIFY (data == i1.GetData());  VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Flip (false, true));
 	VERIFY (data[0] == 0xFF00FF00); VERIFY (data[1] == 0xFF0000FF);
 	VERIFY (data[2] == 0x000000FF); VERIFY (data[3] == 0xFFFF0000);
 	VERIFY (data[4] == 0x00FF0000); VERIFY (data[5] == 0x0000FF00);
 
-	VERIFY (i2.Mirror (true, true, &i1));
-	VERIFY (data == i1.GetData());  VERIFY (i1.GetLimit () == 6);
+	i1 = i2; data = i1.GetData();
+	VERIFY (i1.Flip (true, true));
 	VERIFY (data[0] == 0xFF0000FF); VERIFY (data[1] == 0xFF00FF00);
 	VERIFY (data[2] == 0xFFFF0000); VERIFY (data[3] == 0x000000FF);
 	VERIFY (data[4] == 0x0000FF00); VERIFY (data[5] == 0x00FF0000);
+
+	i1.Create (1, 5); data = i1.GetData();
+	data[0] = 0xFF000000;
+	data[1] = 0x00FF0000;
+	data[2] = 0xFFFFFFFF;
+	data[3] = 0x0000FF00;
+	data[4] = 0x000000FF;
+	VERIFY (i1.Flip (true, true));
+	VERIFY (data[0] == 0x000000FF);
+	VERIFY (data[1] == 0x0000FF00);
+	VERIFY (data[2] == 0xFFFFFFFF);
+	VERIFY (data[3] == 0x00FF0000);
+	VERIFY (data[4] == 0xFF000000);
 
 	return true;
 }
@@ -844,15 +847,15 @@ static bool TestBounds (void)
 	VERIFY (!s3.IsEmpty());
 	VERIFY (!s4.IsEmpty());
 
-	VERIFY (p1.ToSize().W ==  0 && p1.ToSize().H ==  0);
-	VERIFY (p2.ToSize().W ==  5 && p2.ToSize().H ==  5);
-	VERIFY (p3.ToSize().W ==  0 && p3.ToSize().H ==  8);
-	VERIFY (p4.ToSize().W == -4 && p4.ToSize().H ==  0);
+	VERIFY (p1.ToSize ().W ==  0 && p1.ToSize ().H == 0);
+	VERIFY (p2.ToSize ().W ==  5 && p2.ToSize ().H == 5);
+	VERIFY (p3.ToSize ().W ==  0 && p3.ToSize ().H == 8);
+	VERIFY (p4.ToSize ().W == -4 && p4.ToSize ().H == 0);
 
-	VERIFY (s1.ToPoint().X ==  0 && s1.ToPoint().Y ==  0);
-	VERIFY (s2.ToPoint().X ==  5 && s2.ToPoint().Y ==  5);
-	VERIFY (s3.ToPoint().X ==  0 && s3.ToPoint().Y ==  8);
-	VERIFY (s4.ToPoint().X == -4 && s4.ToPoint().Y ==  0);
+	VERIFY (s1.ToPoint().X ==  0 && s1.ToPoint().Y == 0);
+	VERIFY (s2.ToPoint().X ==  5 && s2.ToPoint().Y == 5);
+	VERIFY (s3.ToPoint().X ==  0 && s3.ToPoint().Y == 8);
+	VERIFY (s4.ToPoint().X == -4 && s4.ToPoint().Y == 0);
 
 	p2 += p1;
 	p3 += p2;
@@ -972,10 +975,10 @@ static bool TestBounds (void)
 	VERIFY (p6.X == -4 && p6.Y ==  -8);
 	VERIFY (p7.X == -5 && p7.Y == -13);
 
-	p3 = Point ( 0,  8);
-	p4 = Point (-4,  0);
-	s3 = Size  (-4,  0);
-	s4 = Size  ( 0,  8);
+	p3 = Point ( 0, 8);
+	p4 = Point (-4, 0);
+	s3 = Size  (-4, 0);
+	s4 = Size  ( 0, 8);
 
 	Bounds b1;
 	Bounds b2 ( 2,  8,  7,  3);

@@ -61,9 +61,9 @@ static bool TestText (void)
 	Image image; string text;
 	string big (1048576, '0');
 
-	auto test = [&] (const char* str) -> bool
+	auto test = [&] (const char* str, bool write) -> bool
 	{
-		if (str != nullptr)
+		if (write)
 			VERIFY (Clipboard::SetText (str));
 
 		VERIFY ( Clipboard::HasText ());
@@ -84,18 +84,17 @@ static bool TestText (void)
 
 	//----------------------------------------------------------------------------//
 
-	VERIFY (test (""         ));
-	VERIFY (test ("Hello"    )); cout << "Try pasting the text"; getchar();
-	VERIFY (test ("World"    )); cout << "Try pasting the text"; getchar();
-	VERIFY (test (big.c_str()));
+	VERIFY (test ("",         true));
+	VERIFY (test ("Hello",    true)); cout << "Try pasting the text"; getchar();
+	VERIFY (test ("World",    true)); cout << "Try pasting the text"; getchar();
+	VERIFY (test (big.data(), true));
 
 	//----------------------------------------------------------------------------//
 
 	VERIFY (Clipboard::Clear());
-	cout << "Copy Hello and press enter  "; getchar(); VERIFY (test ("Hello"));
-
+	cout << "Copy Hello and press enter  "; getchar(); VERIFY (test ("Hello", false));
 	VERIFY (Clipboard::Clear());
-	cout << "Copy World and press enter\n"; getchar(); VERIFY (test ("World"));
+	cout << "Copy World and press enter\n"; getchar(); VERIFY (test ("World", false));
 
 	//----------------------------------------------------------------------------//
 
@@ -295,7 +294,7 @@ static bool TestSpeed (void)
 	{
 		timer.Start();
 
-		VERIFY (Clipboard::SetText (smallText.c_str()));
+		VERIFY (Clipboard::SetText (smallText.data()));
 		uint64 clipSequence = Clipboard::GetSequence();
 		VERIFY (clipSequence != s); s = clipSequence;
 
@@ -315,7 +314,7 @@ static bool TestSpeed (void)
 	{
 		timer.Start();
 
-		VERIFY (Clipboard::SetText (largeText.c_str()));
+		VERIFY (Clipboard::SetText (largeText.data()));
 		uint64 clipSequence = Clipboard::GetSequence();
 		VERIFY (clipSequence != s); s = clipSequence;
 

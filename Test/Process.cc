@@ -48,7 +48,7 @@ static bool TestInvalid (void)
 	Process p1;
 	Process p2; VERIFY (!p2.Open ( 0));
 	Process p3; VERIFY (!p3.Open (-1));
-	Process p4 (888);
+	Process p4 (8888);
 
 	VERIFY (!p1.IsValid()); VERIFY (!p1.Is64Bit()); VERIFY (p1.HasExited());
 	VERIFY (!p2.IsValid()); VERIFY (!p2.Is64Bit()); VERIFY (p2.HasExited());
@@ -70,10 +70,10 @@ static bool TestInvalid (void)
 	VERIFY ( (p3 == p4)); VERIFY ( (p4 == p3));
 	VERIFY (!(p3 != p4)); VERIFY (!(p4 != p3));
 
-	VERIFY (p1 == 0); VERIFY (p1 != 888);
-	VERIFY (p2 == 0); VERIFY (p2 != 888);
-	VERIFY (p3 == 0); VERIFY (p3 != 888);
-	VERIFY (p4 == 0); VERIFY (p4 != 888);
+	VERIFY (p1 == 0); VERIFY (p1 != 8888);
+	VERIFY (p2 == 0); VERIFY (p2 != 8888);
+	VERIFY (p3 == 0); VERIFY (p3 != 8888);
+	VERIFY (p4 == 0); VERIFY (p4 != 8888);
 
 	return true;
 }
@@ -160,11 +160,11 @@ static bool TestSelect (void)
 	VERIFY (!(p1 == p2)); VERIFY (!(p2 == p1));
 	VERIFY ( (p1 != p2)); VERIFY ( (p2 != p1));
 
-	VERIFY (p1 == pid1); VERIFY (p1 != 888);
-	VERIFY (p2 == pid2); VERIFY (p2 != 888);
+	VERIFY (p1 == pid1); VERIFY (p1 != 8888);
+	VERIFY (p2 == pid2); VERIFY (p2 != 8888);
 
-	VERIFY (!(p1 != pid1)); VERIFY (!(p1 == 888));
-	VERIFY (!(p2 != pid2)); VERIFY (!(p2 == 888));
+	VERIFY (!(p1 != pid1)); VERIFY (!(p1 == 8888));
+	VERIFY (!(p2 != pid2)); VERIFY (!(p2 == 8888));
 
 	cout << "Type something in both apps then press enter";
 	getchar();
@@ -247,8 +247,8 @@ static bool TestCurrent (void)
 	VERIFY ( (p1 == p2)); VERIFY ( (p2 == p1));
 	VERIFY (!(p1 != p2)); VERIFY (!(p2 != p1));
 
-	VERIFY (p1 == pid); VERIFY (p1 != 888);
-	VERIFY (p2 == pid); VERIFY (p2 != 888);
+	VERIFY (p1 == pid); VERIFY (p1 != 8888);
+	VERIFY (p2 == pid); VERIFY (p2 != 8888);
 
 	cout << "Verify the following information\n"
 		 << "Path: " << p2.GetPath() << "\n\n";
@@ -284,8 +284,8 @@ static bool TestGetList (void)
 
 	getchar();
 
-#if defined (ROBOT_OS_WIN) || \
-	defined (ROBOT_OS_LINUX)
+#if defined (ROBOT_OS_LINUX) || \
+	defined (ROBOT_OS_WIN  )
 
 	// This result is unreliable on OSX
 	VERIFY (Process::GetList ("*").empty());

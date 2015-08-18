@@ -23,10 +23,10 @@
 
 #define TEST_INVALID_RW( mem, address )						\
 	{														\
-		VERIFY (mem.ReadData  (address, nullptr, 0) == 0);	\
-		VERIFY (mem.ReadData  (address, nullptr, 1) == 0);	\
-		VERIFY (mem.ReadData  (address,   &data, 0) == 0);	\
-		VERIFY (mem.ReadData  (address,   &data, 1) == 0);	\
+		VERIFY (mem. ReadData (address, nullptr, 0) == 0);	\
+		VERIFY (mem. ReadData (address, nullptr, 1) == 0);	\
+		VERIFY (mem. ReadData (address,   &data, 0) == 0);	\
+		VERIFY (mem. ReadData (address,   &data, 1) == 0);	\
 															\
 		VERIFY (mem.WriteData (address, nullptr, 0) == 0);	\
 		VERIFY (mem.WriteData (address, nullptr, 1) == 0);	\
@@ -142,8 +142,8 @@ static bool TestInvalid (void)
 	VERIFY (mod.GetSize    () == 0);
 	VERIFY (mod.GetSegments().empty());
 
-	Process p = Process(); VERIFY (!  p.IsValid());
-	  mem = p.GetMemory(); VERIFY (!mem.IsValid());
+	auto p = Process( ); VERIFY (!  p.IsValid());
+	   mem = Memory (p); VERIFY (!mem.IsValid());
 	VERIFY (mem.GetProcess() == p);
 
 	VERIFY (p.IsDebugged() == false);
@@ -210,6 +210,7 @@ static bool TestEquals (void)
 {
 	{
 		Module module1, module2;
+
 		VERIFY (module1 == module1); VERIFY (module1 == module2);
 		VERIFY (module2 == module2); VERIFY (module2 == module1);
 
@@ -234,22 +235,22 @@ static bool TestEquals (void)
 
 		module1 = Module (Process(), "", "", 5, 0);
 		module2 = Module (Process(), "", "", 5, 0);
-		VERIFY (!(module1 <  module2));
-		VERIFY (!(module1 >  module2));
-		VERIFY ( (module1 <= module2));
-		VERIFY ( (module1 >= module2));
+		VERIFY (!(module1 <  module2)); VERIFY (!(module1 <  module2.GetBase()));
+		VERIFY (!(module1 >  module2)); VERIFY (!(module1 >  module2.GetBase()));
+		VERIFY ( (module1 <= module2)); VERIFY ( (module1 <= module2.GetBase()));
+		VERIFY ( (module1 >= module2)); VERIFY ( (module1 >= module2.GetBase()));
 
 		module1 = Module (Process(), "", "", 4, 0);
-		VERIFY ( (module1 <  module2));
-		VERIFY (!(module1 >  module2));
-		VERIFY ( (module1 <= module2));
-		VERIFY (!(module1 >= module2));
+		VERIFY ( (module1 <  module2)); VERIFY ( (module1 <  module2.GetBase()));
+		VERIFY (!(module1 >  module2)); VERIFY (!(module1 >  module2.GetBase()));
+		VERIFY ( (module1 <= module2)); VERIFY ( (module1 <= module2.GetBase()));
+		VERIFY (!(module1 >= module2)); VERIFY (!(module1 >= module2.GetBase()));
 
 		module1 = Module (Process(), "", "", 6, 0);
-		VERIFY (!(module1 <  module2));
-		VERIFY ( (module1 >  module2));
-		VERIFY (!(module1 <= module2));
-		VERIFY ( (module1 >= module2));
+		VERIFY (!(module1 <  module2)); VERIFY (!(module1 <  module2.GetBase()));
+		VERIFY ( (module1 >  module2)); VERIFY ( (module1 >  module2.GetBase()));
+		VERIFY (!(module1 <= module2)); VERIFY (!(module1 <= module2.GetBase()));
+		VERIFY ( (module1 >= module2)); VERIFY ( (module1 >= module2.GetBase()));
 	}
 
 	//----------------------------------------------------------------------------//
@@ -287,22 +288,22 @@ static bool TestEquals (void)
 
 		segment1.Base = 5;
 		segment2.Base = 5;
-		VERIFY (!(segment1 <  segment2));
-		VERIFY (!(segment1 >  segment2));
-		VERIFY ( (segment1 <= segment2));
-		VERIFY ( (segment1 >= segment2));
+		VERIFY (!(segment1 <  segment2)); VERIFY (!(segment1 <  segment2.Base));
+		VERIFY (!(segment1 >  segment2)); VERIFY (!(segment1 >  segment2.Base));
+		VERIFY ( (segment1 <= segment2)); VERIFY ( (segment1 <= segment2.Base));
+		VERIFY ( (segment1 >= segment2)); VERIFY ( (segment1 >= segment2.Base));
 
 		segment1.Base = 4;
-		VERIFY ( (segment1 <  segment2));
-		VERIFY (!(segment1 >  segment2));
-		VERIFY ( (segment1 <= segment2));
-		VERIFY (!(segment1 >= segment2));
+		VERIFY ( (segment1 <  segment2)); VERIFY ( (segment1 <  segment2.Base));
+		VERIFY (!(segment1 >  segment2)); VERIFY (!(segment1 >  segment2.Base));
+		VERIFY ( (segment1 <= segment2)); VERIFY ( (segment1 <= segment2.Base));
+		VERIFY (!(segment1 >= segment2)); VERIFY (!(segment1 >= segment2.Base));
 
 		segment1.Base = 6;
-		VERIFY (!(segment1 <  segment2));
-		VERIFY ( (segment1 >  segment2));
-		VERIFY (!(segment1 <= segment2));
-		VERIFY ( (segment1 >= segment2));
+		VERIFY (!(segment1 <  segment2)); VERIFY (!(segment1 <  segment2.Base));
+		VERIFY ( (segment1 >  segment2)); VERIFY ( (segment1 >  segment2.Base));
+		VERIFY (!(segment1 <= segment2)); VERIFY (!(segment1 <= segment2.Base));
+		VERIFY ( (segment1 >= segment2)); VERIFY ( (segment1 >= segment2.Base));
 	}
 
 	//----------------------------------------------------------------------------//
@@ -387,22 +388,22 @@ static bool TestEquals (void)
 
 		region1.Start = 5;
 		region2.Start = 5;
-		VERIFY (!(region1 <  region2));
-		VERIFY (!(region1 >  region2));
-		VERIFY ( (region1 <= region2));
-		VERIFY ( (region1 >= region2));
+		VERIFY (!(region1 <  region2)); VERIFY (!(region1 <  region2.Start));
+		VERIFY (!(region1 >  region2)); VERIFY (!(region1 >  region2.Start));
+		VERIFY ( (region1 <= region2)); VERIFY ( (region1 <= region2.Start));
+		VERIFY ( (region1 >= region2)); VERIFY ( (region1 >= region2.Start));
 
 		region1.Start = 4;
-		VERIFY ( (region1 <  region2));
-		VERIFY (!(region1 >  region2));
-		VERIFY ( (region1 <= region2));
-		VERIFY (!(region1 >= region2));
+		VERIFY ( (region1 <  region2)); VERIFY ( (region1 <  region2.Start));
+		VERIFY (!(region1 >  region2)); VERIFY (!(region1 >  region2.Start));
+		VERIFY ( (region1 <= region2)); VERIFY ( (region1 <= region2.Start));
+		VERIFY (!(region1 >= region2)); VERIFY (!(region1 >= region2.Start));
 
 		region1.Start = 6;
-		VERIFY (!(region1 <  region2));
-		VERIFY ( (region1 >  region2));
-		VERIFY (!(region1 <= region2));
-		VERIFY ( (region1 >= region2));
+		VERIFY (!(region1 <  region2)); VERIFY (!(region1 <  region2.Start));
+		VERIFY ( (region1 >  region2)); VERIFY ( (region1 >  region2.Start));
+		VERIFY (!(region1 <= region2)); VERIFY (!(region1 <= region2.Start));
+		VERIFY ( (region1 >= region2)); VERIFY ( (region1 >= region2.Start));
 	}
 
 	return true;
@@ -439,8 +440,8 @@ static bool TestParams (void)
 
 #endif
 
-	Memory m = p.GetMemory();
-	VERIFY (m.IsValid   ());
+	Memory m = Memory (p);
+	VERIFY (m.IsValid ());
 	VERIFY (m.GetProcess() == p);
 
 	cout << "Please verify the following\n" << hex
@@ -636,7 +637,7 @@ static bool TestRegion (const Process& p)
 	else
 		cout << "Verify regions for the selected app\n";
 
-	Memory m = p.GetMemory(); uintptr i, j;
+	Memory m (p); uintptr i, j;
 	Memory::RegionList list1 = m.GetRegions();
 	Memory::RegionList list2 = m.GetRegions
 					(0x10000000, 0x80000000);
@@ -695,7 +696,7 @@ static bool TestRegion (const Process& p)
 		VERIFY (list1[i] == m.GetRegion (list1[i].Start));
 	#endif
 
-#ifdef ROBOT_OS_LINUX
+	#ifdef ROBOT_OS_LINUX
 
 		VERIFY (!m.SetAccess (list1[i], false, false, false));
 		VERIFY (!m.SetAccess (list1[i], false, false, true ));
@@ -709,9 +710,9 @@ static bool TestRegion (const Process& p)
 		// This is unused on Linux
 		VERIFY (!list1[i].Guarded);
 
-#endif
-#if defined (ROBOT_OS_MAC) || \
-	defined (ROBOT_OS_WIN)
+	#endif
+	#if defined (ROBOT_OS_MAC) || \
+		defined (ROBOT_OS_WIN)
 
 		// Attempt to change the regions protection value
 		if ( list1[i].Readable   && !list1[i].Writable &&
@@ -737,7 +738,7 @@ static bool TestRegion (const Process& p)
 
 		else cout << "    ";
 
-#endif
+	#endif
 
 		// Check if we hit the second list
 		if (list1[i].Start < 0x80000000 &&
@@ -774,8 +775,8 @@ static bool TestModules (const Process& p)
 	else
 		cout << "Verify module lists for the selected app\n\n";
 
-#if defined (ROBOT_OS_WIN) || \
-	defined (ROBOT_OS_LINUX)
+#if defined (ROBOT_OS_LINUX) || \
+	defined (ROBOT_OS_WIN  )
 
 	// This result is unreliable on OSX
 	VERIFY (p.GetModules ("*").empty());
@@ -817,8 +818,8 @@ static bool TestModules (const Process& p)
 		Module::SegmentList segs2 =
 			list2[i].GetSegments();
 
-	#if defined (ROBOT_OS_WIN) || \
-		defined (ROBOT_OS_LINUX)
+	#if defined (ROBOT_OS_LINUX) || \
+		defined (ROBOT_OS_WIN  )
 
 		VERIFY (list1[i].GetSize());
 		VERIFY (segs1.empty     ());
@@ -901,7 +902,7 @@ static bool TestStress (void)
 		if (pList[p].Is64Bit()) continue;
 	#endif
 
-		auto m = pList[p].GetMemory();
+		auto m = Memory (pList[p]);
 		auto rList = m.GetRegions();
 
 		VERIFY (is_sorted (ALL (rList)));
@@ -949,8 +950,8 @@ static bool TestStress (void)
 			Module::SegmentList sList =
 				mList[m].GetSegments();
 
-			#if defined (ROBOT_OS_WIN) || \
-				defined (ROBOT_OS_LINUX)
+			#if defined (ROBOT_OS_LINUX) || \
+				defined (ROBOT_OS_WIN  )
 
 				VERIFY (mList[m].GetSize());
 				VERIFY (sList.empty     ());
@@ -1010,9 +1011,10 @@ static bool TestRW (const Process& p, Memory* mem = nullptr)
 	bool is64Bit = p.Is64Bit ();
 	uintptr l = is64Bit ? 8 : 4;
 
-	Memory m = p.GetMemory();
+	Memory m (p);
 	if (mem == nullptr) mem = &m;
 	auto f = Memory::SkipErrors;
+	VERIFY (l == mem->GetPtrSize());
 
 	//----------------------------------------------------------------------------//
 
@@ -1032,9 +1034,9 @@ static bool TestRW (const Process& p, Memory* mem = nullptr)
 
 	//----------------------------------------------------------------------------//
 
-	VERIFY (mem->ReadData (module +  PINT16, &vInt16,  2, f) == 2); VERIFY (vInt16  == 100);
-	VERIFY (mem->ReadData (module +  PINT32, &vInt32,  4   ) == 4); VERIFY (vInt32  == 200);
-	VERIFY (mem->ReadData (module +  PINT64, &vInt64,  8   ) == 8); VERIFY (vInt64  == 300);
+	VERIFY (mem->ReadData (module +  PINT16, &vInt16,  2, f) == 2); VERIFY (vInt16 == 100);
+	VERIFY (mem->ReadData (module +  PINT32, &vInt32,  4   ) == 4); VERIFY (vInt32 == 200);
+	VERIFY (mem->ReadData (module +  PINT64, &vInt64,  8   ) == 8); VERIFY (vInt64 == 300);
 
 	VERIFY (mem->ReadData (module + PREAL32, &vReal32, 4) == 4); VERIFY (vReal32 == 400);
 	VERIFY (mem->ReadData (module + PREAL64, &vReal64, 8) == 8); VERIFY (vReal64 == 500);
@@ -1133,7 +1135,7 @@ static bool TestRW (const Process& p, Memory* mem = nullptr)
 
 static bool TestCache (const Process& p)
 {
-	Memory m = p.GetMemory();
+	Memory m (p);
 	// Create 8K cache with 8K reads and 16K Enlarge
 	VERIFY (m.CreateCache (4096, 4096, 8192, 16384));
 	VERIFY (m.IsCaching());
@@ -1166,7 +1168,7 @@ static bool TestCache (const Process& p)
 
 static bool TestFlags (const Process& p)
 {
-	Memory m = p.GetMemory();
+	Memory m (p);
 
 	bool test1 = false; // R Zero
 	bool test2 = false; // W Zero
@@ -1400,7 +1402,8 @@ static bool TestFind (const Process& p)
 
 	bool is64Bit = p.Is64Bit ();
 	uintptr l = is64Bit ? 8 : 4;
-	Memory m = p.GetMemory();
+	 Memory m = Memory (p);
+	VERIFY (l == m.GetPtrSize());
 
 #ifdef ROBOT_OS_LINUX
 
@@ -1591,8 +1594,8 @@ static bool TestFind (const Process& p)
 	list2 = m.Find ("04 08",             0, -1, 12, ""); VERIFY (list2.size() == 12);
 	VERIFY (list1 == list2);
 
-#if defined (ROBOT_OS_WIN) ||\
-	defined (ROBOT_OS_LINUX)
+#if defined (ROBOT_OS_LINUX) ||\
+	defined (ROBOT_OS_WIN  )
 
 	uintptr mS = list[0].GetBase();
 	uintptr mT = list[0].GetBase() +

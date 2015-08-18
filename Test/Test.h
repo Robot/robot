@@ -62,7 +62,7 @@ using std::unique;
 #endif
 
 #include "../Source/Robot.h"
-ROBOT_NS_USE_ALL
+ROBOT_NS_USE_ALL;
 
 
 

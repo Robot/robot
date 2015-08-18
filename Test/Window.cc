@@ -54,14 +54,14 @@
 static bool TestInvalid (void)
 {
 	Window w1;
-	Window w2; VERIFY ( w2.SetHandle (  0));
-	Window w3; VERIFY (!w3.SetHandle (888));
-	Window w4 (888);
+	Window w2; VERIFY ( w2.SetHandle (   0));
+	Window w3; VERIFY (!w3.SetHandle (8888));
+	Window w4 (8888);
 
-	VERIFY (!w1.IsValid()); VERIFY ( w1.SetHandle (  0));
-	VERIFY (!w2.IsValid()); VERIFY ( w2.SetHandle (  0));
-	VERIFY (!w3.IsValid()); VERIFY (!w3.SetHandle (888));
-	VERIFY (!w4.IsValid()); VERIFY (!w4.SetHandle (888));
+	VERIFY (!w1.IsValid()); VERIFY ( w1.SetHandle (   0));
+	VERIFY (!w2.IsValid()); VERIFY ( w2.SetHandle (   0));
+	VERIFY (!w3.IsValid()); VERIFY (!w3.SetHandle (8888));
+	VERIFY (!w4.IsValid()); VERIFY (!w4.SetHandle (8888));
 
 	VERIFY (!w1.IsTopMost()); VERIFY (!w1.IsBorderless());
 	VERIFY (!w2.IsTopMost()); VERIFY (!w2.IsBorderless());
@@ -108,10 +108,10 @@ static bool TestInvalid (void)
 	VERIFY ( (w3 == w4)); VERIFY ( (w4 == w3));
 	VERIFY (!(w3 != w4)); VERIFY (!(w4 != w3));
 
-	VERIFY (w1 == 0); VERIFY (w1 != 888);
-	VERIFY (w2 == 0); VERIFY (w2 != 888);
-	VERIFY (w3 == 0); VERIFY (w3 != 888);
-	VERIFY (w4 == 0); VERIFY (w4 != 888);
+	VERIFY (w1 == 0); VERIFY (w1 != 8888);
+	VERIFY (w2 == 0); VERIFY (w2 != 8888);
+	VERIFY (w3 == 0); VERIFY (w3 != 8888);
+	VERIFY (w4 == 0); VERIFY (w4 != 8888);
 
 	return true;
 }
@@ -308,8 +308,8 @@ static bool TestSelect1 (void)
 
 #ifndef ROBOT_OS_MAC
 
-	VERIFY (w1.GetTitle().empty());
-	VERIFY (w2.GetTitle().empty());
+	VERIFY (w1.GetTitle() == "Hello");
+	VERIFY (w2.GetTitle() == "World");
 
 #endif
 
@@ -332,11 +332,13 @@ static bool TestSelect1 (void)
 #if defined (ROBOT_OS_LINUX) || \
 	defined (ROBOT_OS_WIN  )
 
-	w1.SetClient (100, 100, 250, 300);
-	w2.SetBounds (350, 400, 550, 300);
+	w1.SetClient (100, 100, 250, 300); w1.SetTitle ("");
+	w2.SetBounds (350, 400, 550, 300); w2.SetTitle ("");
 	Timer::Sleep (500);
 	VERIFY (w1.GetClient() == Bounds (100, 100, 250, 300));
 	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 300));
+	VERIFY (w1.GetTitle().empty());
+	VERIFY (w2.GetTitle().empty());
 	cout << "Verify window title & arrangement";
 	getchar();
 
@@ -516,8 +518,9 @@ static bool TestGetList1 (void)
 
 	getchar();
 
-#if defined (ROBOT_OS_WIN) || \
-	defined (ROBOT_OS_LINUX)
+#if defined (ROBOT_OS_LINUX) || \
+	defined (ROBOT_OS_WIN  )
+
 
 	// This result is unreliable on OSX
 	VERIFY (Window::GetList ("*").empty());
