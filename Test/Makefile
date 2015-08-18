@@ -26,7 +26,7 @@ endif
 ifeq ($(mode), debug)
 	BINARY   = $(OUTPUT)Testd.bin
 	OBJECT   = $(OUTPUT)Testd/
-	CXXFLAGS = -std=c++11 -fno-rtti -O0 -g
+	CXXFLAGS = -std=c++11 -fno-rtti -O0 -g -DDEBUG
 	 LDFLAGS = -L$(OUTPUT) -lRobotd
 
 	ifeq ($(UNAME), Darwin)
@@ -70,7 +70,7 @@ all:
 	exit 1
 
 _init:
-ifneq ($(_build), Robot)
+ifneq ($(_build), robot)
 	@echo "Please run make from the root directory"
 	exit 1
 endif

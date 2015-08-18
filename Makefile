@@ -22,11 +22,11 @@ help:
 	@echo
 	@echo "MAKE"
 	@echo "  $$ make help    - Prints out these help instructions"
-	@echo "  $$ make build   - Builds Robot as a static library"
+	@echo "  $$ make build   - Builds robot as a static library"
 	@echo "  $$ make clean   - Cleans and removes generated files"
-	@echo "  $$ make install - Installs Robot onto your system"
-	@echo "  $$ make remove  -  Removes Robot from your system"
-	@echo "  $$ make test    - Builds the Robot testing framework"
+	@echo "  $$ make install - Installs robot onto your system"
+	@echo "  $$ make remove  -  Removes robot from your system"
+	@echo "  $$ make test    - Builds the robot testing framework"
 	@echo
 	@echo "MODES"
 	@echo "  This project can be built using debug or release settings"
@@ -34,7 +34,7 @@ help:
 	@echo "  $$ make mode=debug <cmd>  -or-  $$ make mode=release <cmd>"
 	@echo
 	@echo "DOCS"
-	@echo "  Go to https://robot.github.io/ for product documentation"
+	@echo "  Go to http://robot.github.io/ for product documentation"
 	@echo
 
 
@@ -55,14 +55,14 @@ else
 endif
 
 build: _init
-	cd Source; make _build=Robot --no-print-directory build
+	cd Source; make _build=robot --no-print-directory build
 	
 test: _init
-	cd   Test; make _build=Robot --no-print-directory build
+	cd   Test; make _build=robot --no-print-directory build
 
 clean:
-	cd Source; make _build=Robot --no-print-directory clean
-	cd   Test; make _build=Robot --no-print-directory clean
+	cd Source; make _build=robot --no-print-directory clean
+	cd   Test; make _build=robot --no-print-directory clean
 
 
 
@@ -73,7 +73,7 @@ clean:
 .PHONY: install remove
 
 install:
-	cd Source; make _build=Robot --no-print-directory install
+	cd Source; make _build=robot --no-print-directory install
 
 remove:
-	cd Source; make _build=Robot --no-print-directory remove
+	cd Source; make _build=robot --no-print-directory remove

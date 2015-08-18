@@ -26,7 +26,7 @@ endif
 ifeq ($(mode), debug)
 	LIBRARY  = libRobotd.a
 	OBJECT   = $(OUTPUT)Robotd/
-	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O0 -g
+	CXXFLAGS = -std=c++11 -Wall -pedantic-errors -fno-rtti -O0 -g -DDEBUG
 
 	ifeq ($(UNAME), Darwin)
 		CXXFLAGS += -stdlib=libc++ -x objective-c++
@@ -65,7 +65,7 @@ all:
 	exit 1
 
 _init:
-ifneq ($(_build), Robot)
+ifneq ($(_build), robot)
 	@echo "Please run make from the root directory"
 	exit 1
 endif
