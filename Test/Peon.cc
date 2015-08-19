@@ -122,6 +122,9 @@ int main (int argc, const char* argv[], const char* env[])
 	gPat4  = new uint8_t[32];
 	gArray = new int32_t[ 4];
 
+	if (gPat3 > gPat4)
+		std::swap (gPat3, gPat4);
+
 	memcpy (gPat3, sPat5, 32);
 	memcpy (gPat4, sPat6, 32);
 

@@ -439,10 +439,7 @@ static bool TestSelect2 (void)
 		VERIFY (b2.GetPoint() == p2);
 		VERIFY (b2 == Bounds (mp, 20));
 
-		cout << setw (4) << p1.X
-			 << setw (4) << p1.Y
-			 << endl;
-
+		cout << p1.X << " " << p1.Y << endl;
 		Timer::Sleep (30);
 	}
 
