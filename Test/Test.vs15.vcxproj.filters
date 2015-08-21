@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{3ca49299-5b3e-47de-a83b-5b01ae068f9e}</UniqueIdentifier>
+      <Extensions>cc</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Targa.h" />
+    <ClInclude Include="Test.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Clipboard.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Types.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cc" />
+    <ClCompile Include="Targa.cc" />
+  </ItemGroup>
+</Project>
