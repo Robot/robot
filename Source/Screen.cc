@@ -361,10 +361,10 @@ bool Screen::Synchronize (void)
 				&nItems, &bAfter, &result) && result != nullptr &&
 				type == XA_CARDINAL && format == 32 && nItems == 4)
 			{
-				int32* usable = (int32*) result;
+				long* usable = (long*) result;
 				mScreens[i]->mUsable = Bounds
-						(usable[0], usable[1],
-						 usable[2], usable[3]);
+					((int32) usable[0], (int32) usable[1],
+					 (int32) usable[2], (int32) usable[3]);
 
 				if (isVirtualDesktop)
 					// Confine the work area to the current screen

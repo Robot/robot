@@ -34,7 +34,7 @@ ifeq ($(mode), debug)
 		 LDFLAGS += -framework ApplicationServices -framework AppKit
 	else
 		CXXFLAGS += -pthread
-		 LDFLAGS += -lX11 -lXtst -lXinerama
+		 LDFLAGS += -lrt -lX11 -lXtst -lXinerama
 	endif
 
 else
@@ -48,7 +48,7 @@ else
 		 LDFLAGS += -framework ApplicationServices -framework AppKit
 	else
 		CXXFLAGS += -pthread -s
-		 LDFLAGS += -lX11 -lXtst -lXinerama
+		 LDFLAGS += -lrt -lX11 -lXtst -lXinerama
 	endif
 
 endif

@@ -313,9 +313,9 @@ ROBOT_NS_BEGIN
 		// Retrieve frame bounds
 		if (WM_EXTENTS != None)
 		{
-			uint32* result; uint32 nItems = 0;
+			long* result; uint32 nItems = 0;
 			// Get the window extents property
-			result = (uint32*) GetWindowProperty
+			result = (long*) GetWindowProperty
 					 (win, WM_EXTENTS, &nItems);
 
 			// Verify the results
@@ -324,9 +324,9 @@ ROBOT_NS_BEGIN
 				if (nItems == 4)
 				{
 					frame = Bounds
-						(result[0],  result[2],
-						 result[0] + result[1],
-						 result[2] + result[3]);
+						((int32) result[0],  (int32) result[2],
+						 (int32) result[0] + (int32) result[1],
+						 (int32) result[2] + (int32) result[3]);
 				}
 
 				XFree (result);
@@ -1046,13 +1046,14 @@ int32 Window::GetPID (void) const
 	// Ignore X errors
 	XDismissErrors xe;
 
-	// Get the window PID property
-	void* result = GetWindowProperty
+	// Get the window PID
+	long* result = (long*)
+		GetWindowProperty
 		((::Window) mHandle, WM_PID);
 
 	// Check result and convert it
 	if (result == nullptr) return 0;
-	int32 pid = *((int32*) result);
+	auto pid = (int32) *result;
 	XFree (result); return pid;
 
 #endif
@@ -1647,7 +1648,7 @@ Window Window::GetActive (void)
 	if (active != nullptr)
 	{
 		// Extract window from the result
-		int32 window = *((int32*) active);
+		long window = *((long*) active);
 		XFree (active); if (window != 0)
 		{
 			// Return resulting window value
