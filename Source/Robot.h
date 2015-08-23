@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#pragma once
 
 #include "Keyboard.h"
 #include "Mouse.h"
@@ -25,5 +24,3 @@
 #include "Screen.h"
 #include "Timer.h"
 #include "Clipboard.h"
-
-#endif // ROBOT_H

@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_MODULE_H
-#define ROBOT_MODULE_H
+#pragma once
 
 #include "Types.h"
 #include <memory>
@@ -113,4 +112,3 @@ private:
 #endif
 
 ROBOT_NS_END
-#endif // ROBOT_MODULE_H

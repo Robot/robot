@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_TYPES_H
-#define ROBOT_TYPES_H
+#pragma once
 
 #include "Enum.h"
 #include "Hash.h"
@@ -24,5 +23,3 @@
 #include "Point.h"
 #include "Size.h"
 #include "Bounds.h"
-
-#endif // ROBOT_TYPES_H

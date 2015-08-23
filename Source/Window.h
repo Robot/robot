@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_WINDOW_H
-#define ROBOT_WINDOW_H
+#pragma once
 
 #include "Types.h"
 #include <string>
@@ -128,4 +127,3 @@ private:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_WINDOW_H

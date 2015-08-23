@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_CLIPBOARD_H
-#define ROBOT_CLIPBOARD_H
+#pragma once
 
 #include "Types.h"
 #include <string>
@@ -53,4 +52,3 @@ private:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_CLIPBOARD_H

@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_RANGE_H
-#define ROBOT_RANGE_H
+#pragma once
 
 #include "Global.h"
 ROBOT_NS_BEGIN
@@ -55,4 +54,3 @@ private:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_RANGE_H

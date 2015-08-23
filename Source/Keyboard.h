@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_KEYBOARD_H
-#define ROBOT_KEYBOARD_H
+#pragma once
 
 #include "Types.h"
 #include <vector>
@@ -438,4 +437,3 @@ public:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_KEYBOARD_H

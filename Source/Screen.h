@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_SCREEN_H
-#define ROBOT_SCREEN_H
+#pragma once
 
 #include "Types.h"
 #include "Window.h"
@@ -95,4 +94,3 @@ private:
 #endif
 
 ROBOT_NS_END
-#endif // ROBOT_SCREEN_H

@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_MOUSE_H
-#define ROBOT_MOUSE_H
+#pragma once
 
 #include "Types.h"
 #include <unordered_map>
@@ -79,4 +78,3 @@ public:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_MOUSE_H

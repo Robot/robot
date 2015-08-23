@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_ENUM_H
-#define ROBOT_ENUM_H
+#pragma once
 
 #include "Global.h"
 #include <string>
@@ -152,4 +151,3 @@ private:
 #endif
 
 ROBOT_NS_END
-#endif // ROBOT_ENUM_H

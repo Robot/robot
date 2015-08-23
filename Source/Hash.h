@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_HASH_H
-#define ROBOT_HASH_H
+#pragma once
 
 #include "Global.h"
 ROBOT_NS_BEGIN
@@ -50,4 +49,3 @@ public:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_HASH_H

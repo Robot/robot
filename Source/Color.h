@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_COLOR_H
-#define ROBOT_COLOR_H
+#pragma once
 
 #include "Global.h"
 ROBOT_NS_BEGIN
@@ -48,4 +47,3 @@ public:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_COLOR_H

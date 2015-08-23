@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_IMAGE_H
-#define ROBOT_IMAGE_H
+#pragma once
 
 #include "Global.h"
 ROBOT_NS_BEGIN
@@ -88,4 +87,3 @@ private:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_IMAGE_H

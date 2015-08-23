@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_GLOBAL_H
-#define ROBOT_GLOBAL_H
+#pragma once
 
 
 
@@ -181,4 +180,3 @@ typedef double				real64;		// 64-bit real value
 #endif
 
 ROBOT_NS_END
-#endif // ROBOT_GLOBAL_H

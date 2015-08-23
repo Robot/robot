@@ -11,8 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_TIMER_H
-#define ROBOT_TIMER_H
+#pragma once
 
 #include "Types.h"
 ROBOT_NS_BEGIN
@@ -61,4 +60,3 @@ private:
 };
 
 ROBOT_NS_END
-#endif // ROBOT_TIMER_H

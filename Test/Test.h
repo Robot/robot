@@ -11,14 +11,7 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#ifndef ROBOT_TEST_H
-#define ROBOT_TEST_H
-
-#ifdef VLD_LEAK_TEST
-	// Used for MS VC++ leak testing
-	#define VLD_AGGREGATE_DUPLICATES
-	#include "vld.h"
-#endif
+#pragma once
 
 #include <iostream>
 using std::ios;
@@ -193,5 +186,3 @@ bool TestWindow    (void);
 bool TestMemory    (void);
 bool TestScreen    (void);
 bool TestClipboard (void);
-
-#endif // ROBOT_TEST_H
