@@ -41,6 +41,11 @@ using std::regex_match;
 	#include <dlfcn.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
+	#ifdef MAC_OS_X_VERSION_10_11
+		#define kAXValueCGPointType kAXValueTypeCGPoint
+		#define kAXValueCGSizeType  kAXValueTypeCGSize
+	#endif
+
 #endif
 #ifdef ROBOT_OS_WIN
 

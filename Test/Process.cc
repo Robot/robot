@@ -132,10 +132,6 @@ static bool TestSelect (void)
 #endif
 #ifdef ROBOT_OS_MAC
 
-	VERIFY (p1.GetHandle() != 0);
-	VERIFY (p2.GetHandle() != 0);
-	VERIFY (p1.GetHandle() != p2.GetHandle());
-
 	VERIFY (p1.GetName() == "TextEdit");
 	VERIFY (p2.GetName() == "Notes"   );
 

@@ -280,10 +280,10 @@ static bool TestSelect1 (void)
 	Bounds b2 = w2.GetBounds();
 
 	w1.SetBounds (100, 100, 250, 300); w1.SetTitle ("Hello");
-	w2.SetBounds (350, 400, 550, 300); w2.SetTitle ("World");
+	w2.SetBounds (350, 400, 550, 400); w2.SetTitle ("World");
 	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == Bounds (100, 100, 250, 300));
-	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 300));
+	VERIFY (w2.GetBounds() == Bounds (350, 400, 550, 400));
 
 #ifdef ROBOT_OS_MAC
 
@@ -301,10 +301,10 @@ static bool TestSelect1 (void)
 	getchar();
 
 	w1.SetBounds (100, 400, 250, 300); w1.SetTitle (nullptr);
-	w2.SetBounds (350, 100, 550, 300); w2.SetTitle (nullptr);
+	w2.SetBounds (350, 100, 550, 400); w2.SetTitle (nullptr);
 	Timer::Sleep (500);
 	VERIFY (w1.GetBounds() == Bounds (100, 400, 250, 300));
-	VERIFY (w2.GetBounds() == Bounds (350, 100, 550, 300));
+	VERIFY (w2.GetBounds() == Bounds (350, 100, 550, 400));
 
 #ifndef ROBOT_OS_MAC
 

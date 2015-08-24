@@ -579,6 +579,7 @@ void Mouse::SetPos (uint32 x, uint32 y)
 #endif
 #ifdef ROBOT_OS_MAC
 
+	CGPoint position = CGPointMake (x, y);
 	// Create an HID hardware event source
 	CGEventSourceRef src = CGEventSourceCreate
 		(kCGEventSourceStateHIDSystemState);
@@ -589,7 +590,7 @@ void Mouse::SetPos (uint32 x, uint32 y)
 		// Create a left button drag
 		evt = CGEventCreateMouseEvent
 			(src, kCGEventLeftMouseDragged,
-			CGPointMake (x, y), 0);
+			 position, kCGMouseButtonLeft);
 	}
 
 	else
@@ -599,7 +600,7 @@ void Mouse::SetPos (uint32 x, uint32 y)
 			// Create a right button drag
 			evt = CGEventCreateMouseEvent
 				(src, kCGEventRightMouseDragged,
-				CGPointMake (x, y), 0);
+				 position, kCGMouseButtonLeft);
 		}
 
 		else
@@ -607,7 +608,7 @@ void Mouse::SetPos (uint32 x, uint32 y)
 			// Create a mouse move event
 			evt = CGEventCreateMouseEvent
 				(src, kCGEventMouseMoved,
-				CGPointMake (x, y), 0);
+				 position, kCGMouseButtonLeft);
 		}
 	}
 
