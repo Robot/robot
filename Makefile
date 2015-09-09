@@ -34,7 +34,7 @@ help:
 	@echo "  $$ make mode=debug <cmd>  -or-  $$ make mode=release <cmd>"
 	@echo
 	@echo "DOCS"
-	@echo "  Go to http://robot.github.io/ for product documentation"
+	@echo "  Visit http://getrobot.net for product documentation"
 	@echo
 
 
@@ -56,7 +56,7 @@ endif
 
 build: _init
 	cd Source; make _build=robot --no-print-directory build
-	
+
 test: _init
 	cd   Test; make _build=robot --no-print-directory build
 

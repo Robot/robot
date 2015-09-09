@@ -22,8 +22,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Defines the current Robot version as a string and integer value.
 
-#define ROBOT_VERSION 0x000000
-#define ROBOT_VERSION_STR "0.0.0"
+#define ROBOT_VERSION 0x020000
+#define ROBOT_VERSION_STR "2.0.0"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Can be used as an easier method for checking the Robot version.
