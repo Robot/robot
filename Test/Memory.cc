@@ -251,6 +251,14 @@ static bool TestEquals (void)
 		VERIFY ( (module1 >  module2)); VERIFY ( (module1 >  module2.GetBase()));
 		VERIFY (!(module1 <= module2)); VERIFY (!(module1 <= module2.GetBase()));
 		VERIFY ( (module1 >= module2)); VERIFY ( (module1 >= module2.GetBase()));
+
+		module1 = Module (Process(), "", "", 1000, 1000);
+		VERIFY (!module1.Contains ( 999));
+		VERIFY ( module1.Contains (1000));
+		VERIFY ( module1.Contains (1001));
+		VERIFY ( module1.Contains (1999));
+		VERIFY (!module1.Contains (2000));
+		VERIFY (!module1.Contains (2001));
 	}
 
 	//----------------------------------------------------------------------------//
@@ -304,6 +312,15 @@ static bool TestEquals (void)
 		VERIFY ( (segment1 >  segment2)); VERIFY ( (segment1 >  segment2.Base));
 		VERIFY (!(segment1 <= segment2)); VERIFY (!(segment1 <= segment2.Base));
 		VERIFY ( (segment1 >= segment2)); VERIFY ( (segment1 >= segment2.Base));
+
+		segment1.Base = 1000;
+		segment1.Size = 1000;
+		VERIFY (!segment1.Contains ( 999));
+		VERIFY ( segment1.Contains (1000));
+		VERIFY ( segment1.Contains (1001));
+		VERIFY ( segment1.Contains (1999));
+		VERIFY (!segment1.Contains (2000));
+		VERIFY (!segment1.Contains (2001));
 	}
 
 	//----------------------------------------------------------------------------//
@@ -404,6 +421,15 @@ static bool TestEquals (void)
 		VERIFY ( (region1 >  region2)); VERIFY ( (region1 >  region2.Start));
 		VERIFY (!(region1 <= region2)); VERIFY (!(region1 <= region2.Start));
 		VERIFY ( (region1 >= region2)); VERIFY ( (region1 >= region2.Start));
+
+		region1.Start = 1000;
+		region1.Stop  = 2000;
+		VERIFY (!region1.Contains ( 999));
+		VERIFY ( region1.Contains (1000));
+		VERIFY ( region1.Contains (1001));
+		VERIFY ( region1.Contains (1999));
+		VERIFY (!region1.Contains (2000));
+		VERIFY (!region1.Contains (2001));
 	}
 
 	return true;
@@ -542,7 +568,8 @@ static bool TestParams (void)
 	VERIFY (!m.CreateCache (12288,    0, 65536));
 	VERIFY (!m.CreateCache (12287,    0, 65536));
 	VERIFY (!m.CreateCache (    0, 4096, 65536));
-	VERIFY ( m.CreateCache (12288, 4096, 65536));
+	VERIFY ( m.CreateCache (16384, 4096, 65536));
+	VERIFY (!m.CreateCache (12288, 4096, 65536));
 	VERIFY (!m.CreateCache (12287, 4096, 65536));
 	VERIFY (!m.CreateCache (    0, 4095, 65536));
 	VERIFY (!m.CreateCache (12288, 4095, 65536));
@@ -568,19 +595,24 @@ static bool TestParams (void)
 	VERIFY (!m.CreateCache (12288, 4095, 12288));
 	VERIFY (!m.CreateCache (12287, 4095, 12288));
 
-	VERIFY ( m.CreateCache (12288, 4096, 65536, 65536, 524288));
+	VERIFY ( m.CreateCache (16384, 4096, 65536, 65536, 524288));
+	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536, 524288));
 	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536, 524287));
 	VERIFY (!m.CreateCache (12288, 4096, 65536, 65535, 524288));
 	VERIFY (!m.CreateCache (12288, 4096, 65536, 65535, 524287));
 
 	VERIFY (!m.CreateCache (4096, 12288, 65536, 0, 0));
 
-	VERIFY ( m.CreateCache (12288, 4096, 65536, 65536));
-	VERIFY ( m.CreateCache (12288, 4096, 65536, 16384));
+	VERIFY ( m.CreateCache (16384, 4096, 65536, 65536));
+	VERIFY ( m.CreateCache (16384, 4096, 65536, 20480));
+	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536));
+	VERIFY (!m.CreateCache (12288, 4096, 65536, 16384));
 	VERIFY (!m.CreateCache (12288, 4096, 65536, 12288));
 
-	VERIFY ( m.CreateCache (12288, 4096, 65536, 65536, 524288));
-	VERIFY ( m.CreateCache (12288, 4096, 65536, 65536,  65536));
+	VERIFY ( m.CreateCache (16384, 4096, 65536, 65536, 524288));
+	VERIFY ( m.CreateCache (16384, 4096, 65536, 65536,  65536));
+	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536, 524288));
+	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536,  65536));
 	VERIFY (!m.CreateCache (12288, 4096, 65536, 65536,  12288));
 
 	VERIFY ( m.IsCaching()); VERIFY (m.GetCacheSize() == 65536);
@@ -704,6 +736,12 @@ static bool TestRegion (const Process& p)
 		VERIFY (!m.SetAccess (list1[i], true , true , true ));
 
 		// This is unused on Linux
+		VERIFY (!list1[i].Guarded);
+
+	#endif
+	#ifdef ROBOT_OS_MAC
+
+		// This is unused on Mac
 		VERIFY (!list1[i].Guarded);
 
 	#endif

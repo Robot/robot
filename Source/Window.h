@@ -14,16 +14,19 @@
 #pragma once
 
 #include "Types.h"
+#include <memory>
 #include <string>
 #include <vector>
-
-#ifdef ROBOT_OS_MAC
-	#include <memory>
-#endif
 
 ROBOT_NS_BEGIN
 	class Process;
 	class Window;
+
+#ifdef ROBOT_OS_WIN
+	#pragma warning (push)
+	// Ignore the VS C4251 warning
+	#pragma warning (disable:4251)
+#endif
 
 
 
@@ -107,23 +110,12 @@ public:
 	bool				operator !=		(uintptr handle) const;
 
 private:
-#ifdef ROBOT_OS_LINUX
-
-	uintptr mHandle;					// Handle to an X11 window
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	std::shared_ptr
-		<std::pair<uintptr,				// Handle to a CGWindowID
-		 uintptr>> mHandle;				// Handle to a AXUIElementRef
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	uintptr mHandle;					// Handle to a window HWND
-
-#endif
+	struct Data;
+	std::shared_ptr<Data> mData;		// Shared information
 };
+
+#ifdef ROBOT_OS_WIN
+	#pragma warning (pop)
+#endif
 
 ROBOT_NS_END

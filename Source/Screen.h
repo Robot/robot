@@ -48,8 +48,8 @@ class ROBOT_EXPORT Screen
 {
 public:
 	Screen								(void);
-	Screen								(Bounds bounds,
-										 Bounds usable);
+	Screen								(const Bounds& bounds,
+										 const Bounds& usable);
 
 public:
 	Bounds				GetBounds		(void) const;

@@ -50,8 +50,8 @@ bool TestTimer (void)
 	VERIFY ((t1 <= t2) == (t1() <= t2())); VERIFY ((t2 >= t1) == (t2() >= t1()));
 	VERIFY ((t1 >= t2) == (t1() >= t2())); VERIFY ((t2 <= t1) == (t2() <= t1()));
 
-	VERIFY (t1() == t1.Restart()); t1.Reset();
-	VERIFY (t2() == t2.Restart()); t2.Reset();
+	VERIFY (t1() == t1.Reset  ()); VERIFY (t1() == t1.Restart());
+	VERIFY (t2() == t2.Restart()); VERIFY (t2() == t2.Reset  ());
 
 	//----------------------------------------------------------------------------//
 
@@ -131,6 +131,8 @@ bool TestTimer (void)
 	VERIFY ( t1.HasExpired (100));
 	VERIFY ( t2.HasExpired (100));
 
+	VERIFY (200 <= t1() && t1() <= 400);
+	VERIFY (200 <= t2() && t2() <= 400);
 	cout << setfill ('0') << setw (3) << t1() << " = (200 - 400) : "
 		 << setfill ('0') << setw (3) << t2() << " = (200 - 400)\n";
 
@@ -146,6 +148,8 @@ bool TestTimer (void)
 	VERIFY ( t1.HasExpired (100));
 	VERIFY ( t2.HasExpired (100));
 
+	VERIFY (200 <= t1() && t1() <= 400);
+	VERIFY (400 <= t2() && t2() <= 800);
 	cout << setfill ('0') << setw (3) << t1() << " = (200 - 400) : "
 		 << setfill ('0') << setw (3) << t2() << " = (400 - 800)\n\n";
 

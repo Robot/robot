@@ -32,6 +32,7 @@ public:
 	Size						(int32 w, int32 h);
 
 public:
+	bool		IsZero			(void) const;
 	bool		IsEmpty			(void) const;
 	Point		ToPoint			(void) const;
 

@@ -115,9 +115,13 @@ bool TestEnum (void)
 
 	VERIFY (Enum<TestEnum1>::Parse ("BadValue") == (TestEnum1) -1);
 	VERIFY (Enum<TestEnum2>::Parse ("BadValue") == (TestEnum2) -1);
+	VERIFY (Enum<TestEnum1>::Parse ("BadValue", Enum1Value2) == Enum1Value2);
+	VERIFY (Enum<TestEnum2>::Parse ("BadValue", Enum2Value2) == Enum2Value2);
 
 	VERIFY (Enum<TestEnum1>::Parse ((TestEnum1) 9).empty());
 	VERIFY (Enum<TestEnum2>::Parse ((TestEnum2) 9).empty());
+	VERIFY (Enum<TestEnum1>::Parse ((TestEnum1) 9, "empty1") == "empty1");
+	VERIFY (Enum<TestEnum2>::Parse ((TestEnum2) 9, "empty2") == "empty2");
 
 	VERIFY (Enum<Button>::Parse ("LEFT"  ) == ButtonLeft  );
 	VERIFY (Enum<Button>::Parse ("MID"   ) == ButtonMid   );
@@ -329,7 +333,11 @@ static bool TestImage1 (void)
 	VERIFY (i5.GetLength() ==  0); VERIFY (!i5.GetData());
 	VERIFY (i6.GetLength() ==  0); VERIFY (!i6.GetData());
 
-	i3.Create (6, 8);
+	VERIFY ( i3.Create (6, 8));
+	VERIFY (!i3.Create (6, 0));
+	VERIFY (!i3.Create (0, 8));
+	VERIFY (!i3.Create (0, 0));
+	VERIFY (!i3.Create (0   ));
 	d1 = i3.GetData();
 
 	VERIFY (i3.IsValid() == true);
@@ -338,8 +346,8 @@ static bool TestImage1 (void)
 	VERIFY (i3.GetLength() == 48);
 	VERIFY (i3.GetLimit () == 48);
 
-	i3.Create (4);
-	i4.Create (4);
+	VERIFY (i3.Create (4));
+	VERIFY (i4.Create (4));
 	d2 = i3.GetData();
 	VERIFY (d1 == d2);
 
@@ -475,7 +483,7 @@ static bool TestImage1 (void)
 	VERIFY (i6 == i4);
 
 	d1 = i4.GetData();
-	i4.Create (2, 2);
+	VERIFY (i4.Create (2, 2));
 	d2 = i4.GetData();
 	VERIFY (d1 == d2);
 
@@ -576,7 +584,7 @@ static bool TestImage2 (void)
 	VERIFY (data[4] == 0x00FF00FF);
 	VERIFY (data[5] == 0xFF0000FF);
 
-	i1.Create (2, 2);
+	VERIFY (i1.Create (2, 2));
 	VERIFY (data == i1.GetData());
 	VERIFY (i1.GetLimit () == 6);
 
@@ -628,7 +636,8 @@ static bool TestImage2 (void)
 	VERIFY (data[2] == 0xFFFF0000); VERIFY (data[3] == 0x000000FF);
 	VERIFY (data[4] == 0x0000FF00); VERIFY (data[5] == 0x00FF0000);
 
-	i1.Create (1, 5); data = i1.GetData();
+	VERIFY (i1.Create (1, 5));
+	data = i1.GetData();
 	data[0] = 0xFF000000;
 	data[1] = 0x00FF0000;
 	data[2] = 0xFFFFFFFF;
@@ -841,11 +850,21 @@ static bool TestBounds (void)
 	VERIFY (!p2.IsZero());
 	VERIFY (!p3.IsZero());
 	VERIFY (!p4.IsZero());
+	VERIFY (!p5.IsZero());
+	VERIFY (!p6.IsZero());
+	VERIFY (!p7.IsZero());
+	VERIFY (!p8.IsZero());
+	VERIFY (!p9.IsZero());
 
-	VERIFY ( s1.IsEmpty());
-	VERIFY (!s2.IsEmpty());
-	VERIFY (!s3.IsEmpty());
-	VERIFY (!s4.IsEmpty());
+	VERIFY ( s1.IsZero()); VERIFY ( s1.IsEmpty());
+	VERIFY (!s2.IsZero()); VERIFY (!s2.IsEmpty());
+	VERIFY (!s3.IsZero()); VERIFY ( s3.IsEmpty());
+	VERIFY (!s4.IsZero()); VERIFY ( s4.IsEmpty());
+	VERIFY (!s5.IsZero()); VERIFY (!s5.IsEmpty());
+	VERIFY (!s6.IsZero()); VERIFY (!s6.IsEmpty());
+	VERIFY (!s7.IsZero()); VERIFY (!s7.IsEmpty());
+	VERIFY (!s8.IsZero()); VERIFY (!s8.IsEmpty());
+	VERIFY (!s9.IsZero()); VERIFY (!s9.IsEmpty());
 
 	VERIFY (p1.ToSize ().W ==  0 && p1.ToSize ().H == 0);
 	VERIFY (p2.ToSize ().W ==  5 && p2.ToSize ().H == 5);
@@ -1002,8 +1021,8 @@ static bool TestBounds (void)
 	VERIFY (!b2.IsZero()); VERIFY (!b2.IsEmpty()); VERIFY ( b2.IsValid());
 	VERIFY (!b3.IsZero()); VERIFY (!b3.IsEmpty()); VERIFY (!b3.IsValid());
 	VERIFY (!b4.IsZero()); VERIFY (!b4.IsEmpty()); VERIFY (!b4.IsValid());
-	VERIFY (!b5.IsZero()); VERIFY (!b5.IsEmpty()); VERIFY (!b5.IsValid());
-	VERIFY (!b6.IsZero()); VERIFY (!b6.IsEmpty()); VERIFY (!b6.IsValid());
+	VERIFY (!b5.IsZero()); VERIFY ( b5.IsEmpty()); VERIFY (!b5.IsValid());
+	VERIFY (!b6.IsZero()); VERIFY ( b6.IsEmpty()); VERIFY (!b6.IsValid());
 	VERIFY (!b7.IsZero()); VERIFY (!b7.IsEmpty()); VERIFY ( b7.IsValid());
 	VERIFY (!b8.IsZero()); VERIFY (!b8.IsEmpty()); VERIFY ( b8.IsValid());
 
@@ -1044,21 +1063,21 @@ static bool TestBounds (void)
 	VERIFY (!b4.Contains (b8)); VERIFY (!b4.Intersects (b8));
 	VERIFY (!b6.Contains (b8)); VERIFY (!b6.Intersects (b8));
 
-	VERIFY ((b7 & b1) == Bounds (0, 0, 0, 0)); VERIFY ((b7 | b1) == Bounds (  3,   9,  5,  1));
-	VERIFY ((b8 & b1) == Bounds (0, 0, 0, 0)); VERIFY ((b8 | b1) == Bounds (  5,   6,  2,  7));
+	VERIFY ((b7 | b1) == Bounds (  3,   9,  5,  1)); VERIFY ((b7 & b1) == Bounds (0, 0, 0, 0));
+	VERIFY ((b8 | b1) == Bounds (  5,   6,  2,  7)); VERIFY ((b8 & b1) == Bounds (0, 0, 0, 0));
 
-	VERIFY ((b1 & b7) == Bounds (0, 0, 0, 0)); VERIFY ((b1 | b7) == Bounds (  3,   9,  5,  1));
-	VERIFY ((b2 & b7) == Bounds (3, 9, 5, 1)); VERIFY ((b2 | b7) == Bounds (  2,   8,  7,  3));
-	VERIFY ((b4 & b7) == Bounds (0, 0, 0, 0)); VERIFY ((b4 | b7) == Bounds (-11, -11, 19, 21));
-	VERIFY ((b6 & b7) == Bounds (0, 0, 0, 0)); VERIFY ((b6 | b7) == Bounds ( -4,   0, 12, 10));
-	VERIFY ((b1 & b8) == Bounds (0, 0, 0, 0)); VERIFY ((b1 | b8) == Bounds (  5,   6,  2,  7));
-	VERIFY ((b2 & b8) == Bounds (5, 8, 2, 3)); VERIFY ((b2 | b8) == Bounds (  2,   6,  7,  7));
-	VERIFY ((b4 & b8) == Bounds (0, 0, 0, 0)); VERIFY ((b4 | b8) == Bounds (-11, -11, 18, 24));
-	VERIFY ((b6 & b8) == Bounds (0, 0, 0, 0)); VERIFY ((b6 | b8) == Bounds ( -4,   0, 11, 13));
+	VERIFY ((b1 | b7) == Bounds (  3,   9,  5,  1)); VERIFY ((b1 & b7) == Bounds (0, 0, 0, 0));
+	VERIFY ((b2 | b7) == Bounds (  2,   8,  7,  3)); VERIFY ((b2 & b7) == Bounds (3, 9, 5, 1));
+	VERIFY ((b4 | b7) == Bounds (-11, -11, 19, 21)); VERIFY ((b4 & b7) == Bounds (0, 0, 0, 0));
+	VERIFY ((b6 | b7) == Bounds ( -4,   0, 12, 10)); VERIFY ((b6 & b7) == Bounds (0, 0, 0, 0));
+	VERIFY ((b1 | b8) == Bounds (  5,   6,  2,  7)); VERIFY ((b1 & b8) == Bounds (0, 0, 0, 0));
+	VERIFY ((b2 | b8) == Bounds (  2,   6,  7,  7)); VERIFY ((b2 & b8) == Bounds (5, 8, 2, 3));
+	VERIFY ((b4 | b8) == Bounds (-11, -11, 18, 24)); VERIFY ((b4 & b8) == Bounds (0, 0, 0, 0));
+	VERIFY ((b6 | b8) == Bounds ( -4,   0, 11, 13)); VERIFY ((b6 & b8) == Bounds (0, 0, 0, 0));
 	b7.Normalize(); VERIFY (b7 == Bounds (3, 9, 5, 1));
 	b8.Normalize(); VERIFY (b8 == Bounds (5, 6, 2, 7));
-	b7 &= b2; VERIFY (b7 == Bounds (3, 9, 5, 1));
 	b8 |= b2; VERIFY (b8 == Bounds (2, 6, 7, 7));
+	b7 &= b2; VERIFY (b7 == Bounds (3, 9, 5, 1));
 
 	b7.SetLTRB (-2, 10, -2, 6);
 	b8.SetLTRB (-6,  2, -2, 2);
@@ -1071,14 +1090,14 @@ static bool TestBounds (void)
 	VERIFY (!b5.Contains (b8)); VERIFY (!b5.Intersects (b8));
 	VERIFY (!b6.Contains (b8)); VERIFY ( b6.Intersects (b8));
 
-	VERIFY ((b3 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b3 | b7) == Bounds ( -4,  -1, 3, 11));
-	VERIFY ((b4 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b4 | b7) == Bounds (-11, -11, 9, 21));
-	VERIFY ((b5 & b7) == Bounds (-2, 8, 0, 0)); VERIFY ((b5 | b7) == Bounds ( -4,   6, 4,  4));
-	VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b6 | b7) == Bounds ( -4,   0, 2, 10));
-	VERIFY ((b3 & b8) == Bounds (-4, 2, 2, 0)); VERIFY ((b3 | b8) == Bounds ( -6,  -1, 5,  6));
-	VERIFY ((b4 & b8) == Bounds ( 0, 0, 0, 0)); VERIFY ((b4 | b8) == Bounds (-11, -11, 9, 13));
-	VERIFY ((b5 & b8) == Bounds ( 0, 0, 0, 0)); VERIFY ((b5 | b8) == Bounds ( -6,   2, 6,  6));
-	VERIFY ((b6 & b8) == Bounds (-4, 2, 0, 0)); VERIFY ((b6 | b8) == Bounds ( -6,   0, 4,  8));
+	VERIFY ((b3 | b7) == Bounds ( -4,  -1, 3, 11)); VERIFY ((b3 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b4 | b7) == Bounds (-11, -11, 9, 21)); VERIFY ((b4 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b5 | b7) == Bounds ( -4,   6, 4,  4)); VERIFY ((b5 & b7) == Bounds (-2, 8, 0, 0));
+	VERIFY ((b6 | b7) == Bounds ( -4,   0, 2, 10)); VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b3 | b8) == Bounds ( -6,  -1, 5,  6)); VERIFY ((b3 & b8) == Bounds (-4, 2, 2, 0));
+	VERIFY ((b4 | b8) == Bounds (-11, -11, 9, 13)); VERIFY ((b4 & b8) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b5 | b8) == Bounds ( -6,   2, 6,  6)); VERIFY ((b5 & b8) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b6 | b8) == Bounds ( -6,   0, 4,  8)); VERIFY ((b6 & b8) == Bounds (-4, 2, 0, 0));
 	b7.Normalize(); VERIFY (b7 == Bounds (-2, 6, 0, 4));
 	b8.Normalize(); VERIFY (b8 == Bounds (-6, 2, 4, 0));
 	b7 |= b3; VERIFY (b7 == Bounds (-4, -1, 3, 11));
@@ -1095,18 +1114,18 @@ static bool TestBounds (void)
 	VERIFY (!b3.Contains (b8)); VERIFY ( b3.Intersects (b8));
 	VERIFY (!b6.Contains (b8)); VERIFY ( b6.Intersects (b8));
 
-	VERIFY ((b1 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b1 | b7) == Bounds (-3,  0,  1,  1));
-	VERIFY ((b2 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b2 | b7) == Bounds (-3,  0, 12, 11));
-	VERIFY ((b3 & b7) == Bounds (-3, 0, 1, 1)); VERIFY ((b3 | b7) == Bounds (-4, -1,  3,  6));
-	VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b6 | b7) == Bounds (-4,  0,  2,  8));
-	VERIFY ((b1 & b8) == Bounds ( 0, 0, 0, 0)); VERIFY ((b1 | b8) == Bounds (-5,  3,  2,  1));
-	VERIFY ((b2 & b8) == Bounds ( 0, 0, 0, 0)); VERIFY ((b2 | b8) == Bounds (-5,  3, 14,  8));
-	VERIFY ((b3 & b8) == Bounds (-4, 3, 1, 1)); VERIFY ((b3 | b8) == Bounds (-5, -1,  4,  6));
-	VERIFY ((b6 & b8) == Bounds (-4, 3, 0, 1)); VERIFY ((b6 | b8) == Bounds (-5,  0,  2,  8));
+	VERIFY ((b1 | b7) == Bounds (-3,  0,  1,  1)); VERIFY ((b1 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b2 | b7) == Bounds (-3,  0, 12, 11)); VERIFY ((b2 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b3 | b7) == Bounds (-4, -1,  3,  6)); VERIFY ((b3 & b7) == Bounds (-3, 0, 1, 1));
+	VERIFY ((b6 | b7) == Bounds (-4,  0,  2,  8)); VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b1 | b8) == Bounds (-5,  3,  2,  1)); VERIFY ((b1 & b8) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b2 | b8) == Bounds (-5,  3, 14,  8)); VERIFY ((b2 & b8) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b3 | b8) == Bounds (-5, -1,  4,  6)); VERIFY ((b3 & b8) == Bounds (-4, 3, 1, 1));
+	VERIFY ((b6 | b8) == Bounds (-5,  0,  2,  8)); VERIFY ((b6 & b8) == Bounds (-4, 3, 0, 1));
 	b7.Normalize(); VERIFY (b7 == Bounds (-3, 0, 1, 1));
 	b8.Normalize(); VERIFY (b8 == Bounds (-5, 3, 2, 1));
-	b7 &= b3; VERIFY (b7 == Bounds (-3,  0, 1, 1));
 	b8 |= b3; VERIFY (b8 == Bounds (-5, -1, 4, 6));
+	b7 &= b3; VERIFY (b7 == Bounds (-3,  0, 1, 1));
 
 	b7 = Bounds (-11, -9, 2,  2);
 	b8 = Bounds ( -8, -5, 2, -2);
@@ -1114,8 +1133,8 @@ static bool TestBounds (void)
 	VERIFY (!b4.Contains (b8,  true)); VERIFY ( b4.Intersects (b8,  true));
 	VERIFY (!b4.Contains (b7, false)); VERIFY ( b4.Intersects (b7, false));
 	VERIFY (!b4.Contains (b8, false)); VERIFY (!b4.Intersects (b8, false));
-	VERIFY ((b4 & b7) == Bounds (-11, -9, 2, 2)); VERIFY ((b4 | b7) == Bounds (-11, -11, 3, 7));
-	VERIFY ((b4 & b8) == Bounds ( -8, -7, 0, 2)); VERIFY ((b4 | b8) == Bounds (-11, -11, 5, 7));
+	VERIFY ((b4 | b7) == Bounds (-11, -11, 3, 7)); VERIFY ((b4 & b7) == Bounds (-11, -9, 2, 2));
+	VERIFY ((b4 | b8) == Bounds (-11, -11, 5, 7)); VERIFY ((b4 & b8) == Bounds ( -8, -7, 0, 2));
 	b7.Normalize(); VERIFY (b7 == Bounds (-11, -9, 2, 2));
 	b8.Normalize(); VERIFY (b8 == Bounds ( -8, -7, 2, 2));
 	b7 |= b4; VERIFY (b7 == Bounds (-11, -11, 3, 7));
@@ -1127,12 +1146,12 @@ static bool TestBounds (void)
 	VERIFY ( b4.Contains (b8,  true)); VERIFY ( b4.Intersects (b8,  true));
 	VERIFY (!b4.Contains (b7, false)); VERIFY (!b4.Intersects (b7, false));
 	VERIFY (!b4.Contains (b8, false)); VERIFY (!b4.Intersects (b8, false));
-	VERIFY ((b4 & b7) == Bounds ( -8, -10, 0, 1)); VERIFY ((b4 | b7) == Bounds (-11, -11, 3, 7));
-	VERIFY ((b4 & b8) == Bounds (-10,  -4, 1, 0)); VERIFY ((b4 | b8) == Bounds (-11, -11, 3, 7));
+	VERIFY ((b4 | b7) == Bounds (-11, -11, 3, 7)); VERIFY ((b4 & b7) == Bounds ( -8, -10, 0, 1));
+	VERIFY ((b4 | b8) == Bounds (-11, -11, 3, 7)); VERIFY ((b4 & b8) == Bounds (-10,  -4, 1, 0));
 	b7.Normalize(); VERIFY (b7 == Bounds ( -8, -10, 0, 1));
 	b8.Normalize(); VERIFY (b8 == Bounds (-10,  -4, 1, 0));
-	b7 &= b4; VERIFY (b7 == Bounds ( -8, -10, 0, 1));
 	b8 |= b4; VERIFY (b8 == Bounds (-11, -11, 3, 7));
+	b7 &= b4; VERIFY (b7 == Bounds ( -8, -10, 0, 1));
 
 	b7 = Bounds (-1, 8, -1,  0);
 	b8 = Bounds (-4, 8,  0, -2);
@@ -1144,10 +1163,10 @@ static bool TestBounds (void)
 	VERIFY (!b6.Contains (b7, false)); VERIFY (!b6.Intersects (b7, false));
 	VERIFY (!b5.Contains (b8, false)); VERIFY (!b5.Intersects (b8, false));
 	VERIFY (!b6.Contains (b8, false)); VERIFY (!b6.Intersects (b8, false));
-	VERIFY ((b5 & b7) == Bounds (-2, 8, 1, 0)); VERIFY ((b5 | b7) == Bounds (-4, 8, 4, 0));
-	VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0)); VERIFY ((b6 | b7) == Bounds (-4, 0, 3, 8));
-	VERIFY ((b5 & b8) == Bounds (-4, 8, 0, 0)); VERIFY ((b5 | b8) == Bounds (-4, 6, 4, 2));
-	VERIFY ((b6 & b8) == Bounds (-4, 6, 0, 2)); VERIFY ((b6 | b8) == Bounds (-4, 0, 0, 8));
+	VERIFY ((b5 | b7) == Bounds (-4, 8, 4, 0)); VERIFY ((b5 & b7) == Bounds (-2, 8, 1, 0));
+	VERIFY ((b6 | b7) == Bounds (-4, 0, 3, 8)); VERIFY ((b6 & b7) == Bounds ( 0, 0, 0, 0));
+	VERIFY ((b5 | b8) == Bounds (-4, 6, 4, 2)); VERIFY ((b5 & b8) == Bounds (-4, 8, 0, 0));
+	VERIFY ((b6 | b8) == Bounds (-4, 0, 0, 8)); VERIFY ((b6 & b8) == Bounds (-4, 6, 0, 2));
 	b7.Normalize(); VERIFY (b7 == Bounds (-2, 8, 1, 0));
 	b8.Normalize(); VERIFY (b8 == Bounds (-4, 6, 0, 2));
 	b7 |= b6; VERIFY (b7 == Bounds (-4, 0, 3, 8));

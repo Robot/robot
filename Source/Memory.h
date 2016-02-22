@@ -46,8 +46,6 @@ typedef std::vector<uintptr> AddressList;
 
 class ROBOT_EXPORT Memory
 {
-	friend class Process;
-
 public:
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -83,6 +81,8 @@ public:
 
 		bool			Private;		// If the region is private
 		bool			Guarded;		// If the region is guarded
+
+		bool			Contains		(uintptr address) const;
 
 		bool			operator <		(uintptr address) const;
 		bool			operator >		(uintptr address) const;

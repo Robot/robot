@@ -31,7 +31,7 @@ class ROBOT_EXPORT Image
 {
 public:
 				 Image			(void);
-				~Image			(void);
+	virtual		~Image			(void);
 
 				 Image			(const Image&  image);
 				 Image			(      Image&& image);
@@ -42,8 +42,8 @@ public:
 public:
 	bool		IsValid			(void) const;
 
-	void		Create			(const  Size&  size);
-	void		Create			(uint16 w, uint16 h);
+	bool		Create			(const  Size&  size);
+	bool		Create			(uint16 w, uint16 h);
 	void		Destroy			(void);
 
 	uint16		GetWidth		(void) const { return mWidth;  }

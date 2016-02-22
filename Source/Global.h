@@ -20,17 +20,10 @@
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Defines the current Robot version as a string and integer value.
+/// Defines the current version of Robot as an integer and string value.
 
-#define ROBOT_VERSION 0x020000
-#define ROBOT_VERSION_STR "2.0.0"
-
-////////////////////////////////////////////////////////////////////////////////
-/// Can be used as an easier method for checking the Robot version.
-/// An example: #if (ROBOT_VERSION >= ROBOT_VERSION_CHK (1, 0, 2))
-
-#define ROBOT_VERSION_CHK( major, minor, patch ) \
-		((major << 16) | (minor << 8) | (patch))
+#define ROBOT_VERSION		0x020000
+#define ROBOT_VERSION_STR	"2.0.0"
 
 
 
@@ -154,18 +147,18 @@
 
 ROBOT_NS_BEGIN
 
-typedef signed char			int8;		// Signed  8-bit integer
-typedef signed short		int16;		// Signed 16-bit integer
-typedef signed int			int32;		// Signed 32-bit integer
-typedef signed long long	int64;		// Signed 64-bit integer
+typedef signed char			int8;		// Signed  8-Bit integer
+typedef signed short		int16;		// Signed 16-Bit integer
+typedef signed int			int32;		// Signed 32-Bit integer
+typedef signed long long	int64;		// Signed 64-Bit integer
 
-typedef unsigned char		uint8;		// Unsigned  8-bit integer
-typedef unsigned short		uint16;		// Unsigned 16-bit integer
-typedef unsigned int		uint32;		// Unsigned 32-bit integer
-typedef unsigned long long	uint64;		// Unsigned 64-bit integer
+typedef unsigned char		uint8;		// Unsigned  8-Bit integer
+typedef unsigned short		uint16;		// Unsigned 16-Bit integer
+typedef unsigned int		uint32;		// Unsigned 32-Bit integer
+typedef unsigned long long	uint64;		// Unsigned 64-Bit integer
 
-typedef float				real32;		// 32-bit real value
-typedef double				real64;		// 64-bit real value
+typedef float				real32;		// 32-Bit float value
+typedef double				real64;		// 64-Bit float value
 
 #ifdef ROBOT_ARCH_64
 

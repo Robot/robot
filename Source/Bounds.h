@@ -87,11 +87,11 @@ public:
 	Point		GetCenter		(void) const;
 
 public:
-	Bounds		operator &		(const Bounds& bounds) const;
-	Bounds		operator |		(const Bounds& bounds) const;
-
-	Bounds&		operator &=		(const Bounds& bounds);
 	Bounds&		operator |=		(const Bounds& bounds);
+	Bounds&		operator &=		(const Bounds& bounds);
+
+	Bounds		operator |		(const Bounds& bounds) const;
+	Bounds		operator &		(const Bounds& bounds) const;
 
 	bool		operator ==		(const Bounds& bounds) const;
 	bool		operator !=		(const Bounds& bounds) const;

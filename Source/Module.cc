@@ -51,6 +51,19 @@ struct Module::Data
 
 
 //----------------------------------------------------------------------------//
+// Functions                                                  Module::Segment //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Module::Segment::Contains (uintptr address) const
+{
+	return Base <= address && address < (Base + Size);
+}
+
+
+
+//----------------------------------------------------------------------------//
 // Operators                                                  Module::Segment //
 //----------------------------------------------------------------------------//
 
@@ -148,10 +161,9 @@ Module::Module (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Module::Module (Process process,
-	string  name, string  path,
-	uintptr base, uintptr size)
-	: mData (new Module::Data())
+Module::Module (const Process& process, const string& name,
+			const string& path, uintptr base, uintptr size)
+			: mData (new Module::Data())
 {
 	mData->Valid = true;
 	mData->Name  = name;
@@ -274,6 +286,13 @@ Module::SegmentList Module::GetSegments (void) const
 #endif
 
 	return mData->Segments;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Module::Contains (uintptr address) const
+{
+	return mData->Base <= address && address < (mData->Base + mData->Size);
 }
 
 

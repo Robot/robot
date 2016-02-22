@@ -72,9 +72,18 @@ void Timer::Start (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Timer::Reset (void)
+uint64 Timer::Reset (void)
 {
-	mStarted = gInvalid;
+	// Check if timer started
+	if (mStarted == gInvalid)
+		return 0;
+
+	else
+	{
+		auto old = mStarted;
+		mStarted = gInvalid;
+		return GetCpuTime() - old;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +99,7 @@ uint64 Timer::Restart (void)
 
 	else
 	{
-		uint64 old = mStarted;
+		auto old = mStarted;
 		mStarted = GetCpuTime();
 		return mStarted - old;
 	}
@@ -131,7 +140,9 @@ void Timer::Sleep (const Range& time)
 {
 	// Generate a random range
 	int32 d = time.GetRandom();
-	if (d <= 5) return;
+
+	// Skip negatives
+	if (d < 0) return;
 
 #ifdef ROBOT_OS_LINUX
 

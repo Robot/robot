@@ -31,7 +31,7 @@ public:
 
 public:
 	void			Start			(void);
-	void			Reset			(void);
+	uint64			Reset			(void);
 	uint64			Restart			(void);
 
 	uint64			GetElapsed		(void) const;

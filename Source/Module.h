@@ -37,8 +37,6 @@ ROBOT_NS_BEGIN
 
 class ROBOT_EXPORT Module
 {
-	friend class Process;
-
 public:
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +47,8 @@ public:
 
 		uintptr			Base;			// Base address of the segment
 		uintptr			Size;			// Virtual size of the segment
+
+		bool			Contains		(uintptr address) const;
 
 		bool			operator <		(uintptr address) const;
 		bool			operator >		(uintptr address) const;
@@ -70,11 +70,10 @@ public:
 
 public:
 	Module								(void);
-	Module								(Process process,
-										 std::string name,
-										 std::string path,
-										 uintptr base,
-										 uintptr size);
+	Module								(const Process& process,
+										 const std::string& name,
+										 const std::string& path,
+										 uintptr base, uintptr size);
 
 public:
 	bool				IsValid			(void) const;
@@ -87,6 +86,8 @@ public:
 
 	Process				GetProcess		(void) const;
 	SegmentList			GetSegments		(void) const;
+
+	bool				Contains		(uintptr address) const;
 
 public:
 	bool				operator <		(uintptr address) const;

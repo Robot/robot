@@ -395,7 +395,8 @@ enum Key
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined (BUILDING_ROBOT_SHARED) || defined (USING_ROBOT_SHARED)
+#if defined (BUILDING_ROBOT_SHARED) || \
+	defined (   USING_ROBOT_SHARED)
 	template class ROBOT_EXPORT Enum<Key>;
 #endif
 

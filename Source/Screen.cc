@@ -154,7 +154,7 @@ ROBOT_NS_BEGIN
 			HMODULE d = LoadLibrary (TEXT ("Dwmapi.dll"));
 			if (d != nullptr)
 			{
-				// Attempt to load the DWM aero functionality
+				// Attempt to load the DWM Aero functionality
 				gDwmEnableComposition = (DWMENABLECOMPOSITION)
 					GetProcAddress (d, "DwmEnableComposition");
 
@@ -226,7 +226,8 @@ Screen::Screen (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Screen::Screen (Bounds bounds, Bounds usable)
+Screen::Screen (const Bounds& bounds,
+				const Bounds& usable)
 {
 	mBounds = bounds;
 	mUsable = usable;

@@ -88,7 +88,7 @@ bool Bounds::IsZero (void) const
 
 bool Bounds::IsEmpty (void) const
 {
-	return W == 0 && H == 0;
+	return W == 0 || H == 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -314,28 +314,16 @@ Point Bounds::GetCenter (void) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Bounds Bounds::operator & (const Bounds& bounds) const
+Bounds& Bounds::operator |= (const Bounds& bounds)
 {
-	int32 x = bounds.X;
-	int32 y = bounds.Y;
-	int32 w = bounds.W;
-	int32 h = bounds.H;
+	return *this = *this | bounds;
+}
 
-	if ((W == 0 && H == 0) || (w == 0 && h == 0))
-		return Bounds();
+////////////////////////////////////////////////////////////////////////////////
 
-	// Normalize negative rectangles
-	NORM (l1, r1, t1, b1, X, Y, W, H);
-	NORM (l2, r2, t2, b2, x, y, w, h);
-
-	// Check for bounds intersection
-	if (l1 > r2 || r1 < l2 || t1 > b2 || b1 < t2)
-		return Bounds();
-
-	Bounds result;
-	result.SetLTRB (max (l1, l2), max (t1, t2),
-					min (r1, r2), min (b1, b2));
-	return result;
+Bounds& Bounds::operator &= (const Bounds& bounds)
+{
+	return *this = *this & bounds;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -372,16 +360,28 @@ Bounds Bounds::operator | (const Bounds& bounds) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Bounds& Bounds::operator &= (const Bounds& bounds)
+Bounds Bounds::operator & (const Bounds& bounds) const
 {
-	return *this = *this & bounds;
-}
+	int32 x = bounds.X;
+	int32 y = bounds.Y;
+	int32 w = bounds.W;
+	int32 h = bounds.H;
 
-////////////////////////////////////////////////////////////////////////////////
+	if ((W == 0 && H == 0) || (w == 0 && h == 0))
+		return Bounds();
 
-Bounds& Bounds::operator |= (const Bounds& bounds)
-{
-	return *this = *this | bounds;
+	// Normalize negative rectangles
+	NORM (l1, r1, t1, b1, X, Y, W, H);
+	NORM (l2, r2, t2, b2, x, y, w, h);
+
+	// Check for bounds intersection
+	if (l1 > r2 || r1 < l2 || t1 > b2 || b1 < t2)
+		return Bounds();
+
+	Bounds result;
+	result.SetLTRB (max (l1, l2), max (t1, t2),
+					min (r1, r2), min (b1, b2));
+	return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

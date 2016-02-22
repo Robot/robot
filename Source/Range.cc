@@ -78,11 +78,10 @@ int32 Range::GetRandom (void) const
 	if (Min >= Max)
 		return Min;
 
-	// Increment generator using LCG
-	*const_cast<uint32*> (&mState) =
-		(mState * 1103515245 + 12345) & 0x7FFFFFFF;
+	// Compute the value of the next state by using LCG
+	mState = (mState * 1103515245 + 12345) & 0x7FFFFFFF;
 
-	// Generate value between the range
+	// Get the value between the range
 	return mState % (Max - Min) + Min;
 }
 

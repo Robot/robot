@@ -97,19 +97,31 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	static Type Parse (const std::string& key)
+	static const ValueMap& GetMap (void)
+	{
+		// Initialize the static parser
+		if (mMap.empty()) Enum<Type>();
+
+		return mMap;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	static Type Parse (const std::string& key,
+				Type defaultValue = (Type) -1)
 	{
 		// Initialize the static parser
 		if (mMap.empty()) Enum<Type>();
 
 		// Search for a matching key
 		return mMap.find (key) != mMap.end()
-			   ? mMap.at (key) : (Type) -1;
+			   ? mMap.at (key) : defaultValue;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	static std::string Parse (Type value)
+	static std::string Parse (Type value,
+		   const char* defaultValue = "")
 	{
 		// Initialize the static parser
 		if (mMap.empty()) Enum<Type>();
@@ -123,17 +135,7 @@ public:
 		}
 
 		// Nothing was found
-		return std::string();
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	static const ValueMap& GetMap (void)
-	{
-		// Initialize the static parser
-		if (mMap.empty()) Enum<Type>();
-
-		return mMap;
+		return defaultValue;
 	}
 
 

@@ -110,17 +110,18 @@ bool Image::IsValid (void) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Image::Create (const Size& size)
+bool Image::Create (const Size& size)
 {
-	Create (size.W, size.H);
+	return Create (size.W, size.H);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Image::Create (uint16 w, uint16 h)
+bool Image::Create (uint16 w, uint16 h)
 {
-	// Don't accept empty values
-	if (w == 0 || h == 0) return;
+	// Verify dimensions
+	if (w == 0 || h == 0)
+		return false;
 
 	mWidth  = w;
 	mHeight = h;
@@ -136,6 +137,8 @@ void Image::Create (uint16 w, uint16 h)
 		mData = new uint32
 			[mLimit = mLength];
 	}
+
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -443,10 +443,6 @@ ROBOT_NS_BEGIN
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	#define AXElement ((AXUIElementRef) mHandle->second)
-
-	////////////////////////////////////////////////////////////////////////////////
-
 	static Boolean (*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -600,51 +596,79 @@ ROBOT_NS_BEGIN
 
 
 //----------------------------------------------------------------------------//
-// Constructors                                                        Window //
+// Classes                                                             Window //
 //----------------------------------------------------------------------------//
 
+////////////////////////////////////////////////////////////////////////////////
+
+struct Window::Data
+{
 #ifdef ROBOT_OS_LINUX
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Window::Window (uintptr handle) : mHandle (0)
-	{
-		// If atoms loaded
-		if (WM_PID == None)
-		{
-			// Load all necessary atom properties
-			if (gDisplay != nullptr) LoadAtoms();
-		}
-
-		SetHandle (handle);
-	}
+	::Window		XWin;		// Handle to an X11 window
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Window::Window (uintptr handle) : mHandle
-		(new std::pair<uintptr, uintptr> (0, 0),
-		 [ ](std::pair<uintptr, uintptr>* handle)
-	{
-		// Release the AX element
-		if ((AXUIElementRef) handle->second != nullptr)
-			CFRelease ((AXUIElementRef) handle->second);
-
-		// Free memory
-		delete handle;
-
-	}) { SetHandle (handle); }
+	CGWindowID		CgID;		// Handle to a CGWindowID
+	AXUIElementRef	AxID;		// Handle to a AXUIElementRef
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	////////////////////////////////////////////////////////////////////////////////
-
-	Window::Window (uintptr handle) : mHandle (0) { SetHandle (handle); }
+	HWND			HWnd;		// Handle to a window HWND
 
 #endif
+};
+
+
+
+//----------------------------------------------------------------------------//
+// Constructors                                                        Window //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+Window::Window (uintptr handle) : mData (new Window::Data(), [](Window::Data* data)
+{
+#ifdef ROBOT_OS_MAC
+
+	// Release the AX element
+	if (data->AxID != nullptr)
+		CFRelease (data->AxID);
+
+#endif
+
+	// Free data
+	delete data;
+})
+{
+#ifdef ROBOT_OS_LINUX
+
+	// If atoms loaded
+	if (WM_PID == None)
+	{
+		// Load all necessary atom properties
+		if (gDisplay != nullptr) LoadAtoms();
+	}
+
+	mData->XWin = 0;
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	mData->CgID = 0;
+	mData->AxID = 0;
+
+#endif
+#ifdef ROBOT_OS_WIN
+
+	mData->HWnd = 0;
+
+#endif
+
+	SetHandle (handle);
+}
 
 
 
@@ -658,7 +682,7 @@ bool Window::IsValid (void) const
 {
 #ifdef ROBOT_OS_LINUX
 
-	if (mHandle == 0)
+	if (mData->XWin == 0)
 		return false;
 
 	// Check for a valid X-Window display
@@ -669,7 +693,7 @@ bool Window::IsValid (void) const
 
 	// Get the window PID property
 	void* result = GetWindowProperty
-		((::Window) mHandle, WM_PID);
+			  (mData->XWin, WM_PID);
 	if (result == nullptr) return false;
 
 	// Free result and return true
@@ -678,15 +702,15 @@ bool Window::IsValid (void) const
 #endif
 #ifdef ROBOT_OS_MAC
 
-	if (mHandle->first  == 0 ||
-		mHandle->second == 0)
+	if (mData->CgID == 0 ||
+		mData->AxID == 0)
 		return false;
 
 	CFTypeRef r = nullptr;
 
 	// Attempt to get the window role
 	if (AXUIElementCopyAttributeValue
-		(AXElement, kAXRoleAttribute,
+		(mData->AxID, kAXRoleAttribute,
 		&r) == kAXErrorSuccess && r)
 		{ CFRelease (r); return true; }
 
@@ -695,10 +719,10 @@ bool Window::IsValid (void) const
 #endif
 #ifdef ROBOT_OS_WIN
 
-	if (mHandle == 0)
+	if (mData->HWnd == 0)
 		return false;
 
-	return IsWindow ((HWND) mHandle) != 0;
+	return IsWindow (mData->HWnd) != 0;
 
 #endif
 }
@@ -716,7 +740,7 @@ void Window::Close (void)
 	XDismissErrors xe;
 
 	// Close the window
-	XDestroyWindow (gDisplay, (::Window) mHandle);
+	XDestroyWindow (gDisplay, mData->XWin);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -724,7 +748,7 @@ void Window::Close (void)
 	AXUIElementRef b = nullptr;
 
 	// Retrieve the close button of this window
-	if (AXUIElementCopyAttributeValue (AXElement,
+	if (AXUIElementCopyAttributeValue (mData->AxID,
 		kAXCloseButtonAttribute, (CFTypeRef*) &b)
 		== kAXErrorSuccess && b != nullptr)
 	{
@@ -736,7 +760,7 @@ void Window::Close (void)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	PostMessage ((HWND) mHandle, WM_CLOSE, 0, 0);
+	PostMessage (mData->HWnd, WM_CLOSE, 0, 0);
 
 #endif
 }
@@ -752,9 +776,7 @@ bool Window::IsTopMost (void) const
 
 	// Ignore X errors
 	XDismissErrors xe;
-
-	return GetState
-		((::Window) mHandle, STATE_TOPMOST);
+	return GetState (mData->XWin, STATE_TOPMOST);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -764,7 +786,7 @@ bool Window::IsTopMost (void) const
 #endif
 #ifdef ROBOT_OS_WIN
 
-	return (GetWindowLongPtr ((HWND) mHandle,
+	return (GetWindowLongPtr (mData->HWnd,
 		GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
 
 #endif
@@ -784,7 +806,7 @@ bool Window::IsBorderless (void) const
 
 	// Get the window hints property
 	void* result = GetWindowProperty
-		((::Window) mHandle, WM_HINTS);
+			(mData->XWin, WM_HINTS);
 
 	// Check the result and convert it
 	if (result == nullptr) return false;
@@ -805,8 +827,8 @@ bool Window::IsBorderless (void) const
 	// correct results. Run several tests beforehand
 	// to see if this function is right for you.
 
-	return (GetWindowLongPtr ((HWND) mHandle,
-			GWL_STYLE) & WS_TILEDWINDOW) == 0;
+	return (GetWindowLongPtr (mData->HWnd,
+		GWL_STYLE) & WS_TILEDWINDOW) == 0;
 
 #endif
 }
@@ -822,9 +844,7 @@ bool Window::IsMinimized (void) const
 
 	// Ignore X errors
 	XDismissErrors xe;
-
-	return GetState
-		((::Window) mHandle, STATE_MINIMIZE);
+	return GetState (mData->XWin, STATE_MINIMIZE);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -832,7 +852,7 @@ bool Window::IsMinimized (void) const
 	CFBooleanRef data = nullptr;
 
 	// Determine whether the window is minimized
-	if (AXUIElementCopyAttributeValue (AXElement,
+	if (AXUIElementCopyAttributeValue (mData->AxID,
 		kAXMinimizedAttribute, (CFTypeRef*) &data)
 		== kAXErrorSuccess && data != nullptr)
 	{
@@ -846,7 +866,7 @@ bool Window::IsMinimized (void) const
 #endif
 #ifdef ROBOT_OS_WIN
 
-	return (GetWindowLongPtr ((HWND) mHandle,
+	return (GetWindowLongPtr (mData->HWnd,
 			GWL_STYLE) & WS_MINIMIZE) != 0;
 
 #endif
@@ -863,9 +883,7 @@ bool Window::IsMaximized (void) const
 
 	// Ignore X errors
 	XDismissErrors xe;
-
-	return GetState
-		((::Window) mHandle, STATE_MAXIMIZE);
+	return GetState (mData->XWin, STATE_MAXIMIZE);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -875,7 +893,7 @@ bool Window::IsMaximized (void) const
 #endif
 #ifdef ROBOT_OS_WIN
 
-	return (GetWindowLongPtr ((HWND) mHandle,
+	return (GetWindowLongPtr (mData->HWnd,
 			GWL_STYLE) & WS_MAXIMIZE) != 0;
 
 #endif
@@ -892,7 +910,7 @@ void Window::SetTopMost (bool state)
 
 	// Ignore X errors
 	XDismissErrors xe;
-	SetState ((::Window) mHandle, STATE_TOPMOST, state);
+	SetState (mData->XWin, STATE_TOPMOST, state);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -902,7 +920,7 @@ void Window::SetTopMost (bool state)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	SetWindowPos ((HWND) mHandle, state ?
+	SetWindowPos (mData->HWnd, state ?
 		HWND_TOPMOST : HWND_NOTOPMOST, 0,
 		0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
@@ -930,8 +948,8 @@ void Window::SetBorderless (bool state)
 		hints.Decorations =
 			state ? 0 : 1;
 
-		// Replace hints property with our version
-		XChangeProperty (gDisplay, (::Window) mHandle,
+		// Set hints property with our version
+		XChangeProperty (gDisplay, mData->XWin,
 			WM_HINTS, WM_HINTS, 32, PropModeReplace,
 			(unsigned char*) &hints, 5);
 	}
@@ -949,17 +967,15 @@ void Window::SetBorderless (bool state)
 	// correct results. Run several tests beforehand
 	// to see if this function is right for you.
 
-	// Determine current style
-	HWND hwnd = (HWND) mHandle;
-	LONG_PTR style = GetWindowLongPtr (hwnd, GWL_STYLE);
+	LONG_PTR style = GetWindowLongPtr (mData->HWnd, GWL_STYLE);
 
 	if (state)
-		SetWindowLongPtr (hwnd, GWL_STYLE, style & ~WS_TILEDWINDOW);
+		SetWindowLongPtr (mData->HWnd, GWL_STYLE, style & ~WS_TILEDWINDOW);
 	else
-		SetWindowLongPtr (hwnd, GWL_STYLE, style |  WS_TILEDWINDOW);
+		SetWindowLongPtr (mData->HWnd, GWL_STYLE, style |  WS_TILEDWINDOW);
 
 	// Request recalculation of new window decorations
-	SetWindowPos (hwnd, nullptr, 0, 0, 0, 0,
+	SetWindowPos (mData->HWnd, nullptr, 0, 0, 0, 0,
 		SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE |
 		SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
@@ -977,12 +993,12 @@ void Window::SetMinimized (bool state)
 
 	// Ignore X errors
 	XDismissErrors xe;
-	SetState ((::Window) mHandle, STATE_MINIMIZE, state);
+	SetState (mData->XWin, STATE_MINIMIZE, state);
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	AXUIElementSetAttributeValue (AXElement,
+	AXUIElementSetAttributeValue (mData->AxID,
 		kAXMinimizedAttribute, state ?
 		kCFBooleanTrue : kCFBooleanFalse);
 
@@ -990,10 +1006,10 @@ void Window::SetMinimized (bool state)
 #ifdef ROBOT_OS_WIN
 
 	if (state)
-		ShowWindow ((HWND) mHandle, SW_MINIMIZE);
+		ShowWindow (mData->HWnd, SW_MINIMIZE);
 
 	else if (IsMinimized())
-		ShowWindow ((HWND) mHandle, SW_RESTORE);
+		ShowWindow (mData->HWnd, SW_RESTORE);
 
 #endif
 }
@@ -1009,8 +1025,8 @@ void Window::SetMaximized (bool state)
 
 	// Ignore X errors
 	XDismissErrors xe;
-	SetState ((::Window) mHandle, STATE_MINIMIZE, false);
-	SetState ((::Window) mHandle, STATE_MAXIMIZE, state);
+	SetState (mData->XWin, STATE_MINIMIZE, false);
+	SetState (mData->XWin, STATE_MAXIMIZE, state);
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -1021,13 +1037,13 @@ void Window::SetMaximized (bool state)
 #ifdef ROBOT_OS_WIN
 
 	if (IsMinimized())
-		ShowWindow ((HWND) mHandle, SW_RESTORE);
+		ShowWindow (mData->HWnd, SW_RESTORE);
 
 	if (state)
-		ShowWindow ((HWND) mHandle, SW_MAXIMIZE);
+		ShowWindow (mData->HWnd, SW_MAXIMIZE);
 
 	else if (IsMaximized())
-		ShowWindow ((HWND) mHandle, SW_RESTORE);
+		ShowWindow (mData->HWnd, SW_RESTORE);
 
 #endif
 }
@@ -1054,7 +1070,7 @@ int32 Window::GetPID (void) const
 	// Get the window PID
 	long* result = (long*)
 		GetWindowProperty
-		((::Window) mHandle, WM_PID);
+		(mData->XWin, WM_PID);
 
 	// Check result and convert it
 	if (result == nullptr) return 0;
@@ -1066,7 +1082,7 @@ int32 Window::GetPID (void) const
 
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
-	if (AXUIElementGetPid (AXElement, &pid)
+	if (AXUIElementGetPid (mData->AxID, &pid)
 			== kAXErrorSuccess) return pid;
 
 	return 0;
@@ -1074,10 +1090,8 @@ int32 Window::GetPID (void) const
 #endif
 #ifdef ROBOT_OS_WIN
 
-	DWORD id = 0;
-	GetWindowThreadProcessId
-		((HWND) mHandle, &id);
-
+	DWORD  id = 0;
+	GetWindowThreadProcessId (mData->HWnd, &id);
 	return id;
 
 #endif
@@ -1089,18 +1103,17 @@ uintptr Window::GetHandle (void) const
 {
 #ifdef ROBOT_OS_LINUX
 
-	return mHandle;
+	return (uintptr) mData->XWin;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// Return CGWindowID
-	return mHandle->first;
+	return (uintptr) mData->CgID;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	return mHandle;
+	return (uintptr) mData->HWnd;
 
 #endif
 }
@@ -1111,39 +1124,39 @@ bool Window::SetHandle (uintptr handle)
 {
 #ifdef ROBOT_OS_LINUX
 
-	mHandle = handle;
+	mData->XWin = (::Window) handle;
+
 	if (handle == 0)
 		return true;
 
 	if (IsValid())
 		return true;
 
-	mHandle = 0;
+	mData->XWin = 0;
 	return false;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
 	// Release the AX element
-	if (AXElement != nullptr)
-		CFRelease (AXElement);
+	if (mData->AxID != nullptr)
+		CFRelease (mData->AxID);
 
 	// Reset both values
-	mHandle->first  = 0;
-	mHandle->second = 0;
+	mData->CgID = 0;
+	mData->AxID = 0;
 
 	if (handle == 0)
 		return true;
 
-	// Retrieve AXUIElementRef
-	auto result = GetUIElement
-		((CGWindowID) handle);
+	// Retrieve the window element
+	auto cgID = (CGWindowID) handle;
+	auto axID = GetUIElement (cgID);
 
-	if (result != nullptr)
+	if (axID != nullptr)
 	{
-		// Set both handle values and finish
-		mHandle->first  = (uintptr) handle;
-		mHandle->second = (uintptr) result;
+		mData->CgID = cgID;
+		mData->AxID = axID;
 		return true;
 	}
 
@@ -1152,14 +1165,15 @@ bool Window::SetHandle (uintptr handle)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	mHandle = handle;
+	mData->HWnd = (HWND) handle;
+
 	if (handle == 0)
 		return true;
 
 	if (IsValid())
 		return true;
 
-	mHandle = 0;
+	mData->HWnd = 0;
 	return false;
 
 #endif
@@ -1176,8 +1190,8 @@ uintptr Window::GetHandleAx (void) const
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// Return UIElementRef
-	return mHandle->second;
+	return (uintptr)
+		mData->AxID;
 
 #endif
 #ifdef ROBOT_OS_WIN
@@ -1202,7 +1216,7 @@ string Window::GetTitle (void) const
 
 	// Get window title (UTF-8)
 	result = GetWindowProperty
-		((::Window) mHandle, WM_NAME);
+		(mData->XWin, WM_NAME);
 
 	// Check result value
 	if (result != nullptr)
@@ -1217,7 +1231,7 @@ string Window::GetTitle (void) const
 
 	// Get window title (ASCII)
 	result = GetWindowProperty
-		((::Window) mHandle, XA_WM_NAME);
+		(mData->XWin, XA_WM_NAME);
 
 	// Check result value
 	if (result != nullptr)
@@ -1235,7 +1249,7 @@ string Window::GetTitle (void) const
 	CFStringRef data = nullptr;
 
 	// Determine the current title of the window
-	if (AXUIElementCopyAttributeValue (AXElement,
+	if (AXUIElementCopyAttributeValue (mData->AxID,
 		kAXTitleAttribute, (CFTypeRef*) &data)
 		== kAXErrorSuccess && data != nullptr)
 	{
@@ -1254,8 +1268,8 @@ string Window::GetTitle (void) const
 
 	TCHAR name[512];
 	return GetWindowText
-		((HWND) mHandle, name, 512) > 0
-		? _UTF8Encode (name) : string();
+		(mData->HWnd, name, 512) > 0 ?
+		_UTF8Encode (name) : string();
 
 #endif
 }
@@ -1276,27 +1290,22 @@ void Window::SetTitle (const char* title)
 	uint8* converted = (uint8*) title;
 	int32  conLength =  strlen (title);
 
-	// Convert handle to an X-Window
-	::Window win = (::Window) mHandle;
+	// Change ASCII window name
+	XChangeProperty (gDisplay,
+		mData->XWin, XA_WM_NAME, XA_STRING, 8,
+		PropModeReplace, converted, conLength);
 
-	// Change the ASCII window name
-	XChangeProperty (gDisplay, win,
-		XA_WM_NAME, XA_STRING, 8,
-		PropModeReplace, converted,
-		conLength);
-
-	XChangeProperty (gDisplay, win,
-		XA_WM_ICON_NAME, XA_STRING, 8,
-		PropModeReplace, converted,
-		conLength);
+	XChangeProperty (gDisplay,
+		mData->XWin, XA_WM_ICON_NAME, XA_STRING,
+		8, PropModeReplace, converted, conLength);
 
 	// Check every atom that we want to use
 	if (WM_NAME != None && WM_UTF8 != None)
 	{
-		// Change the UTF-8 window name
-		XChangeProperty (gDisplay, win,
-			WM_NAME, WM_UTF8, 8,
-			PropModeReplace, converted,
+		// Change UTF-8 window name
+		XChangeProperty (gDisplay,
+			mData->XWin, WM_NAME, WM_UTF8,
+			8, PropModeReplace, converted,
 			conLength);
 	}
 
@@ -1310,7 +1319,7 @@ void Window::SetTitle (const char* title)
 	if (name != nullptr)
 	{
 		// Set the current title of the window
-		AXUIElementSetAttributeValue (AXElement,
+		AXUIElementSetAttributeValue (mData->AxID,
 			kAXTitleAttribute, (CFTypeRef) name);
 
 		CFRelease (name);
@@ -1319,8 +1328,7 @@ void Window::SetTitle (const char* title)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	SetWindowText ((HWND) mHandle,
-		_UTF8Decode (title).data());
+	SetWindowText (mData->HWnd, _UTF8Decode (title).data());
 
 #endif
 }
@@ -1338,8 +1346,7 @@ Bounds Window::GetBounds (void) const
 	XDismissErrors xe;
 
 	Bounds client = GetClient();
-	Bounds frame  = GetFrame
-		((::Window) mHandle);
+	Bounds frame  = GetFrame (mData->XWin);
 	return Bounds (client.X - frame.X,
 				   client.Y - frame.Y,
 				   client.W + frame.W,
@@ -1353,13 +1360,13 @@ Bounds Window::GetBounds (void) const
 	AXValueRef axs = nullptr;
 
 	// Determine the current point of the window
-	if (AXUIElementCopyAttributeValue (AXElement,
+	if (AXUIElementCopyAttributeValue (mData->AxID,
 		kAXPositionAttribute, (CFTypeRef*) &axp)
 		!= kAXErrorSuccess || axp == nullptr)
 		goto exit;
 
 	// Determine the current size of the window
-	if (AXUIElementCopyAttributeValue (AXElement,
+	if (AXUIElementCopyAttributeValue (mData->AxID,
 		kAXSizeAttribute, (CFTypeRef*) &axs)
 		!= kAXErrorSuccess || axs == nullptr)
 		goto exit;
@@ -1379,8 +1386,7 @@ exit:
 #ifdef ROBOT_OS_WIN
 
 	RECT rect = { 0 };
-	HWND hwnd = (HWND) mHandle;
-	GetWindowRect (hwnd, &rect);
+	GetWindowRect (mData->HWnd, &rect);
 
 	return Bounds
 		(rect.left, rect.top,
@@ -1410,10 +1416,7 @@ void Window::SetBounds (int32 x,
 
 	// Ignore X errors
 	XDismissErrors xe;
-
-	// Need to update origin
-	Bounds frame = GetFrame
-		((::Window) mHandle);
+	Bounds frame = GetFrame (mData->XWin);
 
 	// Prepare win changes
 	XWindowChanges changes;
@@ -1421,8 +1424,8 @@ void Window::SetBounds (int32 x,
 	changes.width  = w - frame.W;
 	changes.height = h - frame.H;
 
-	// Set the new position and size of the window
-	XConfigureWindow (gDisplay, (::Window) mHandle,
+	// Apply new position and size of window
+	XConfigureWindow (gDisplay, mData->XWin,
 		CWX | CWY | CWWidth | CWHeight, &changes);
 
 #endif
@@ -1439,8 +1442,8 @@ void Window::SetBounds (int32 x,
 	if (axp != nullptr && axs != nullptr)
 	{
 		// Set the current bounds of the window
-		AXUIElementSetAttributeValue (AXElement, kAXPositionAttribute, axp);
-		AXUIElementSetAttributeValue (AXElement, kAXSizeAttribute,     axs);
+		AXUIElementSetAttributeValue (mData->AxID, kAXPositionAttribute, axp);
+		AXUIElementSetAttributeValue (mData->AxID, kAXSizeAttribute,     axs);
 	}
 
 	if (axp != nullptr) CFRelease (axp);
@@ -1449,7 +1452,7 @@ void Window::SetBounds (int32 x,
 #endif
 #ifdef ROBOT_OS_WIN
 
-	SetWindowPos ((HWND) mHandle, nullptr, x, y,
+	SetWindowPos (mData->HWnd, nullptr, x, y,
 		w, h, SWP_NOZORDER | SWP_NOOWNERZORDER);
 
 #endif
@@ -1473,22 +1476,20 @@ Bounds Window::GetClient (void) const
 	unsigned int count;
 	int32 x = 0, y = 0;
 
-	// Convert handle to an X-Window
-	::Window win = (::Window) mHandle;
-
-	// Check if the window is root
-	XQueryTree (gDisplay, win, &root,
-		&parent, &children, &count);
+	// Check if the window is the root
+	XQueryTree (gDisplay, mData->XWin,
+		&root, &parent, &children, &count);
 	if (children) XFree (children);
 
 	// Retrieve window attributes
 	XWindowAttributes attr = { 0 };
-	XGetWindowAttributes (gDisplay, win, &attr);
+	XGetWindowAttributes (gDisplay,
+				mData->XWin, &attr);
 
 	// Coordinates must be translated
 	if (parent != attr.root) XTranslateCoordinates
-		(gDisplay, win, attr.root, attr.x, attr.y,
-		&x, &y, &parent);
+		(gDisplay, mData->XWin, attr.root, attr.x,
+		 attr.y, &x, &y, &parent);
 
 	// Coordinates can be left alone
 	else { x = attr.x; y = attr.y; }
@@ -1505,15 +1506,14 @@ Bounds Window::GetClient (void) const
 #ifdef ROBOT_OS_WIN
 
 	RECT rect = { 0 };
-	HWND hwnd = (HWND) mHandle;
-	GetClientRect (hwnd, &rect);
+	GetClientRect (mData->HWnd, &rect);
 
 	POINT point;
 	point.x = rect.left;
 	point.y = rect.top;
 
-	// Convert client point to screen
-	ClientToScreen (hwnd, &point);
+	// Convert the client point to screen
+	ClientToScreen (mData->HWnd, &point);
 	return Bounds (point.x, point.y,
 			rect.right  - rect.left,
 			rect.bottom - rect.top);
@@ -1541,10 +1541,7 @@ void Window::SetClient (int32 x,
 
 	// Ignore X errors
 	XDismissErrors xe;
-
-	// Need to update origin
-	Bounds frame = GetFrame
-		((::Window) mHandle);
+	Bounds frame = GetFrame (mData->XWin);
 
 	// Prepare win changes
 	XWindowChanges changes;
@@ -1553,8 +1550,8 @@ void Window::SetClient (int32 x,
 	changes.width  = w;
 	changes.height = h;
 
-	// Set the new position and size of the window
-	XConfigureWindow (gDisplay, (::Window) mHandle,
+	// Apply new position and size of window
+	XConfigureWindow (gDisplay, mData->XWin,
 		CWX | CWY | CWWidth | CWHeight, &changes);
 
 #endif
@@ -1569,16 +1566,15 @@ void Window::SetClient (int32 x,
 	rect.left = x; rect.right  = x + w;
 	rect.top  = y; rect.bottom = y + h;
 
-	HWND hwnd = (HWND) mHandle;
-	DWORD st = GetWindowLong (hwnd, GWL_STYLE  );
-	DWORD ex = GetWindowLong (hwnd, GWL_EXSTYLE);
+	DWORD st = GetWindowLong (mData->HWnd, GWL_STYLE  );
+	DWORD ex = GetWindowLong (mData->HWnd, GWL_EXSTYLE);
 
 	// Compute bounds with decorations
 	if (!AdjustWindowRectEx (&rect, st,
-		GetMenu (hwnd) != nullptr, ex))
+		GetMenu (mData->HWnd) != nullptr, ex))
 		return;
 
-	SetWindowPos (hwnd, nullptr,
+	SetWindowPos (mData->HWnd, nullptr,
 		rect.left, rect.top, rect.right -
 		rect.left, rect.bottom - rect.top,
 		SWP_NOZORDER | SWP_NOOWNERZORDER);
@@ -1656,8 +1652,8 @@ Window Window::GetActive (void)
 		long window = *((long*) active);
 		XFree (active); if (window != 0)
 		{
-			// Return resulting window value
-			result.mHandle = (uintptr) window;
+			// Set and return the foreground window
+			result.mData->XWin = (::Window) window;
 			return result;
 		}
 	}
@@ -1668,8 +1664,8 @@ Window Window::GetActive (void)
 	XGetInputFocus (gDisplay,
 			&window, &revert);
 
-	// Return resulting window value
-	result.mHandle = (uintptr) window;
+	// Return foreground window
+	result.mData->XWin = window;
 	return result;
 
 #endif
@@ -1707,9 +1703,9 @@ Window Window::GetActive (void)
 		if (_AXUIElementGetWindow (element,
 			&win) == kAXErrorSuccess && win)
 		{
-			// Manually set the windows internal values
-			result.mHandle->first  = (uintptr) win;
-			result.mHandle->second = (uintptr) element;
+			// Manually set internals
+			result.mData->CgID = win;
+			result.mData->AxID = element;
 		}
 
 		// Something went wrong
@@ -1754,23 +1750,22 @@ void Window::SetActive (const Window& window)
 	// Ignore X errors
 	XDismissErrors xe;
 
-	// Retrieve specified window handle
-	auto win = (::Window) window.mHandle;
-
-	// Go to window's desktop
-	SetDesktopForWindow (win);
+	// Go to the specified window's desktop
+	SetDesktopForWindow (window.mData->XWin);
 
 	// Check the atom value
 	if (WM_ACTIVE != None)
 	{
 		// Retrieve the screen number
 		XWindowAttributes attr = { 0 };
-		XGetWindowAttributes (gDisplay, win, &attr);
+		XGetWindowAttributes (gDisplay,
+			window.mData->XWin, &attr);
 		int s = XScreenNumberOfScreen (attr.screen);
 
 		// Prepare an event
 		XClientMessageEvent e = { 0 };
-		e.window = win; e.format = 32;
+		e.window = window.mData->XWin;
+		e.format = 32;
 		e.message_type = WM_ACTIVE;
 		e.display = gDisplay;
 		e.type = ClientMessage;
@@ -1785,29 +1780,25 @@ void Window::SetActive (const Window& window)
 
 	else
 	{
-		// Attempt raise the window
-		XRaiseWindow (gDisplay, win);
+		// Attempt to raise the specified window
+		XRaiseWindow (gDisplay, window.mData->XWin);
 
-		// Set the window input focus
-		XSetInputFocus (gDisplay, win,
-			RevertToParent, CurrentTime);
+		// Set the specified window's input focus
+		XSetInputFocus (gDisplay, window.mData->XWin,
+						RevertToParent, CurrentTime);
 	}
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	// Retrieve the window element
-	auto element = (AXUIElementRef)
-			window.mHandle->second;
-
-	// Attempt to raise the specified window
-	if (AXUIElementPerformAction (element,
-		kAXRaiseAction) == kAXErrorSuccess)
+	// Attempt to raise the specified window object
+	if (AXUIElementPerformAction (window.mData->AxID,
+				  kAXRaiseAction) == kAXErrorSuccess)
 	{
 		pid_t pid = 0;
-		// Attempt to retrieve the window pid
-		if (AXUIElementGetPid (element, &pid)
-			!= kAXErrorSuccess || !pid) return;
+		// Attempt to retrieve the PID of the window
+		if (AXUIElementGetPid (window.mData->AxID, &pid)
+					!= kAXErrorSuccess || !pid) return;
 
 		// Ignore deprecated warnings
 		#pragma clang diagnostic push
@@ -1833,9 +1824,9 @@ void Window::SetActive (const Window& window)
 #ifdef ROBOT_OS_WIN
 
 	if (window.IsMinimized())
-		ShowWindow ((HWND) window.mHandle, SW_RESTORE);
+		ShowWindow (window.mData->HWnd, SW_RESTORE);
 
-	SetForegroundWindow ((HWND) window.mHandle);
+	SetForegroundWindow (window.mData->HWnd);
 
 #endif
 }
@@ -1972,9 +1963,9 @@ WindowList Window::GetList (const char* title, int32 pid)
 				if (_AXUIElementGetWindow (element, &win)
 					!= kAXErrorSuccess || !win) continue;
 
-				// Manually set the windows internal values
-				window.mHandle->first  = (uintptr) win;
-				window.mHandle->second = (uintptr) element;
+				// Manually set internals
+				window.mData->CgID = win;
+				window.mData->AxID = element;
 				CFRetain (element);
 
 				// Attempt to associate and match the current window
