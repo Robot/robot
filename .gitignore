@@ -1,5 +1,6 @@
 ipch/
 .vs/
+*.db
 *.user
 *.sdf
 *.suo
