@@ -215,7 +215,7 @@ endif(CompilerIsMsvc)
 
 if(SystemIsWindows AND CompilerIsGCC)
     # Put mingw compiler flags here.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif(SystemIsWindows AND CompilerIsGCC)
 
 
@@ -240,13 +240,14 @@ add_executable(Test "${TestHeaderFileList}" "${TestSourceFileList}")
 # Link Build Targets
 
 set(LinkLibraries "")
-if(SystemIsLinux)
-    set(LinkLibraries rt X11 Xtst Xinerama)
-endif(SystemIsLinux)
 
 if(SystemIsLinux)
-    set(LinkLibraries rt X11 Xtst Xinerama)
+    set(LinkLibraries ${LinkLibraries} rt X11 Xtst Xinerama)
 endif(SystemIsLinux)
+
+if(SystemIsWindows AND CompilerIsGCC)
+    set(LinkLibraries ${LinkLibraries} Shlwapi psapi)
+endif(SystemIsWindows AND CompilerIsGCC)
 
 target_link_libraries(Robot "${LinkLibraries}")
 target_link_libraries(Test Robot)
@@ -257,6 +258,8 @@ if(NOT BuildStatic)
     # Adds the definition when something else links against Robot
     target_compile_definitions(Robot INTERFACE -DUSING_ROBOT_SHARED)
 endif(NOT BuildStatic)
+
+
 
 
 # TODO

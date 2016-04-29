@@ -20,7 +20,7 @@
 ROBOT_NS_BEGIN
 	class Screen;
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (push)
 	// Ignore the VS C4251 warning
 	#pragma warning (disable:4251)
@@ -89,7 +89,7 @@ private:
 	static ScreenList	mScreens;		// System screens deque
 };
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (pop)
 #endif
 

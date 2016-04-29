@@ -21,7 +21,10 @@ using std::string;
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define NOMINMAX
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
 	using std::wstring;
