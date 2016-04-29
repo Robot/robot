@@ -10,13 +10,14 @@
 ################################################################################
 # Project Setup
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 project(Robot)
 
 ################################################################################
 # Tools
 
-# A tool for Troubleshooting, to make sure we got all the files
+# A tool for troubleshooting, to make sure we got all the files
+# can be removed without affecting built binaries
 function(DisplayList Header ListToShow)
     message(STATUS "\t${Header}")
     foreach(ListItem ${ListToShow})
@@ -38,7 +39,10 @@ set(TestHeaderDir "${ProjectRootDir}Test/")
 
 # We could use a globbing expression, but is generally poor form, because
 # eventually someone accidentally adds an incorrect file to their build and
-# something hard to fix breaks.
+# something hard to fix breaks. When there is only one place to update file list
+# it is not that painful.
+#
+# Here are four globbing expressions that appear to work.
 
 #file(GLOB SourceFileList ${SourceDir}*.cc)
 #DisplayList("Source Files" "${SourceFileList}")
@@ -51,9 +55,6 @@ set(TestHeaderDir "${ProjectRootDir}Test/")
 
 #file(GLOB TestHeaderFileList ${TestHeaderDir}*.h)
 #DisplayList("Test Header Files" "${TestHeaderFileList}")
-
-#
-# When there is only one place to update file list it is not that painful:
 
 set(SourceFileList
 	"${SourceDir}Bounds.cc"
@@ -121,6 +122,7 @@ set(TestHeaderFileList
 	"${TestHeaderDir}Targa.h"
 	"${TestHeaderDir}Test.h"
 )
+
 DisplayList("Test Header Files" "${TestHeaderFileList}")
 
 ################################################################################
@@ -183,6 +185,7 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 ################################################################################
 # Set up build 
 
+# When using the CMake-gui this creates a checkbox
 option(BuildStatic "Set for Static library, unset for Dynamic library." ON)
 if(BuildStatic)
     set(BuildType "STATIC")
@@ -195,10 +198,22 @@ include_directories(
     "${TestHeaderDir}"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+if(CompilerDesignNix)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+endif(CompilerDesignNix)
+
+if(CompilerIsMsvc)
+    # Put msvc compiler flags here.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3") 
+endif(CompilerIsMsvc)
+
+set(LinkLibraries "")
+if(SystemIsLinux)
+    set(LinkLibraries rt X11 Xtst Xinerama)
+endif(SystemIsLinux)
 
 add_library(Robot "${BuildType}" "${TestSourceFileList}")
-target_link_libraries(Robot rt X11 Xtst Xinerama)
+target_link_libraries(Robot "${LinkLibraries}")
 
 add_executable(Test "${SourceFileList}")
 target_link_libraries(Test Robot)
@@ -209,7 +224,7 @@ target_link_libraries(Test Robot)
 # d in debug build
 # -DSHARED 
 # objective C++
-# pthreads
+
 # Windows Linking
 # All of Peon
 # .BIN in the names
