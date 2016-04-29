@@ -133,17 +133,17 @@ set(SystemIsWindows OFF)
 set(SystemIsMacOSX OFF)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    message(STATUS "\t\tDetected OS as 'Linux'.")
+    message(STATUS "\tDetected OS as 'Linux'.")
     set(SystemIsLinux ON)
 endif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-    message(STATUS "\t\tDetected OS as 'Windows'.")
+    message(STATUS "\tDetected OS as 'Windows'.")
     set(SystemIsWindows ON)
 endif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-    message(STATUS "\t\tDetected OS as 'Mac OS X'.")
+    message(STATUS "\tDetected OS as 'Mac OS X'.")
     set(SystemIsMacOSX ON)
 endif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
 
@@ -159,25 +159,25 @@ set(CompilerDesignNix OFF)
 set(CompilerDesignMS OFF)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    message(STATUS "\t\tDetected compiler as 'GCC'.")
+    message(STATUS "\tDetected compiler as 'GCC'.")
     set(CompilerIsGCC ON)
     set(CompilerDesignNix ON)
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    message(STATUS "\t\tDetected compiler as 'Clang'.")
+    message(STATUS "\tDetected compiler as 'Clang'.")
     set(CompilerIsClang ON)
     set(CompilerDesignNix ON)
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    message(STATUS "\t\tDetected compiler as 'Intel'.")
+    message(STATUS "\tDetected compiler as 'Intel'.")
     set(CompilerIsIntel ON)
     set(CompilerDesignNix ON)
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    message(STATUS "\t\tDetected compiler as 'MSVC'.")
+    message(STATUS "\tDetected compiler as 'MSVC'.")
     set(CompilerIsMsvc ON)
     set(CompilerDesignMS ON)
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -191,7 +191,9 @@ if(BuildStatic)
     set(BuildType "STATIC")
 else(BuildStatic)
     set(BuildType "SHARED")
+    add_definitions(-DBUILDING_ROBOT_SHARED)
 endif(BuildStatic)
+message(STATUS "\tLibrary Build type '${BuildType}'.")
 
 include_directories(
     "${HeaderDir}"
@@ -212,6 +214,10 @@ if(SystemIsLinux)
     set(LinkLibraries rt X11 Xtst Xinerama)
 endif(SystemIsLinux)
 
+if(SystemIsLinux)
+    set(LinkLibraries rt X11 Xtst Xinerama)
+endif(SystemIsLinux)
+
 add_library(Robot "${BuildType}" "${TestSourceFileList}")
 target_link_libraries(Robot "${LinkLibraries}")
 
@@ -224,7 +230,6 @@ target_link_libraries(Test Robot)
 # d in debug build
 # -DSHARED 
 # objective C++
-
 # Windows Linking
 # All of Peon
 # .BIN in the names
