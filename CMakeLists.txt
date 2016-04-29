@@ -191,7 +191,6 @@ if(BuildStatic)
     set(BuildType "STATIC")
 else(BuildStatic)
     set(BuildType "SHARED")
-    add_definitions(-DBUILDING_ROBOT_SHARED)
 endif(BuildStatic)
 message(STATUS "\tLibrary Build type '${BuildType}'.")
 
@@ -209,6 +208,12 @@ if(CompilerIsMsvc)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3") 
 endif(CompilerIsMsvc)
 
+if(SystemIsWindows AND CompilerIsGCC)
+        # Put mingw compiler flags here.
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ") 
+endif(SystemIsWindows AND CompilerIsGCC)
+
+
 set(LinkLibraries "")
 if(SystemIsLinux)
     set(LinkLibraries rt X11 Xtst Xinerama)
@@ -218,22 +223,44 @@ if(SystemIsLinux)
     set(LinkLibraries rt X11 Xtst Xinerama)
 endif(SystemIsLinux)
 
-add_library(Robot "${BuildType}" "${TestSourceFileList}")
-target_link_libraries(Robot "${LinkLibraries}")
+################################################################################
+# Make build targets
 
-add_executable(Test "${SourceFileList}")
+# For those unfamiliar with CMake. When it spits out build files, like make
+# files, ninja scripts or vs solutions, these are the top level objects 
+# presented to the developer.
+#
+# So a dev can type "make Robot" to build the library or can type "ninja Test"
+# to build Test and everything it requires.
+#
+# If used to create files for IDEs like Code::Blocks, visual studio, or
+# QtCreator these will show up appropriately as different projects or build
+# targets.
+
+add_library(Robot "${BuildType}" "${HeaderFileList}" "${SourceFileList}")
+add_executable(Test "${TestHeaderFileList}" "${TestSourceFileList}")
+
+################################################################################
+# Link Build Targets
+
+target_link_libraries(Robot "${LinkLibraries}")
 target_link_libraries(Test Robot)
 
-# TODO
+if(NOT BuildStatic)
+    # Adds the definition when building robot
+    target_compile_definitions(Robot PRIVATE -DBUILDING_ROBOT_SHARED)
+    # Adds the definition when something else links against Robot
+    target_compile_definitions(Robot INTERFACE -DUSING_ROBOT_SHARED)
+endif(NOT BuildStatic)
 
+
+# TODO
 # install process
 # d in debug build
-# -DSHARED 
-# objective C++
-# Windows Linking
+# objective C++ and other mac stuff
 # All of Peon
 # .BIN in the names
-# Figure out any special VS specific logic.
+# Figure out any special VS specific logic. I don't think is any beyound /W3
 
 
 
