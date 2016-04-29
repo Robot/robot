@@ -80,7 +80,7 @@
 
 #else
 
-    #define _COMPILER
+    #define NIX_COMPILER
 
 #endif
 
@@ -158,17 +158,20 @@
 // Types                                                                      //
 //----------------------------------------------------------------------------//
 
+
+#include <cstdint>
+
 ROBOT_NS_BEGIN
 
-typedef signed char			int8;		// Signed  8-Bit integer
-typedef signed short		int16;		// Signed 16-Bit integer
-typedef signed int			int32;		// Signed 32-Bit integer
-typedef signed long long	int64;		// Signed 64-Bit integer
+typedef std::int8_t   			int8;		// Signed  8-Bit integer
+typedef std::int16_t     		int16;		// Signed 16-Bit integer
+typedef	std::int32_t     		int32;		// Signed 32-Bit integer
+typedef std::int64_t 	        int64;		// Signed 64-Bit integer
 
-typedef unsigned char		uint8;		// Unsigned  8-Bit integer
-typedef unsigned short		uint16;		// Unsigned 16-Bit integer
-typedef unsigned int		uint32;		// Unsigned 32-Bit integer
-typedef unsigned long long	uint64;		// Unsigned 64-Bit integer
+typedef std::uint8_t     		uint8;		// Unsigned  8-Bit integer
+typedef std::uint16_t     		uint16;		// Unsigned 16-Bit integer
+typedef std::uint32_t     		uint32;		// Unsigned 32-Bit integer
+typedef std::uint64_t        	uint64;		// Unsigned 64-Bit integer
 
 typedef float				real32;		// 32-Bit float value
 typedef double				real64;		// 64-Bit float value
