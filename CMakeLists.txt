@@ -194,10 +194,15 @@ else(BuildStatic)
 endif(BuildStatic)
 message(STATUS "\tLibrary Build type '${BuildType}'.")
 
-include_directories(
-    "${HeaderDir}"
-    "${TestHeaderDir}"
-)
+if(CompilerIsGCC)
+    add_definitions("-iquote${HeaderDir}" "-iquote${TestHeaderDir}")
+else(CompilerIsGCC)
+    include_directories("${HeaderDir}" "${TestHeaderDir}")
+endif(CompilerIsGCC)
+
+################################################################################
+# System Specific Settings
+
 
 if(CompilerDesignNix)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
@@ -209,19 +214,10 @@ if(CompilerIsMsvc)
 endif(CompilerIsMsvc)
 
 if(SystemIsWindows AND CompilerIsGCC)
-        # Put mingw compiler flags here.
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ") 
+    # Put mingw compiler flags here.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
 endif(SystemIsWindows AND CompilerIsGCC)
 
-
-set(LinkLibraries "")
-if(SystemIsLinux)
-    set(LinkLibraries rt X11 Xtst Xinerama)
-endif(SystemIsLinux)
-
-if(SystemIsLinux)
-    set(LinkLibraries rt X11 Xtst Xinerama)
-endif(SystemIsLinux)
 
 ################################################################################
 # Make build targets
@@ -242,6 +238,15 @@ add_executable(Test "${TestHeaderFileList}" "${TestSourceFileList}")
 
 ################################################################################
 # Link Build Targets
+
+set(LinkLibraries "")
+if(SystemIsLinux)
+    set(LinkLibraries rt X11 Xtst Xinerama)
+endif(SystemIsLinux)
+
+if(SystemIsLinux)
+    set(LinkLibraries rt X11 Xtst Xinerama)
+endif(SystemIsLinux)
 
 target_link_libraries(Robot "${LinkLibraries}")
 target_link_libraries(Test Robot)
