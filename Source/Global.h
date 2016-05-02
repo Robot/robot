@@ -65,22 +65,45 @@
 
 #else
 
-	#error Your operating system is not supported
+    #error Your operating system is not supported.
 
 #endif
 
 
 //----------------------------------------------------------------------------//
-// Platforms                                                                  //
+// Compilers                                                                  //
 //----------------------------------------------------------------------------//
 
 #if(_MSC_VER)
 
-    #define VS_COMPILER
+    #define ROBOT_VS_COMPILER_GROUP
+
+    #if (_MSC_VER == 1900)
+        #define ROBOT_VS_COMPILER_2015_14
+    #elif (_MSC_VER == 1800)
+        #define ROBOT_VS_COMPILER_2013_12
+    #elif (_MSC_VER == 1700)
+        #define ROBOT_VS_COMPILER_2011_11
+    #elif (_MSC_VER == 1600)
+        #define ROBOT_VS_COMPILER_2010_10
+    #else
+        #error Your version of microsoft visual C++ is not supported.
+    #endif
 
 #else
 
-    #define NIX_COMPILER
+    #define ROBOT_NIX_COMPILER_GROUP
+
+    #if defined(__clang__)
+        #define ROBOT_CLANG_COMPILER
+    #elif defined(__MINGW32__)
+        #define ROBOT_MINGW_COMPILER
+    #elif defined(__GNUC__) || defined(__GNUG__)
+        // Must be last because Clange will report as an old Version of GCC and
+        // who knows what MinGW will do that seems crazy but makes only on deep
+        // inspection of GCC interactions with windows.
+        #define ROBOT_GCC_COMPILER
+    #endif
 
 #endif
 

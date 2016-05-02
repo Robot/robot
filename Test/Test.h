@@ -23,8 +23,11 @@ using std::endl;
 using std::ostream;
 using std::istream;
 
-using std::  uppercase;
+using std::uppercase;
 using std::nouppercase;
+
+#include<ios>
+using std::boolalpha;
 
 #include <iomanip>
 using std::setw;
@@ -171,7 +174,13 @@ inline ostream& operator << (ostream& out, const Bounds& bounds)
 	return out;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
+inline void WaitForEnter(const string& message = string("Press enter to continue."))
+{
+    cout << endl << message << endl;
+    getchar();
+}
 
 //----------------------------------------------------------------------------//
 // Functions                                                                  //

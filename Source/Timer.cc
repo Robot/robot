@@ -222,7 +222,7 @@ uint64 Timer::GetCpuTime (void)
 	}
 
     // Should never happen
-    #ifdef NIX_COMPILER
+    #ifdef ROBOT_NIX_COMPILER_GROUP
     	return GetTickCount();
     #else
 	    return GetTickCount64();

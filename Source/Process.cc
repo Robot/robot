@@ -372,7 +372,7 @@ bool Process::Open (int32 pid)
 
 #endif
 #ifdef ROBOT_OS_WIN
-	#ifdef NIX_COMPILER
+	#ifdef ROBOT_NIX_COMPILER_GROUP
 	
 		// This could be implemented, but will require some work and
 		// linking to at least one extra library.
@@ -380,7 +380,7 @@ bool Process::Open (int32 pid)
 		return false;
 		
 	#endif
-	#ifdef VS_COMPILER
+	#ifdef ROBOT_VS_COMPILER_GROUP
 	
 		mData->Handle = OpenProcess (PROCESS_VM_OPERATION |
 			 PROCESS_VM_READ  | PROCESS_QUERY_INFORMATION |
