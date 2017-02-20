@@ -17,7 +17,7 @@ using std::hex;
 using std::cout;
 using std::endl;
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstring>
 #include <iomanip>
 using std::setw;

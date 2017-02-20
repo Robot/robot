@@ -14,7 +14,7 @@
 #include "Timer.h"
 #ifdef ROBOT_OS_LINUX
 
-	#include <time.h>
+	#include <ctime>
 	#include <unistd.h>
 
 #endif

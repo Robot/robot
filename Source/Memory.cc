@@ -11,9 +11,9 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
+#include <cassert>
 #include "Process.h"
 #include "Memory.h"
-#include <assert.h>
 
 #include <algorithm>
 using std::search;
