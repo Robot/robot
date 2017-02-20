@@ -30,9 +30,18 @@
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define NOMINMAX
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+    
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
+
+	#ifdef ROBOT_NIX_COMPILER_GROUP
+	    // To make up for MinGW's winuser.h being incomplete
+	    // Do MinGW not have horizontal mouse wheels?
+		#define MOUSEEVENTF_HWHEEL 	0x01000
+	#endif
 
 #endif
 ROBOT_NS_BEGIN

@@ -26,7 +26,10 @@
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define NOMINMAX
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
 
@@ -218,8 +221,12 @@ uint64 Timer::GetCpuTime (void)
 		return (time * 1000) / frequency;
 	}
 
-	// Should never happen
-	return GetTickCount64();
+    // Should never happen
+    #ifdef ROBOT_NIX_COMPILER_GROUP
+    	return GetTickCount();
+    #else
+	    return GetTickCount64();
+	#endif
 
 #endif
 }

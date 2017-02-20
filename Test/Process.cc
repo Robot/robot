@@ -43,6 +43,101 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static bool TestPreproc (void)
+{
+    cout << "Warning: The next set of tests cannot be automated\n"
+         << "         Please validate your platform and compiler\n\n";
+
+    // Platform
+    bool platform_linux = false;
+    bool platform_mac = false;
+    bool platform_windows = false;
+
+#ifdef ROBOT_OS_LINUX
+    platform_linux = true;
+#endif
+#ifdef ROBOT_OS_MAC
+    platform_mac = true;
+#endif
+#ifdef ROBOT_OS_WIN
+    platform_windows = true;
+#endif
+
+    cout << "Check Platform:" << boolalpha
+         << "\n\tLinux    - " << platform_linux
+         << "\n\tMac OS X - " << platform_mac
+         << "\n\tWindows  - " << platform_windows;
+
+    // Compiler group
+    bool compiler_nix = false;
+    bool compiler_vc = false;
+
+#ifdef ROBOT_NIX_COMPILER_GROUP
+    compiler_nix = true;
+#endif
+#ifdef ROBOT_VS_COMPILER_GROUP
+    compiler_vc = true;
+#endif
+
+    cout << "\n\nCheck Compiler Group (type of args and pragmas accepted):" << boolalpha
+         << "\n\tUnix like - " << compiler_nix
+         << "\n\tMsvc like - " << compiler_vc << endl;
+
+
+    // Unixy compiler detection
+    bool compiler_clang = false;
+    bool compiler_mingw = false;
+    bool compiler_gcc = false;
+
+#ifdef ROBOT_CLANG_COMPILER
+    compiler_clang = true;
+#endif
+#ifdef ROBOT_MINGW_COMPILER
+    compiler_mingw = true;
+#endif
+#ifdef ROBOT_GCC_COMPILER
+    compiler_gcc = true;
+#endif
+
+    cout << "\n\nSpecific compiler:" << boolalpha
+         << "\n\tClang - " << compiler_clang
+         << "\n\tMinGW - " << compiler_mingw
+         << "\n\tGCC   - " << compiler_gcc << endl;
+
+
+    // microsoft compiler detection
+    bool compiler_vc10 = false;
+    bool compiler_vc11 = false;
+    bool compiler_vc12 = false;
+    bool compiler_vc14 = false;
+
+#ifdef ROBOT_VS_COMPILER_2010_10
+    compiler_vc10 = true;
+#endif
+#ifdef ROBOT_VS_COMPILER_2011_11
+    compiler_vc11 = true;
+#endif
+#ifdef ROBOT_VS_COMPILER_2013_12
+    compiler_vc12 = true;
+#endif
+#ifdef ROBOT_VS_COMPILER_2015_14
+    compiler_vc14 = true;
+#endif
+
+    cout << "\n\nMsvc versions:" << boolalpha
+         << "\n\tMsvc 2010 - " << compiler_vc10
+         << "\n\tMsvc 2011 - " << compiler_vc11
+         << "\n\tMsvc 2012 - " << compiler_vc12
+         << "\n\tMsvc 2014 - " << compiler_vc14 << endl;
+
+
+    WaitForEnter();
+
+    return true;
+
+}
+
+
 static bool TestInvalid (void)
 {
 	Process p1;
@@ -348,9 +443,10 @@ static bool TestGetList (void)
 bool TestProcess (void)
 {
 	cout << "BEGIN PROCESS TESTING\n------------------------------\n";
-	if (!TestInvalid()) { cout << ">> Invalid Failed\n\n"; return false; }
+    if (!TestPreproc()) { cout << ">> Preproc Failed\n\n"; return false; }
+    if (!TestInvalid()) { cout << ">> Invalid Failed\n\n"; return false; }
 	if (!TestSelect ()) { cout << ">> Select Failed \n\n"; return false; }
-	if (!TestCurrent()) { cout << ">> Current Failed\n\n"; return false; }
-	if (!TestGetList()) { cout << ">> GetList Failed\n\n"; return false; }
+    if (!TestCurrent()) { cout << ">> Current Failed\n\n"; return false; }
+    if (!TestGetList()) { cout << ">> GetList Failed\n\n"; return false; }
 	cout << ">> Success\n\n"; return true;
 }

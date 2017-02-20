@@ -65,11 +65,47 @@
 
 #else
 
-	#error Your operating system is not supported
+    #error Your operating system is not supported.
 
 #endif
 
 
+//----------------------------------------------------------------------------//
+// Compilers                                                                  //
+//----------------------------------------------------------------------------//
+
+#if(_MSC_VER)
+
+    #define ROBOT_VS_COMPILER_GROUP
+
+    #if (_MSC_VER == 1900)
+        #define ROBOT_VS_COMPILER_2015_14
+    #elif (_MSC_VER == 1800)
+        #define ROBOT_VS_COMPILER_2013_12
+    #elif (_MSC_VER == 1700)
+        #define ROBOT_VS_COMPILER_2011_11
+    #elif (_MSC_VER == 1600)
+        #define ROBOT_VS_COMPILER_2010_10
+    #else
+        #error Your version of microsoft visual C++ is not supported.
+    #endif
+
+#else
+
+    #define ROBOT_NIX_COMPILER_GROUP
+
+    #if defined(__clang__)
+        #define ROBOT_CLANG_COMPILER
+    #elif defined(__MINGW32__)
+        #define ROBOT_MINGW_COMPILER
+    #elif defined(__GNUC__) || defined(__GNUG__)
+        // Must be last because Clange will report as an old Version of GCC and
+        // who knows what MinGW will do that seems crazy but makes only on deep
+        // inspection of GCC interactions with windows.
+        #define ROBOT_GCC_COMPILER
+    #endif
+
+#endif
 
 //----------------------------------------------------------------------------//
 // Export                                                                     //
@@ -145,17 +181,20 @@
 // Types                                                                      //
 //----------------------------------------------------------------------------//
 
+
+#include <cstdint>
+
 ROBOT_NS_BEGIN
 
-typedef signed char			int8;		// Signed  8-Bit integer
-typedef signed short		int16;		// Signed 16-Bit integer
-typedef signed int			int32;		// Signed 32-Bit integer
-typedef signed long long	int64;		// Signed 64-Bit integer
+typedef std::int8_t   			int8;		// Signed  8-Bit integer
+typedef std::int16_t     		int16;		// Signed 16-Bit integer
+typedef	std::int32_t     		int32;		// Signed 32-Bit integer
+typedef std::int64_t 	        int64;		// Signed 64-Bit integer
 
-typedef unsigned char		uint8;		// Unsigned  8-Bit integer
-typedef unsigned short		uint16;		// Unsigned 16-Bit integer
-typedef unsigned int		uint32;		// Unsigned 32-Bit integer
-typedef unsigned long long	uint64;		// Unsigned 64-Bit integer
+typedef std::uint8_t     		uint8;		// Unsigned  8-Bit integer
+typedef std::uint16_t     		uint16;		// Unsigned 16-Bit integer
+typedef std::uint32_t     		uint32;		// Unsigned 32-Bit integer
+typedef std::uint64_t        	uint64;		// Unsigned 64-Bit integer
 
 typedef float				real32;		// 32-Bit float value
 typedef double				real64;		// 64-Bit float value

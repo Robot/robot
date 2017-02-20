@@ -62,7 +62,10 @@ using std::regex_match;
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define NOMINMAX
+	#ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
 
@@ -369,58 +372,68 @@ bool Process::Open (int32 pid)
 
 #endif
 #ifdef ROBOT_OS_WIN
-
-	mData->Handle = OpenProcess (PROCESS_VM_OPERATION |
-		 PROCESS_VM_READ  | PROCESS_QUERY_INFORMATION |
-		 PROCESS_VM_WRITE | PROCESS_TERMINATE, FALSE, pid);
-
-	// Check if handle is valid
-	if (mData->Handle != nullptr)
-	{
-		// Store the ProcID
-		mData->ProcID = pid;
-
-		// Check if system 64-Bit
-		if (Process::IsSys64Bit())
-		{
-			BOOL is32Bit = TRUE;
-			// Set whether process is 64-Bit
-			mData->Is64Bit = IsWow64Process
-				(mData->Handle, &is32Bit) &&
-				is32Bit == FALSE;
-		}
-
-	#ifdef ROBOT_ARCH_32
-		// Don't attach to x64 processes from x86 apps
-		if (mData->Is64Bit) { Close(); return false; }
+	#ifdef ROBOT_NIX_COMPILER_GROUP
+	
+		// This could be implemented, but will require some work and
+		// linking to at least one extra library.
+		// http://stackoverflow.com/questions/15554380/mingw-with-old-winbase-h-file
+		return false;
+		
 	#endif
+	#ifdef ROBOT_VS_COMPILER_GROUP
+	
+		mData->Handle = OpenProcess (PROCESS_VM_OPERATION |
+			 PROCESS_VM_READ  | PROCESS_QUERY_INFORMATION |
+			 PROCESS_VM_WRITE | PROCESS_TERMINATE, FALSE, pid);
 
-		DWORD size = MAX_PATH;
-		TCHAR link  [MAX_PATH];
-		string name, path;
-
-		if (QueryFullProcessImageName
-			// Try and get process path name
-			(mData->Handle, 0, link, &size))
+		// Check if handle is valid
+		if (mData->Handle != nullptr)
 		{
-			path = _UTF8Encode (link);
-			// Convert any backslashes to normal slashes
-			replace (path.begin(), path.end(), '\\', '/');
+			// Store the ProcID
+			mData->ProcID = pid;
 
-			// Retrieve the file part of the path
-			auto last = path.find_last_of ('/');
-			if (last == string::npos) name = path;
-			else name = path.substr (last + 1);
+			// Check if system 64-Bit
+			if (Process::IsSys64Bit())
+			{
+				BOOL is32Bit = TRUE;
+				// Set whether process is 64-Bit
+				mData->Is64Bit = IsWow64Process
+					(mData->Handle, &is32Bit) &&
+					is32Bit == FALSE;
+			}
 
-			// Store both the name and path values
-			mData->Name = name; mData->Path = path;
+		#ifdef ROBOT_ARCH_32
+			// Don't attach to x64 processes from x86 apps
+			if (mData->Is64Bit) { Close(); return false; }
+		#endif
+
+			DWORD size = MAX_PATH;
+			TCHAR link  [MAX_PATH];
+			string name, path;
+
+			if (QueryFullProcessImageName
+				// Try and get process path name
+				(mData->Handle, 0, link, &size))
+			{
+				path = _UTF8Encode (link);
+				// Convert any backslashes to normal slashes
+				replace (path.begin(), path.end(), '\\', '/');
+
+				// Retrieve the file part of the path
+				auto last = path.find_last_of ('/');
+				if (last == string::npos) name = path;
+				else name = path.substr (last + 1);
+
+				// Store both the name and path values
+				mData->Name = name; mData->Path = path;
+			}
+
+			return true;
 		}
 
-		return true;
-	}
+		return false;
 
-	return false;
-
+	#endif
 #endif
 }
 
