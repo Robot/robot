@@ -24,7 +24,7 @@ ROBOT_NS_BEGIN
 	class Module;
 	class Window;
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (push)
 	// Ignore the VS C4251 warning
 	#pragma warning (disable:4251)

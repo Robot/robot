@@ -18,7 +18,7 @@
 #include <unordered_map>
 ROBOT_NS_BEGIN
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (push)
 	// Ignore the VS C4251 warning
 	#pragma warning (disable:4251)
@@ -148,7 +148,7 @@ private:
 	static ValueMap mMap;
 };
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (pop)
 #endif
 

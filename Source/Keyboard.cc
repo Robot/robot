@@ -34,8 +34,10 @@ using std::string;
 #endif
 #ifdef ROBOT_OS_WIN
 
-	#define NOMINMAX
-	#define WIN32_LEAN_AND_MEAN
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+
 	#include <Windows.h>
 
 #endif
