@@ -52,86 +52,65 @@ int main (int argc, const char* argv[])
 	#endif
 #endif
 
-	cout << (Process::IsSys64Bit() ? " 64\n" : " 32\n");
+	cout << (Process::IsSys64Bit() ? " 64\n" : " 32\n")
+		 << "------------------------------\n"
+		 << "(C) 2010-2017 Robot Developers\n\n"
 
-	cout << "------------------------------\n"
-		 << "(C) 2010-2017 Robot Developers\n\n";
+		 << "This program is  designed to test the  Robot library for\n"
+		 << "compliance and compatibility on the target platform.  It\n"
+		 << "does this by running  a series of test cases  on various\n"
+		 << "components of the library. To get started, please select\n"
+		 << "the test cases you wish to run by using the  menu below.\n"
+		 << "Multiple tests can be run at the same time.\n\n";
 
-	// Check args
-	if (argc < 2)
+	while (true)
 	{
-		cout << "This program is designed  to test the Robot library for\n"
-			 << "compliance and compatibility on the target platform. It\n"
-			 << "does this by running a series of test  cases on various\n"
-			 << "components of the  library; if an error is detected all\n"
-			 << "subsequent tests are cancelled. In order to get started\n"
-			 << "please select the tests you wish to run via the command\n"
-			 << "line. Possible tests  include: types, timer,  keyboard,\n"
-			 << "mouse,  process, window,  memory, screen and clipboard.\n"
-			 << "Multiple tests can be run at the same time.\n\n";
+		cout << "MAIN MENU\n"
+			 << "------------------------------\n"
+			 << "  1: Types    \n"
+			 << "  2: Timer    \n"
+			 << "  3: Keyboard \n"
+			 << "  4: Mouse    \n"
+			 << "  5: Process  \n"
+			 << "  6: Window   \n"
+			 << "  7: Memory   \n"
+			 << "  8: Screen   \n"
+			 << "  9: Clipboard\n\n";
 
-		// All the tests have concluded
-		cout << "Press enter to exit\n";
-		getchar();
-		return 1;
-	}
+		// Ask the user to make a selection
+		cout << "Enter component(s) to test: ";
+		string input; getline (cin, input);
 
-	bool types     = false;
-	bool timer     = false;
-	bool keyboard  = false;
-	bool mouse     = false;
-	bool process   = false;
-	bool window    = false;
-	bool memory    = false;
-	bool screen    = false;
-	bool clipboard = false;
-
-	// Determine which tests to run
-	for (int i = 1; i < argc; ++i)
-	{
-		// Check for a special all keyword
-		if (strcmp (argv[i], "all") == 0)
+		int selection; cout << endl;
+		// Tokenize the input value
+		stringstream stream (input);
+		while (stream >> selection)
 		{
-			types     = true;
-			timer     = true;
-			keyboard  = true;
-			mouse     = true;
-			process   = true;
-			window    = true;
-			memory    = true;
-			screen    = true;
-			clipboard = true;
-			break;
+			bool result;
+			switch (selection)
+			{
+				case 1: result = TestTypes    (); break;
+				case 2: result = TestTimer    (); break;
+				case 3: result = TestKeyboard (); break;
+				case 4: result = TestMouse    (); break;
+				case 5: result = TestProcess  (); break;
+				case 6: result = TestWindow   (); break;
+				case 8: result = TestScreen   (); break;
+				case 9: result = TestClipboard(); break;
+
+				case 7:
+					cout <<   uppercase;
+					result = TestMemory();
+					cout << nouppercase;
+					break;
+
+				default: continue;
+			}
+
+			cout << (result ? ">> Success\n" : ">> Failure\n");
+			cout << "Press enter to continue...\n"; getchar();
 		}
-
-		if (strcmp (argv[i], "types"    ) == 0) types     = true; else
-		if (strcmp (argv[i], "timer"    ) == 0) timer     = true; else
-		if (strcmp (argv[i], "keyboard" ) == 0) keyboard  = true; else
-		if (strcmp (argv[i], "mouse"    ) == 0) mouse     = true; else
-		if (strcmp (argv[i], "process"  ) == 0) process   = true; else
-		if (strcmp (argv[i], "window"   ) == 0) window    = true; else
-		if (strcmp (argv[i], "memory"   ) == 0) memory    = true; else
-		if (strcmp (argv[i], "screen"   ) == 0) screen    = true; else
-		if (strcmp (argv[i], "clipboard") == 0) clipboard = true;
 	}
 
-	int res = 2;
-	while (res)
-	{
-		if (types     && !TestTypes    ()) break;
-		if (timer     && !TestTimer    ()) break;
-		if (keyboard  && !TestKeyboard ()) break;
-		if (mouse     && !TestMouse    ()) break;
-		if (process   && !TestProcess  ()) break;
-		if (window    && !TestWindow   ()) break;
-		if (memory    && !TestMemory   ()) break;
-		if (screen    && !TestScreen   ()) break;
-		if (clipboard && !TestClipboard()) break;
-		res = 0;
-	}
-
-	// All the tests have concluded
-	cout << "Press enter to exit\n";
-	getchar();
-	return res;
+	return 0;
 }

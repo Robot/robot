@@ -21,24 +21,22 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define TEST_INVALID_RW( mem, address )						\
-	{														\
-		VERIFY (mem. ReadData (address, nullptr, 0) == 0);	\
-		VERIFY (mem. ReadData (address, nullptr, 1) == 0);	\
-		VERIFY (mem. ReadData (address,   &data, 0) == 0);	\
-		VERIFY (mem. ReadData (address,   &data, 1) == 0);	\
-															\
-		VERIFY (mem.WriteData (address, nullptr, 0) == 0);	\
-		VERIFY (mem.WriteData (address, nullptr, 1) == 0);	\
-		VERIFY (mem.WriteData (address,   &data, 0) == 0);	\
-		VERIFY (mem.WriteData (address,   &data, 1) == 0);	\
-	}
+#define ALL( cont ) cont.begin(), cont.end()
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-//----------------------------------------------------------------------------//
-// Locals                                                                     //
-//----------------------------------------------------------------------------//
+#define TEST_INVALID_RW( mem, address )					\
+{														\
+	VERIFY (mem. ReadData (address, nullptr, 0) == 0);	\
+	VERIFY (mem. ReadData (address, nullptr, 1) == 0);	\
+	VERIFY (mem. ReadData (address,   &data, 0) == 0);	\
+	VERIFY (mem. ReadData (address,   &data, 1) == 0);	\
+														\
+	VERIFY (mem.WriteData (address, nullptr, 0) == 0);	\
+	VERIFY (mem.WriteData (address, nullptr, 1) == 0);	\
+	VERIFY (mem.WriteData (address,   &data, 0) == 0);	\
+	VERIFY (mem.WriteData (address,   &data, 1) == 0);	\
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -124,7 +122,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1653,63 +1651,100 @@ static bool TestFind (const Process& p)
 	return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// This section can be used to write miscellaneous tests on other applications.
 
-static bool TestMisc (void)
-{
-	return true;
-}
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestMemory (void)
 {
-	cout << "BEGIN MEMORY TESTING\n------------------------------\n";
+	char sPID[32]; Process p1 = Process::GetCurrent(), p2;
+	cout << uppercase << "Open a program and input PID: ";
+	cin.getline (sPID, 32);
+	auto pid = atoi (sPID);
 
-	cout << "Warning: Some set of tests cannot be automated\n"
-		 << "         Please execute the following commands\n\n";
-
-	cout << uppercase;
-	char input[32] = { 0 }; Process p1 = Process::GetCurrent(), p2;
-	cout << "Open a program and input PID: ";  cin.getline (input, 32);
-	int32 pid = atoi (input); VERIFY (pid > 0); VERIFY (p2.Open (pid));
+	VERIFY (pid > 0     ); VERIFY (p2.Open (pid)  );
 	VERIFY (p1.IsValid()); VERIFY (!p1.HasExited());
-	VERIFY (p2.IsValid()); VERIFY (!p2.HasExited()); cout << endl;
+	VERIFY (p2.IsValid()); VERIFY (!p2.HasExited());
 
 #ifdef ROBOT_ARCH_32
+
 	VERIFY (!p2.Is64Bit()); // We don't support 64-Bit targets through 32-Bit
+
 #endif
 
-	if (!TestInvalid (  )) { cout << ">> Invalid Failed   \n\n"; return false; }
-	if (!TestEquals  (  )) { cout << ">> Equals Failed    \n\n"; return false; }
-	if (!TestParams  (  )) { cout << ">> Params Failed    \n\n"; return false; }
-	if (!TestDebug   (p1)) { cout << ">> Debug p1 Failed  \n\n"; return false; }
-	if (!TestDebug   (p2)) { cout << ">> Debug p2 Failed  \n\n"; return false; }
-	if (!TestRegion  (p1)) { cout << ">> Region p1 Failed \n\n"; return false; }
-	if (!TestRegion  (p2)) { cout << ">> Region p2 Failed \n\n"; return false; }
-	if (!TestModules (p1)) { cout << ">> Modules p1 Failed\n\n"; return false; }
-	if (!TestModules (p2)) { cout << ">> Modules p2 Failed\n\n"; return false; }
-	if (!TestStress  (  )) { cout << ">> Modules p2 Failed\n\n"; return false; }
+	cout << "TEST MEMORY\n"
+		 << "------------------------------\n"
+		 << "   0: All         \n"
+		 << "   1: Invalid     \n"
+		 << "   2: Equals      \n"
+		 << "   3: Params      \n"
+		 << "   4: Debug       \n"
+		 << "   5: Region      \n"
+		 << "   6: Modules     \n"
+		 << "   7: Stress      \n"
+		 << "   8: RW    (Peon)\n"
+		 << "   9: Cache (Peon)\n"
+		 << "  10: Flags (Peon)\n"
+		 << "  11: Find  (Peon)\n\n";
 
-	if (p2.GetName().substr (0, 4) != "Peon")
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
+
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
 	{
-		cout << "Open peon app and input PID: "; cin.getline (input, 32);
-		int32 pid = atoi (input); VERIFY (pid > 0); VERIFY (p2.Open (pid));
-		VERIFY (p2.IsValid()); VERIFY (!p2.HasExited());
-		VERIFY (p2.GetName().substr (0, 4) == "Peon"); cout << endl;
+		// Check for valid selection requirements
+		if ((selection == 0 || selection >= 9) &&
+			p2.GetName().substr (0, 4) != "Peon")
+		{
+			cout << "These tests require selecting Peon!\n\n";
+			if (selection == 0) return false; else continue;
+		}
+
+		// Test everything
+		if (selection == 0)
+		{
+			return TestInvalid (  )
+				&& TestEquals  (  )
+				&& TestParams  (  )
+				&& TestDebug   (p1)
+				&& TestDebug   (p2)
+				&& TestRegion  (p1)
+				&& TestRegion  (p2)
+				&& TestModules (p1)
+				&& TestModules (p2)
+				&& TestStress  (  )
+				&& TestRW      (p2)
+				&& TestCache   (p2)
+				&& TestFlags   (p2)
+				&& TestFind    (p2);
+		}
+
+		switch (selection)
+		{
+			case  1: if (!TestInvalid (  )) return false; break;
+			case  2: if (!TestEquals  (  )) return false; break;
+			case  3: if (!TestParams  (  )) return false; break;
+			case  4: if (!TestDebug   (p1) &&
+						 !TestDebug   (p2)) return false; break;
+			case  5: if (!TestRegion  (p1) &&
+						 !TestRegion  (p2)) return false; break;
+			case  6: if (!TestModules (p1) &&
+						 !TestModules (p2)) return false; break;
+			case  7: if (!TestStress  (  )) return false; break;
+			case  8: if (!TestRW      (p2)) return false; break;
+			case  9: if (!TestCache   (p2)) return false; break;
+			case 10: if (!TestFlags   (p2)) return false; break;
+			case 11: if (!TestFind    (p2)) return false; break;
+		}
 	}
 
-#ifdef ROBOT_ARCH_32
-	VERIFY (!p2.Is64Bit()); // We don't support 64-Bit targets through 32-Bit
-#endif
-
-	if (!TestRW    (p2)) { cout << ">> RW Failed   \n\n"; return false; }
-	if (!TestCache (p2)) { cout << ">> Cache Failed\n\n"; return false; }
-	if (!TestFlags (p2)) { cout << ">> Flags Failed\n\n"; return false; }
-	if (!TestFind  (p2)) { cout << ">> Find Failed \n\n"; return false; }
-	if (!TestMisc  (  )) { cout << ">> Misc Failed \n\n"; return false; }
-
-	cout << nouppercase;
-	cout << ">> Success\n\n"; return true;
+	return true;
 }

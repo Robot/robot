@@ -46,7 +46,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,11 +120,6 @@ static bool TestInvalid (void)
 
 static bool TestSelect1 (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please execute the following instructions\n\n";
-
-	//----------------------------------------------------------------------------//
-
 #ifdef ROBOT_OS_LINUX
 
 	cout << "Open Leafpad and gedit";
@@ -373,11 +368,6 @@ static bool TestSelect1 (void)
 
 static bool TestSelect2 (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please execute the following instructions\n\n";
-
-	//----------------------------------------------------------------------------//
-
 #ifdef ROBOT_OS_LINUX
 
 	cout << "Open Leafpad";
@@ -494,9 +484,6 @@ static bool TestSelect2 (void)
 
 static bool TestGetList1 (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please verify the following window lists\n\n";
-
 #ifdef ROBOT_OS_LINUX
 
 	cout << "Open a couple Leafpads & gedits and press enter\n";
@@ -591,9 +578,6 @@ static bool TestGetList1 (void)
 
 static bool TestGetList2 (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please verify the following window lists\n\n";
-
 	cout << "Open a multi-window testing application";
 	getchar(); Window w, wx =
 		Window::GetActive();
@@ -619,16 +603,55 @@ static bool TestGetList2 (void)
 	return true;
 }
 
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestWindow (void)
 {
-	cout << "BEGIN WINDOW TESTING\n------------------------------\n";
 	VERIFY (Window::IsAxEnabled());
-	if (!TestInvalid ()) { cout << ">> Invalid Failed \n\n"; return false; }
-	if (!TestSelect1 ()) { cout << ">> Select1 Failed \n\n"; return false; }
-	if (!TestSelect2 ()) { cout << ">> Select2 Failed \n\n"; return false; }
-	if (!TestGetList1()) { cout << ">> GetList1 Failed\n\n"; return false; }
-	if (!TestGetList2()) { cout << ">> GetList2 Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+
+	cout << "TEST WINDOW\n"
+		 << "------------------------------\n"
+		 << "  0: All     \n"
+		 << "  1: Invalid \n"
+		 << "  2: Select1 \n"
+		 << "  3: Select2 \n"
+		 << "  4: GetList1\n"
+		 << "  5: GetList2\n\n";
+
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
+
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestInvalid ()
+				&& TestSelect1 ()
+				&& TestSelect2 ()
+				&& TestGetList1()
+				&& TestGetList2();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestInvalid ()) return false; break;
+			case 2: if (!TestSelect1 ()) return false; break;
+			case 3: if (!TestSelect2 ()) return false; break;
+			case 4: if (!TestGetList1()) return false; break;
+			case 5: if (!TestGetList2()) return false; break;
+		}
+	}
+
+	return true;
 }

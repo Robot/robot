@@ -22,7 +22,6 @@ using std::cout;
 using std::endl;
 using std::ostream;
 using std::istream;
-
 using std::  uppercase;
 using std::nouppercase;
 
@@ -49,6 +48,9 @@ using std::sort;
 using std::is_sorted;
 using std::unique;
 
+#include <sstream>
+using std::stringstream;
+
 #if (_MSC_VER != 1600)
 	#include <thread>
 	using std::thread;
@@ -73,10 +75,6 @@ ROBOT_NS_USE_ALL;
 			 << __LINE__ << "\a\n\n";	\
 		return false;					\
 	}
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define ALL( cont ) cont.begin(), cont.end()
 
 
 

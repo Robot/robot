@@ -38,7 +38,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,6 @@ static bool TestSelect (void)
 	Process p1, p2;
 	char input1[32] = { 0 };
 	char input2[32] = { 0 };
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please execute the following instructions\n\n";
 
 #ifdef ROBOT_OS_LINUX
 
@@ -187,9 +185,6 @@ static bool TestSelect (void)
 
 static bool TestCurrent (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please execute the following instructions\n\n";
-
 	cout << "Input this application's PID: ";
 	char input[32] = { 0 };
 	cin.getline (input, 32);
@@ -259,9 +254,6 @@ static bool TestCurrent (void)
 
 static bool TestGetList (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please verify the following process lists\n\n";
-
 #ifdef ROBOT_OS_LINUX
 
 	cout << "Open a couple Leafpads & gedits and press enter\n";
@@ -343,14 +335,50 @@ static bool TestGetList (void)
 	return true;
 }
 
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestProcess (void)
 {
-	cout << "BEGIN PROCESS TESTING\n------------------------------\n";
-	if (!TestInvalid()) { cout << ">> Invalid Failed\n\n"; return false; }
-	if (!TestSelect ()) { cout << ">> Select Failed \n\n"; return false; }
-	if (!TestCurrent()) { cout << ">> Current Failed\n\n"; return false; }
-	if (!TestGetList()) { cout << ">> GetList Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	cout << "TEST PROCESS\n"
+		 << "------------------------------\n"
+		 << "  0: All    \n"
+		 << "  1: Invalid\n"
+		 << "  2: Select \n"
+		 << "  3: Current\n"
+		 << "  4: GetList\n\n";
+
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
+
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestInvalid()
+				&& TestSelect ()
+				&& TestCurrent()
+				&& TestGetList();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestInvalid()) return false; break;
+			case 2: if (!TestSelect ()) return false; break;
+			case 3: if (!TestCurrent()) return false; break;
+			case 4: if (!TestGetList()) return false; break;
+		}
+	}
+
+	return true;
 }
