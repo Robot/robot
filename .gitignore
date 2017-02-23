@@ -2,6 +2,7 @@ ipch/
 .vs/
 *.db
 *.user
+*.tga
 *.sdf
 *.suo
 *.opensdf
