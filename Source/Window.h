@@ -22,7 +22,7 @@ ROBOT_NS_BEGIN
 	class Process;
 	class Window;
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (push)
 	// Ignore the VS C4251 warning
 	#pragma warning (disable:4251)
@@ -114,7 +114,7 @@ private:
 	std::shared_ptr<Data> mData;		// Shared information
 };
 
-#ifdef ROBOT_OS_WIN
+#ifdef VS_COMPILER
 	#pragma warning (pop)
 #endif
 
