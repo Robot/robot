@@ -16,7 +16,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,17 +66,11 @@ enum TestEnum1
 	Enum1Value4,
 };
 
-enum TestEnum2
-{
-	Enum2Value1,
-	Enum2Value2,
-};
-
-// CAUTION: Template specializations
-// cannot be in different namespaces
-// when compiling with GCC.
-
 ROBOT_NS_BEGIN
+
+	// CAUTION: Template specializations
+	// cannot be in different namespaces
+	// when compiling with GCC.
 
 	ROBOT_ENUM (TestEnum1)
 	{
@@ -86,6 +80,22 @@ ROBOT_NS_BEGIN
 		ROBOT_ENUM_MAP (Enum1Value4, "ENUM1Value4");
 	}
 
+ROBOT_NS_END
+
+////////////////////////////////////////////////////////////////////////////////
+
+enum TestEnum2
+{
+	Enum2Value1,
+	Enum2Value2,
+};
+
+ROBOT_NS_BEGIN
+
+	// CAUTION: Template specializations
+	// cannot be in different namespaces
+	// when compiling with GCC.
+
 	ROBOT_ENUM (TestEnum2)
 	{
 		ROBOT_ENUM_MAP (Enum2Value1);
@@ -94,7 +104,9 @@ ROBOT_NS_BEGIN
 
 ROBOT_NS_END
 
-bool TestEnum (void)
+////////////////////////////////////////////////////////////////////////////////
+
+static bool TestEnum (void)
 {
 	VERIFY (Enum<TestEnum1>::Size() == 4);
 	VERIFY (Enum<TestEnum2>::Size() == 2);
@@ -299,6 +311,8 @@ static Image TestGetImage (void)
 	i.GetData()[3] = 0xFF808080;
 	return i;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 static bool TestImage1 (void)
 {
@@ -1286,18 +1300,25 @@ static bool TestBounds (void)
 	return true;
 }
 
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestTypes (void)
 {
-	cout << "BEGIN TYPES TESTING\n------------------------------\n";
-	if (!TestGlobal()) { cout << ">> Global Failed\n\n"; return false; }
-	if (!TestEnum  ()) { cout << ">> Enum Failed  \n\n"; return false; }
-	if (!TestHash  ()) { cout << ">> Hash Failed  \n\n"; return false; }
-	if (!TestColor ()) { cout << ">> Color Failed \n\n"; return false; }
-	if (!TestImage1()) { cout << ">> Image1 Failed\n\n"; return false; }
-	if (!TestImage2()) { cout << ">> Image2 Failed\n\n"; return false; }
-	if (!TestRange ()) { cout << ">> Range Failed \n\n"; return false; }
-	if (!TestBounds()) { cout << ">> Bounds Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	cout << "TEST TYPES\n"
+		 << "------------------------------\n";
+
+	return TestGlobal()
+		&& TestEnum  ()
+		&& TestHash  ()
+		&& TestColor ()
+		&& TestImage1()
+		&& TestImage2()
+		&& TestRange ()
+		&& TestBounds();
 }

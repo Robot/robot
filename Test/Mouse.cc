@@ -17,7 +17,7 @@ static Mouse m;
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,10 +34,7 @@ static bool TestLive (void)
 	Mouse::SetPos ( 50, 200); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X ==  50 && p.Y == 200);
 	Mouse::SetPos (200,  50); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X == 200 && p.Y ==  50);
 	Mouse::SetPos (  0,   0); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p.X ==   0 && p.Y ==   0);
-	Mouse::SetPos (old     ); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p == old);
-
-	cout << "\nWarning: The next set of tests cannot be automated\n"
-		 << "         Please review the following instructions!\n\n";
+	Mouse::SetPos (old     ); Timer::Sleep (1000); p = Mouse::GetPos(); VERIFY (p == old); cout << endl;
 
 	cout << "- Live testing will be performed in sets\n"
 		 << "- Press enter to begin testing a new set\n"
@@ -103,6 +100,7 @@ static bool TestLive (void)
 	Mouse::SetPos (old);
 	m.Release (ButtonRight);
 
+	cout << endl;
 	return true;
 }
 
@@ -110,9 +108,6 @@ static bool TestLive (void)
 
 static bool TestGetState (void)
 {
-	cout << "\nWarning: The next set of tests cannot be automated\n"
-		 << "         Please review the following instructions!\n\n";
-
 	cout << "- Press buttons and verify output\n"
 		 << "- Press enter to begin testing\n"
 		 << "- Press escape to stop testing\n";
@@ -147,12 +142,44 @@ static bool TestGetState (void)
 	return true;
 }
 
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestMouse (void)
 {
-	cout << "BEGIN MOUSE TESTING\n------------------------------\n";
-	if (!TestLive    ()) { cout << ">> Live Test Failed\n\n"; return false; }
-	if (!TestGetState()) { cout << ">> Get State Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	cout << "TEST MOUSE\n"
+		 << "------------------------------\n"
+		 << "  0: All      \n"
+		 << "  1: Live Test\n"
+		 << "  2: GetState \n\n";
+
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
+
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestLive    ()
+				&& TestGetState();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestLive    ()) return false; break;
+			case 2: if (!TestGetState()) return false; break;
+		}
+	}
+
+	return true;
 }

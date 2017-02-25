@@ -17,7 +17,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -365,7 +365,7 @@ static bool TestSpeed (void)
 	}
 
 	VERIFY (Clipboard::Clear());
-	cout << endl;
+	cout << "\n\n";
 
 #endif
 
@@ -382,14 +382,40 @@ static bool TestSpeed (void)
 
 bool TestClipboard (void)
 {
-	cout << "BEGIN CLIPBOARD TESTING\n------------------------------\n";
+	cout << "TEST CLIPBOARD\n"
+		 << "------------------------------\n"
+		 << "  0: All  \n"
+		 << "  1: Linux\n"
+		 << "  2: Text \n"
+		 << "  3: Image\n"
+		 << "  4: Speed\n\n";
 
-	cout << "Warning: Some set of tests cannot be automated\n"
-		 << "         Please execute the following commands\n\n";
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
 
-	if (!TestLinux()) { cout << ">> Linux Failed\n\n"; return false; }
-	if (!TestText ()) { cout << ">> Text Failed \n\n"; return false; }
-	if (!TestImage()) { cout << ">> Image Failed\n\n"; return false; }
-	if (!TestSpeed()) { cout << ">> Speed Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestLinux()
+				&& TestText ()
+				&& TestImage()
+				&& TestSpeed();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestLinux()) return false; break;
+			case 2: if (!TestText ()) return false; break;
+			case 3: if (!TestImage()) return false; break;
+			case 4: if (!TestSpeed()) return false; break;
+		}
+	}
+
+	return true;
 }

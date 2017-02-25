@@ -17,7 +17,7 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +333,7 @@ static bool TestGrab (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static bool TestSpeed (void)
+static bool TestPerf (void)
 {
 	Timer timer;
 	Image image (1920, 1080);
@@ -379,7 +379,7 @@ static bool TestSpeed (void)
 		cout << timer() << " ";
 	}
 
-	cout << endl;
+	cout << "\n\n";
 	return true;
 }
 
@@ -393,15 +393,43 @@ static bool TestSpeed (void)
 
 bool TestScreen (void)
 {
-	cout << "BEGIN SCREEN TESTING\n------------------------------\n";
+	cout << "TEST SCREEN\n"
+		 << "------------------------------\n"
+		 << "  0: All    \n"
+		 << "  1: Invalid\n"
+		 << "  2: Aero   \n"
+		 << "  3: Sync   \n"
+		 << "  4: Grab   \n"
+		 << "  5: Perf   \n\n";
 
-	cout << "Warning: Some set of tests cannot be automated\n"
-		 << "         Please execute the following commands\n\n";
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
 
-	if (!TestInvalid()) { cout << ">> Invalid Failed\n\n"; return false; }
-	if (!TestAero   ()) { cout << ">> Aero Failed   \n\n"; return false; }
-	if (!TestSync   ()) { cout << ">> Sync Failed   \n\n"; return false; }
-	if (!TestGrab   ()) { cout << ">> Grab Failed   \n\n"; return false; }
-	if (!TestSpeed  ()) { cout << ">> Speed Failed  \n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestInvalid()
+				&& TestAero   ()
+				&& TestSync   ()
+				&& TestGrab   ()
+				&& TestPerf   ();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestInvalid()) return false; break;
+			case 2: if (!TestAero   ()) return false; break;
+			case 3: if (!TestSync   ()) return false; break;
+			case 4: if (!TestGrab   ()) return false; break;
+			case 5: if (!TestPerf   ()) return false; break;
+		}
+	}
+
+	return true;
 }

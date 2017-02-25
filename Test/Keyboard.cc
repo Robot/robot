@@ -39,7 +39,7 @@ static Keyboard k;
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -502,9 +502,17 @@ static bool TestCompiler (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Whether to continue running the thread
+static volatile bool resumeThread = false;
+
+////////////////////////////////////////////////////////////////////////////////
+
 static void LiveThread (void)
 {
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Click (Key0);
 	k.Click (Key1);
 	k.Click (Key2);
@@ -518,6 +526,9 @@ static void LiveThread (void)
 	k.Click (KeyReturn);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Click (KeyA);
 	k.Click (KeyB);
 	k.Click (KeyC);
@@ -547,6 +558,9 @@ static void LiveThread (void)
 	k.Click (KeyReturn);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Press (KeyShift);
 	k.Click (KeyA);
 	k.Click (KeyB);
@@ -578,6 +592,9 @@ static void LiveThread (void)
 	k.Click (KeyReturn);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Click (KeyAdd);
 	k.Click (KeySubtract);
 	k.Click (KeyMultiply);
@@ -596,6 +613,9 @@ static void LiveThread (void)
 	k.Click (KeyEnter);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Click (KeyMinus);
 	k.Click (KeyEqual);
 	k.Click (KeyBackspace);
@@ -615,6 +635,9 @@ static void LiveThread (void)
 	k.Click (KeyReturn);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Press (KeyShift);
 	k.Click (KeyGrave);
 	k.Click (KeyMinus);
@@ -632,8 +655,13 @@ static void LiveThread (void)
 	k.Click (KeyReturn);
 
 	Timer::Sleep (500);
+	if (!resumeThread)
+		return;
+
 	k.Click ("+Hello +Robo<<<+(obot)+1~");
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 static bool TestLive (void)
 {
@@ -645,44 +673,50 @@ static bool TestLive (void)
 	getchar();
 
 	char input[32] = { 0 };
-	// Create live testing thread
-	std::thread live (LiveThread);
+	resumeThread = true;
+	// Create testing thread
+	thread live (LiveThread);
 
 	cout << "Numbers: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "0123456789") == 0);
+	if (strcmp (input, "0123456789"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Alphabet: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "abcdefghijklmnopqrstuvwxyz") == 0);
+	if (strcmp (input, "abcdefghijklmnopqrstuvwxyz"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Alphabet: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0);
+	if (strcmp (input, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Keypad: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "+-*/.0123456789") == 0);
+	if (strcmp (input, "+-*/.0123456789"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Punctuation: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "`-=[ ]\\;',./") == 0);
+	if (strcmp (input, "`-=[ ]\\;',./"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Punctuation: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "~_+{ }|:\"<>?") == 0);
+	if (strcmp (input, "~_+{ }|:\"<>?"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	cout << "Hello Robot: ";
 	cin.getline (input, 32);
-	VERIFY (strcmp (input, "Hello ROBOT!") == 0);
+	if (strcmp (input, "Hello ROBOT!"))
+		{ resumeThread = false; live.join(); VERIFY (false); }
 
 	// End thread
 	live.join();
+	cout << endl;
 
 #endif
-
-	cout << "\nWarning: The next set of tests cannot be automated\n"
-		 << "         Please review the following instructions!\n\n";
 
 	cout << "- Live testing will be performed in sets\n"
 		 << "- Press enter to begin testing a new set\n"
@@ -764,9 +798,6 @@ static bool TestLive (void)
 
 static bool TestGetState (void)
 {
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please review the following instructions!\n\n";
-
 	cout << "- Press keys and verify output\n"
 		 << "- Press enter to begin testing\n"
 		 << "- Press escape to stop testing\n";
@@ -916,13 +947,47 @@ static bool TestGetState (void)
 	return true;
 }
 
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestKeyboard (void)
 {
-	cout << "BEGIN KEYBOARD TESTING\n------------------------------\n";
-	if (!TestCompiler()) { cout << ">> Compiler Failed \n\n"; return false; }
-	if (!TestLive    ()) { cout << ">> Live Test Failed\n\n"; return false; }
-	if (!TestGetState()) { cout << ">> Get State Failed\n\n"; return false; }
-	cout << ">> Success\n\n"; return true;
+	cout << "TEST KEYBOARD\n"
+		 << "------------------------------\n"
+		 << "  0: All      \n"
+		 << "  1: Compiler \n"
+		 << "  2: Live Test\n"
+		 << "  3: GetState \n\n";
+
+	// Ask the user to make a selection
+	cout << "Enter component(s) to test: ";
+	string input; getline (cin, input);
+
+	int selection; cout << endl;
+	// Tokenize the input value
+	stringstream stream (input);
+	while (stream >> selection)
+	{
+		// Test everything
+		if (selection == 0)
+		{
+			return TestCompiler()
+				&& TestLive    ()
+				&& TestGetState();
+		}
+
+		switch (selection)
+		{
+			case 1: if (!TestCompiler()) return false; break;
+			case 2: if (!TestLive    ()) return false; break;
+			case 3: if (!TestGetState()) return false; break;
+		}
+	}
+
+	return true;
 }

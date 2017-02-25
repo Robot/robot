@@ -16,15 +16,13 @@
 
 
 //----------------------------------------------------------------------------//
-// Functions                                                                  //
+// Locals                                                                     //
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool TestTimer (void)
+static bool TestGeneric (void)
 {
-	cout << "BEGIN TIMER TESTING\n------------------------------\n";
-
 	Timer t1;   VERIFY (!t1.HasStarted());
 	Timer t2;   VERIFY (!t2.HasStarted());
 	t1.Reset(); VERIFY (!t1.HasStarted());
@@ -54,9 +52,6 @@ bool TestTimer (void)
 	VERIFY (t2() == t2.Restart()); VERIFY (t2() == t2.Reset  ());
 
 	//----------------------------------------------------------------------------//
-
-	cout << "Warning: The next set of tests cannot be automated\n"
-		 << "         Please verify the following results below\n\n";
 
 	t1.Start();
 	VERIFY ( t1.HasStarted());
@@ -170,5 +165,22 @@ bool TestTimer (void)
 
 	t1.Reset(); VERIFY (!t1.HasStarted());
 	t2.Reset(); VERIFY (!t2.HasStarted());
-	cout << ">> Success\n\n"; return true;
+
+	return true;
+}
+
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                                  //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool TestTimer (void)
+{
+	cout << "TEST TIMER\n"
+		 << "------------------------------\n";
+
+	return TestGeneric();
 }
