@@ -199,7 +199,8 @@ bool Image::Fill (const Color& color)
 	// Loop data and fill contents
 	uint32 argb = color.GetARGB();
 	for (uint32 i = 0; i < mLength; ++i)
-		mData[i] = argb; return true;
+		mData[i] = argb;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
