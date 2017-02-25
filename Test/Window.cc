@@ -21,26 +21,26 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define TEST_WINDOW										\
-	{													\
-		VERIFY (list1[i].IsValid());					\
-		VERIFY (list2[i].IsValid());					\
-														\
-		VERIFY ( (list1[i] == list2[i]));				\
-		VERIFY (!(list1[i] != list2[i]));				\
-														\
-		cout << setw (6) << list1[i].GetPID  ()			\
-			 << ": "     << list1[i].GetTitle()			\
-			 << "\n";									\
-	}
+#define TEST_WINDOW									\
+{													\
+	VERIFY (list1[i].IsValid());					\
+	VERIFY (list2[i].IsValid());					\
+													\
+	VERIFY ( (list1[i] == list2[i]));				\
+	VERIFY (!(list1[i] != list2[i]));				\
+													\
+	cout << setw (6) << list1[i].GetPID  ()			\
+		 << ": "     << list1[i].GetTitle()			\
+		 << "\n";									\
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define MINMAX_TEST( action )							\
-	Timer::Sleep (500);									\
-	cout << " - " action " = "							\
-		 << (w.IsMinimized() ? " Min " : "!Min ")		\
-		 << (w.IsMaximized() ? " Max " : "!Max ");		\
+#define MINMAX_TEST( action )						\
+	Timer::Sleep (500);								\
+	cout << " - " action " = "						\
+		 << (w.IsMinimized() ? " Min " : "!Min ")	\
+		 << (w.IsMaximized() ? " Max " : "!Max ");	\
 	getchar();
 
 

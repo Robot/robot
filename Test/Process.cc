@@ -21,19 +21,19 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define TEST_PROCESS									\
-	{													\
-		VERIFY ( list1[i].IsValid  ());					\
-		VERIFY ( list2[i].IsValid  ());					\
-		VERIFY (!list1[i].HasExited());					\
-														\
-		VERIFY ( (list1[i] == list2[i]));				\
-		VERIFY (!(list1[i] != list2[i]));				\
-														\
-		cout << setw (6) << list1[i].GetPID() << " "	\
-			 << (list1[i].Is64Bit() ? "x64 " : "x32 ")	\
-			 <<  list1[i].GetName() << endl;			\
-	}
+#define TEST_PROCESS								\
+{													\
+	VERIFY ( list1[i].IsValid  ());					\
+	VERIFY ( list2[i].IsValid  ());					\
+	VERIFY (!list1[i].HasExited());					\
+													\
+	VERIFY ( (list1[i] == list2[i]));				\
+	VERIFY (!(list1[i] != list2[i]));				\
+													\
+	cout << setw (6) << list1[i].GetPID() << " "	\
+		 << (list1[i].Is64Bit() ? "x64 " : "x32 ")	\
+		 <<  list1[i].GetName() << endl;			\
+}
 
 
 
