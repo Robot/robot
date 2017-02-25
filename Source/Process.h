@@ -20,7 +20,6 @@
 
 ROBOT_NS_BEGIN
 	class Process;
-	class Memory;
 	class Module;
 	class Window;
 

@@ -14,11 +14,11 @@
 #pragma once
 
 #include "Types.h"
+#include "Process.h"
 #include <memory>
 #include <vector>
 
 ROBOT_NS_BEGIN
-	class Process;
 
 #ifdef ROBOT_OS_WIN
 	#pragma warning (push)
