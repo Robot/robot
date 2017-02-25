@@ -812,7 +812,9 @@ bool Window::IsBorderless (void) const
 	if (result == nullptr) return false;
 	auto decorations = reinterpret_cast
 		<Hints*> (result)->Decorations;
-	XFree (result); return decorations == 0;
+	XFree (result);
+
+	return decorations == 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
@@ -1650,7 +1652,9 @@ Window Window::GetActive (void)
 	{
 		// Extract window from the result
 		long window = *((long*) active);
-		XFree (active); if (window != 0)
+		XFree (active);
+
+		if (window != 0)
 		{
 			// Set and return the foreground window
 			result.mData->XWin = (::Window) window;
@@ -1843,8 +1847,8 @@ bool Window::IsAxEnabled (bool options)
 #ifdef ROBOT_OS_MAC
 
 	// Statically load all required functions one time
-	static dispatch_once_t once; dispatch_once (&once,
-	^{
+	static dispatch_once_t once;
+	dispatch_once (&once, ^{
 		// Open the framework
 		void* handle = dlopen
 			("/System/Library/Frameworks/Application"
@@ -1908,7 +1912,8 @@ WindowList Window::GetList (const char* title, int32 pid)
 	WindowList result;
 	// Check if the title is empty
 	bool empty = title == nullptr;
-	regex regexp; if (!empty) {
+	regex regexp;
+	if (!empty) {
 		// Attempt to use a case-insensitive regex
 		try { regexp = regex (title, regex::icase); }
 		catch (...) { return result; }
