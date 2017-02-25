@@ -662,7 +662,8 @@ ModuleList Process::GetModules (const char* name) const
 
 	// Check if the name is empty
 	bool empty = name == nullptr;
-	regex regexp; if (!empty) {
+	regex regexp;
+	if (!empty) {
 		// Attempt to use a case-insensitive regex
 		try { regexp = regex (name, regex::icase); }
 		catch (...) { return result; }
@@ -952,7 +953,8 @@ ProcessList Process::GetList (const char* name)
 	ProcessList result;
 	// Check if the name is empty
 	bool empty = name == nullptr;
-	regex regexp; if (!empty) {
+	regex regexp;
+	if (!empty) {
 		// Attempt to use a case-insensitive regex
 		try { regexp = regex (name, regex::icase); }
 		catch (...) { return result; }

@@ -187,7 +187,9 @@ bool Clipboard::HasText (void)
 
 	// Verify that the type we want is currently available
 	if ([available isEqualToString: NSPasteboardTypeString])
-		return true; else return false;
+		return true;
+
+	return false;
 
 #endif
 #ifdef ROBOT_OS_WIN
