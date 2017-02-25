@@ -1661,10 +1661,14 @@ static bool TestFind (const Process& p)
 
 bool TestMemory (void)
 {
+	cout << "TEST MEMORY\n"
+		 << "------------------------------\n";
+
 	char sPID[32]; Process p1 = Process::GetCurrent(), p2;
 	cout << uppercase << "Open a program and input PID: ";
 	cin.getline (sPID, 32);
 	auto pid = atoi (sPID);
+	cout << endl;
 
 	VERIFY (pid > 0     ); VERIFY (p2.Open (pid)  );
 	VERIFY (p1.IsValid()); VERIFY (!p1.HasExited());
@@ -1676,9 +1680,7 @@ bool TestMemory (void)
 
 #endif
 
-	cout << "TEST MEMORY\n"
-		 << "------------------------------\n"
-		 << "   0: All         \n"
+	cout << "   0: All         \n"
 		 << "   1: Invalid     \n"
 		 << "   2: Equals      \n"
 		 << "   3: Params      \n"
