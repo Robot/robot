@@ -1704,7 +1704,7 @@ bool TestMemory (void)
 		if ((selection == 0 || selection >= 9) &&
 			p2.GetName().substr (0, 4) != "Peon")
 		{
-			cout << "These tests require selecting Peon!\n\n";
+			cout << "This test requires selecting Peon!\n\n";
 			if (selection == 0) return false; else continue;
 		}
 
@@ -1732,11 +1732,11 @@ bool TestMemory (void)
 			case  1: if (!TestInvalid (  )) return false; break;
 			case  2: if (!TestEquals  (  )) return false; break;
 			case  3: if (!TestParams  (  )) return false; break;
-			case  4: if (!TestDebug   (p1) &&
+			case  4: if (!TestDebug   (p1) ||
 						 !TestDebug   (p2)) return false; break;
-			case  5: if (!TestRegion  (p1) &&
+			case  5: if (!TestRegion  (p1) ||
 						 !TestRegion  (p2)) return false; break;
-			case  6: if (!TestModules (p1) &&
+			case  6: if (!TestModules (p1) ||
 						 !TestModules (p2)) return false; break;
 			case  7: if (!TestStress  (  )) return false; break;
 			case  8: if (!TestRW      (p2)) return false; break;
