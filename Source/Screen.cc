@@ -343,8 +343,8 @@ bool Screen::Synchronize (void)
 	// Validate workarea atom
 	if (NET_WORKAREA != None)
 	{
-		// Loop through all screens
-		for (auto screen : mScreens)
+		// Loop through every available screen value
+		for (uintptr i = 0; i < mScreens.size(); ++i)
 		{
 			::Window win = XRootWindow
 				(gDisplay, isVirtualDesktop ?
@@ -363,13 +363,13 @@ bool Screen::Synchronize (void)
 				type == XA_CARDINAL && format == 32 && nItems == 4)
 			{
 				long* usable = (long*) result;
-				screen->mUsable = Bounds
+				mScreens[i]->mUsable = Bounds
 					((int32) usable[0], (int32) usable[1],
 					 (int32) usable[2], (int32) usable[3]);
 
 				if (isVirtualDesktop)
-					// Confine work area to curr screen
-					screen->mUsable &= screen->mBounds;
+					// Confine the work area to the current screen
+					mScreens[i]->mUsable &= mScreens[i]->mBounds;
 			}
 
 			// Free the result if it got allocated
@@ -451,7 +451,7 @@ bool Screen::Synchronize (void)
 	// Check if one valid screen exists
 	if (mScreens.empty()) return false;
 
-	// Loop through every screen
+	// Loop through all screens
 	for (auto screen : mScreens)
 	{
 		// Add to current running total
@@ -496,7 +496,7 @@ Screen* Screen::GetScreen (const Point& point)
 
 Screen* Screen::GetScreen (int32 px, int32 py)
 {
-	// Loop through every screen
+	// Loop through all screens
 	for (auto screen : mScreens)
 	{
 		if (screen->mBounds.Contains (px, py))

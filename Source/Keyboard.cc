@@ -453,8 +453,8 @@ bool Keyboard::Click (const char* keys) const
 	KeyList list = KeyList();
 	if (Compile (keys, list))
 	{
-		// Iterate every key
-		for (auto key : list)
+		// Iterate keys and execute
+		for (const auto& key : list)
 		{
 			key.first ? Press (key.second) :
 					  Release (key.second);
