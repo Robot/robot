@@ -250,9 +250,9 @@ bool   Screen::IsLandscape (void) const { return mBounds.W >= mBounds.H; }
 
 bool Screen::Synchronize (void)
 {
-	// Loop through every available screen value
-	for (uintptr i = 0; i < mScreens.size(); ++i)
-		delete mScreens[i];
+	// Free the previous screens
+	for (auto screen : mScreens)
+		delete screen;
 
 	// Clear screens
 	mScreens.clear();
@@ -343,8 +343,8 @@ bool Screen::Synchronize (void)
 	// Validate workarea atom
 	if (NET_WORKAREA != None)
 	{
-		// Loop through every available screen value
-		for (uintptr i = 0; i < mScreens.size(); ++i)
+		// Loop through all screens
+		for (auto screen : mScreens)
 		{
 			::Window win = XRootWindow
 				(gDisplay, isVirtualDesktop ?
@@ -363,13 +363,13 @@ bool Screen::Synchronize (void)
 				type == XA_CARDINAL && format == 32 && nItems == 4)
 			{
 				long* usable = (long*) result;
-				mScreens[i]->mUsable = Bounds
+				screen->mUsable = Bounds
 					((int32) usable[0], (int32) usable[1],
 					 (int32) usable[2], (int32) usable[3]);
 
 				if (isVirtualDesktop)
-					// Confine the work area to the current screen
-					mScreens[i]->mUsable &= mScreens[i]->mBounds;
+					// Confine work area to curr screen
+					screen->mUsable &= screen->mBounds;
 			}
 
 			// Free the result if it got allocated
@@ -451,12 +451,12 @@ bool Screen::Synchronize (void)
 	// Check if one valid screen exists
 	if (mScreens.empty()) return false;
 
-	// Loop through every available screen value
-	for (uintptr i = 0; i < mScreens.size(); ++i)
+	// Loop through every screen
+	for (auto screen : mScreens)
 	{
-		// Add to the current running total
-		mTotalBounds |= mScreens[i]->mBounds;
-		mTotalUsable |= mScreens[i]->mUsable;
+		// Add to current running total
+		mTotalBounds |= screen->mBounds;
+		mTotalUsable |= screen->mUsable;
 	}
 
 	return true;
@@ -496,11 +496,11 @@ Screen* Screen::GetScreen (const Point& point)
 
 Screen* Screen::GetScreen (int32 px, int32 py)
 {
-	// Loop through every available screen value
-	for (uintptr i = 0; i < mScreens.size(); ++i)
+	// Loop through every screen
+	for (auto screen : mScreens)
 	{
-		if (mScreens[i]->mBounds.Contains (px, py))
-			return mScreens[i];
+		if (screen->mBounds.Contains (px, py))
+			return screen;
 	}
 
 	// The primary screen is always the first element

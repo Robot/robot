@@ -594,9 +594,8 @@ void Process::Exit (void)
 	auto list = Window::GetList
 		(nullptr, mData->ProcID);
 
-	// Close every open window in this process
-	for (uintptr i = 0; i < list.size(); ++i)
-		list[i].Close();
+	// Close every open window in the process
+	for (auto& window : list) window.Close();
 
 #endif
 }

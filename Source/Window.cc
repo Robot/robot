@@ -1991,8 +1991,8 @@ WindowList Window::GetList (const char* title, int32 pid)
 	{
 		// Retrieve list of current processes
 		ProcessList list = Process::GetList();
-		for (uintptr i = 0; i < list.size(); ++i)
-			processPID (list[i].GetPID());
+		for (const auto& process : list)
+			processPID (process.GetPID());
 	}
 
 	else
