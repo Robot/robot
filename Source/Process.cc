@@ -1063,6 +1063,27 @@ Process Process::GetCurrent (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+int32 Process::GetCurrentPID (void)
+{
+#ifdef ROBOT_OS_LINUX
+
+	return getpid();
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	return getpid();
+
+#endif
+#ifdef ROBOT_OS_WIN
+
+	return GetCurrentProcessId();
+
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 bool Process::IsSys64Bit (void)
 {
 	// Initialize only once

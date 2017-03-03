@@ -83,6 +83,8 @@ public:
 	static ProcessList	GetList			(const char* name  = nullptr);
 
 	static Process		GetCurrent		(void);
+	static int32		GetCurrentPID	(void);
+
 	static bool			IsSys64Bit		(void);
 
 public:
