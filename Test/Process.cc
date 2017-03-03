@@ -197,6 +197,10 @@ static bool TestCurrent (void)
 	VERIFY (p1.IsValid()); VERIFY (!p1.HasExited());
 	VERIFY (p2.IsValid()); VERIFY (!p2.HasExited());
 
+	VERIFY (        pid == Process::GetCurrentPID());
+	VERIFY (p1.GetPID() == Process::GetCurrentPID());
+	VERIFY (p2.GetPID() == Process::GetCurrentPID());
+
 	VERIFY (p1.GetPID() == pid);
 	VERIFY (p2.GetPID() == pid);
 
