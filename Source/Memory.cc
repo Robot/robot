@@ -683,12 +683,9 @@ Memory::RegionList Memory::GetRegions
 	region.Valid  = true;
 	region.Start  = start;
 
-	// Iterate through every mapping in the list
-	for (uintptr i = 0; i < mappings.size(); ++i)
+	// Loop through each mapping in list
+	for (const auto& current : mappings)
 	{
-		// Avoid dereferencing each iteration
-		const Mapping& current = mappings[i];
-
 		// Position at the start address
 		if (region.Start >= current.Stop)
 			continue;

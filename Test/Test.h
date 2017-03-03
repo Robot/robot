@@ -51,10 +51,8 @@ using std::unique;
 #include <sstream>
 using std::stringstream;
 
-#if (_MSC_VER != 1600)
-	#include <thread>
-	using std::thread;
-#endif
+#include <thread>
+using std::thread;
 
 #include "../Source/Robot.h"
 ROBOT_NS_USE_ALL;

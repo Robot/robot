@@ -126,12 +126,11 @@ public:
 		// Initialize the static parser
 		if (mMap.empty()) Enum<Type>();
 
-		// Search for a matching value
-		for (auto i = mMap.begin();
-			 i != mMap.end(); ++i)
+		// Find the matching value
+		for (const auto& i : mMap)
 		{
-			if (i->second == value)
-				return i->first;
+			if (i.second == value)
+				return i.first;
 		}
 
 		// Nothing was found

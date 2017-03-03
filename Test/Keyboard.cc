@@ -665,10 +665,6 @@ static void LiveThread (void)
 
 static bool TestLive (void)
 {
-#if (_MSC_VER == 1600)
-	cout << "Warning: This test section is unavailable in VS10!\n";
-#else
-
 	cout << "Press enter to begin live test";
 	getchar();
 
@@ -715,8 +711,6 @@ static bool TestLive (void)
 	// End thread
 	live.join();
 	cout << endl;
-
-#endif
 
 	cout << "- Live testing will be performed in sets\n"
 		 << "- Press enter to begin testing a new set\n"
