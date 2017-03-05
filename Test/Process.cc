@@ -50,10 +50,15 @@ static bool TestInvalid (void)
 	Process p3; VERIFY (!p3.Open (-1));
 	Process p4 (8888);
 
-	VERIFY (!p1.IsValid()); VERIFY (!p1.Is64Bit()); VERIFY (p1.HasExited());
-	VERIFY (!p2.IsValid()); VERIFY (!p2.Is64Bit()); VERIFY (p2.HasExited());
-	VERIFY (!p3.IsValid()); VERIFY (!p3.Is64Bit()); VERIFY (p3.HasExited());
-	VERIFY (!p4.IsValid()); VERIFY (!p4.Is64Bit()); VERIFY (p4.HasExited());
+	VERIFY (!p1.IsValid()); VERIFY (!p1.Is64Bit());
+	VERIFY (!p2.IsValid()); VERIFY (!p2.Is64Bit());
+	VERIFY (!p3.IsValid()); VERIFY (!p3.Is64Bit());
+	VERIFY (!p4.IsValid()); VERIFY (!p4.Is64Bit());
+
+	VERIFY (!p1.Exit()); VERIFY (!p1.Kill()); VERIFY (p1.HasExited());
+	VERIFY (!p2.Exit()); VERIFY (!p2.Kill()); VERIFY (p2.HasExited());
+	VERIFY (!p3.Exit()); VERIFY (!p3.Kill()); VERIFY (p3.HasExited());
+	VERIFY (!p4.Exit()); VERIFY (!p4.Kill()); VERIFY (p4.HasExited());
 
 	VERIFY (p1.GetPID() == 0); VERIFY (p1.GetHandle() == 0);
 	VERIFY (p2.GetPID() == 0); VERIFY (p2.GetHandle() == 0);
@@ -162,8 +167,8 @@ static bool TestSelect (void)
 
 	cout << "Type something in both apps then press enter";
 	getchar();
-	p1.Exit();
-	p2.Kill();
+	VERIFY (p1.Exit());
+	VERIFY (p2.Kill());
 	cout << "Close both applications and then press enter";
 	getchar();
 

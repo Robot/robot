@@ -74,8 +74,8 @@ public:
 	std::string			GetName			(void) const;
 	std::string			GetPath			(void) const;
 
-	void				Exit			(void);
-	void				Kill			(void);
+	bool				Exit			(void);
+	bool				Kill			(void);
 	bool				HasExited		(void) const;
 
 	ModuleList			GetModules		(const char* name  = nullptr) const;
