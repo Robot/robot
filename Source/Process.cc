@@ -573,22 +573,22 @@ string Process::GetPath (void) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Process::Exit (void)
+bool Process::Exit (void)
 {
-	// Check process validity
-	if (!IsValid()) return;
-
 #ifdef ROBOT_OS_LINUX
 
-	kill (mData->ProcID, SIGTERM);
+	return kill (mData->ProcID, SIGTERM) == 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	kill (mData->ProcID, SIGTERM);
+	return kill (mData->ProcID, SIGTERM) == 0;
 
 #endif
 #ifdef ROBOT_OS_WIN
+
+	// Check the process validity
+	if (!IsValid()) return false;
 
 	// Get every process window
 	auto list = Window::GetList
@@ -597,29 +597,29 @@ void Process::Exit (void)
 	// Close every open window in the process
 	for (auto& window : list) window.Close();
 
+	// True if not empty
+	return !list.empty();
+
 #endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Process::Kill (void)
+bool Process::Kill (void)
 {
-	// Check process validity
-	if (!IsValid()) return;
-
 #ifdef ROBOT_OS_LINUX
 
-	kill (mData->ProcID, SIGKILL);
+	return kill (mData->ProcID, SIGKILL) == 0;
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	kill (mData->ProcID, SIGKILL);
+	return kill (mData->ProcID, SIGKILL) == 0;
 
 #endif
 #ifdef ROBOT_OS_WIN
 
-	TerminateProcess (mData->Handle, -1);
+	return TerminateProcess (mData->Handle, -1) != FALSE;
 
 #endif
 }
