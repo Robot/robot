@@ -55,8 +55,10 @@ public:
 	Color		GetPixel		(const Point& point) const;
 	Color		GetPixel		(uint16 x, uint16 y) const;
 
-	void		SetPixel		(const Point& point, Color c);
-	void		SetPixel		(uint16 x, uint16 y, Color c);
+	void		SetPixel		(const Point& point,
+								 const Color& color);
+	void		SetPixel		(uint16 x, uint16 y,
+								 const Color& color);
 
 	bool		Fill			(const Color& color);
 	bool		Fill			(uint8 r, uint8 g,
