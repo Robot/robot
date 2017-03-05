@@ -172,21 +172,23 @@ Color Image::GetPixel (uint16 x, uint16 y) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Image::SetPixel (const Point& point, Color c)
+void Image::SetPixel (const Point& point,
+					  const Color& color)
 {
-	return SetPixel (point.X, point.Y, c);
+	return SetPixel (point.X, point.Y, color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Image::SetPixel (uint16 x, uint16 y, Color c)
+void Image::SetPixel (uint16 x, uint16 y,
+					  const Color& color)
 {
 	// Perform simple boundary check
 	if (x >= mWidth || y >= mHeight)
 		return;
 
-	// Set color at the specified coordinate
-	((Color*) mData) [x + (y * mWidth)] = c;
+	// Set the color at the specified coordinate
+	((Color*) mData) [x + (y * mWidth)] = color;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
