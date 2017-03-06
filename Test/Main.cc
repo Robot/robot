@@ -67,15 +67,16 @@ int main (int argc, const char* argv[])
 	{
 		cout << "MAIN MENU\n"
 			 << "------------------------------\n"
-			 << "  1: Types    \n"
-			 << "  2: Timer    \n"
-			 << "  3: Keyboard \n"
-			 << "  4: Mouse    \n"
-			 << "  5: Process  \n"
-			 << "  6: Window   \n"
-			 << "  7: Memory   \n"
-			 << "  8: Screen   \n"
-			 << "  9: Clipboard\n\n";
+			 << "   1: Types    \n"
+			 << "   2: Timer    \n"
+			 << "   3: Keyboard \n"
+			 << "   4: Mouse    \n"
+			 << "   5: Process  \n"
+			 << "   6: Window   \n"
+			 << "   7: Memory   \n"
+			 << "   8: Screen   \n"
+			 << "   9: Clipboard\n"
+			 << "  10: System   \n\n";
 
 		// Ask the user to make a selection
 		cout << "Enter component(s) to test: ";
@@ -89,14 +90,15 @@ int main (int argc, const char* argv[])
 			bool result;
 			switch (selection)
 			{
-				case 1: result = TestTypes    (); break;
-				case 2: result = TestTimer    (); break;
-				case 3: result = TestKeyboard (); break;
-				case 4: result = TestMouse    (); break;
-				case 5: result = TestProcess  (); break;
-				case 6: result = TestWindow   (); break;
-				case 8: result = TestScreen   (); break;
-				case 9: result = TestClipboard(); break;
+				case  1: result = TestTypes    (); break;
+				case  2: result = TestTimer    (); break;
+				case  3: result = TestKeyboard (); break;
+				case  4: result = TestMouse    (); break;
+				case  5: result = TestProcess  (); break;
+				case  6: result = TestWindow   (); break;
+				case  8: result = TestScreen   (); break;
+				case  9: result = TestClipboard(); break;
+				case 10: result = TestSystem   (); break;
 
 				case 7:
 					cout <<   uppercase;

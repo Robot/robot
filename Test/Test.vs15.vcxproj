@@ -46,6 +46,7 @@
     <ClCompile Include="Mouse.cc" />
     <ClCompile Include="Process.cc" />
     <ClCompile Include="Screen.cc" />
+    <ClCompile Include="System.cc" />
     <ClCompile Include="Targa.cc" />
     <ClCompile Include="Timer.cc" />
     <ClCompile Include="Types.cc" />

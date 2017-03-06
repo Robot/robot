@@ -182,3 +182,4 @@ bool TestWindow    (void);
 bool TestMemory    (void);
 bool TestScreen    (void);
 bool TestClipboard (void);
+bool TestSystem    (void);
