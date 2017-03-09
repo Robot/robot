@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // -------------------------------------------------------------------------- //
 //                                                                            //
-//                       (C) 2010-2016 Robot Developers                       //
-//                       (C) 2016 Chris Gregory czipperz@gmail.com            //
+//                       (C) 2010-2017 Robot Developers                       //
 //                       See LICENSE for licensing info                       //
 //                                                                            //
 // -------------------------------------------------------------------------- //
@@ -12,47 +11,53 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#include "User.h"
+#include "System.h"
+#ifdef ROBOT_OS_LINUX
 
-#if defined (ROBOT_OS_MAC) || \
-	defined (ROBOT_OS_LINUX)
-#include <unistd.h>
-#include <sys/types.h>
+	#include <unistd.h>
+
 #endif
+#ifdef ROBOT_OS_MAC
 
-#if defined (ROBOT_OS_WIN)
-#include <Winbase.h>
-#endif
+	#include <unistd.h>
 
-ROBOT_NS_BEGIN
-
-bool User::IsAdmin(void)
-{
-#if defined (ROBOT_OS_MAC) || \
-	defined (ROBOT_OS_LINUX)
-	return getuid() == 0;
 #endif
 #ifdef ROBOT_OS_WIN
-	BOOL b;
-	SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
-	PSID AdministratorsGroup;
-	b = AllocateAndInitializeSid(
-		&NtAuthority,
-		2,
-		SECURITY_BUILTIN_DOMAIN_RID,
-		DOMAIN_ALIAS_RID_ADMINS,
-		0, 0, 0, 0, 0, 0,
-		&AdministratorsGroup);
-	if(b)
-	{
-		if (!CheckTokenMembership (NULL, AdministratorsGroup, &b))
-		{
-			b = FALSE;
-		}
-		FreeSid(AdministratorsGroup);
-	}
 
-	return b == TRUE;
+	#define NOMINMAX
+	#define WIN32_LEAN_AND_MEAN
+	#include <Windows.h>
+
+#endif
+ROBOT_NS_BEGIN
+
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                           System //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool System::IsUserAdmin (void)
+{
+#ifdef ROBOT_OS_LINUX
+
+	// TODO:
+	return false;
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	// TODO:
+	return false;
+
+#endif
+#ifdef ROBOT_OS_WIN
+
+	// TODO:
+	return false;
+
 #endif
 }
 

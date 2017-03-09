@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // -------------------------------------------------------------------------- //
 //                                                                            //
-//                       (C) 2010-2016 Robot Developers                       //
-//                       (C) 2016 Chris Gregory czipperz@gmail.com            //
+//                       (C) 2010-2017 Robot Developers                       //
 //                       See LICENSE for licensing info                       //
 //                                                                            //
 // -------------------------------------------------------------------------- //
@@ -25,12 +24,20 @@ ROBOT_NS_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class ROBOT_EXPORT User
+class ROBOT_EXPORT System
 {
-public:
-	////////////////////////////////////////////////////////////////////////////////
+private:
+	 System								(void);
+	~System								(void);
+	 System								(const System&  system);
+	 System								(      System&& system);
 
-	static bool IsAdmin(void);
+public:
+	static bool			IsUserAdmin		(void);
+
+private:
+	System&				operator =		(const System&  system);
+	System&				operator =		(      System&& system);
 };
 
 ROBOT_NS_END
