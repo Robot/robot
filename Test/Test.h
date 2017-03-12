@@ -174,6 +174,7 @@ inline ostream& operator << (ostream& out, const Bounds& bounds)
 //----------------------------------------------------------------------------//
 
 bool TestTypes     (void);
+bool TestSystem    (void);
 bool TestTimer     (void);
 bool TestKeyboard  (void);
 bool TestMouse     (void);
@@ -182,4 +183,3 @@ bool TestWindow    (void);
 bool TestMemory    (void);
 bool TestScreen    (void);
 bool TestClipboard (void);
-bool TestSystem    (void);

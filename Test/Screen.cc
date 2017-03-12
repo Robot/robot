@@ -106,9 +106,9 @@ static bool TestSync (void)
 		if (i == 0) { VERIFY (list[i] == main); }
 		       else { VERIFY (list[i] != main); }
 
-		const char* sPort =  list[i]->IsPortrait () ? "true" : "false";
-		const char* sLand =  list[i]->IsLandscape() ? "true" : "false";
-		const char* sMain = (list[i] == main      ) ? "true" : "false";
+		const char* sPort =  list[i]->IsPortrait () ? "True" : "False";
+		const char* sLand =  list[i]->IsLandscape() ? "True" : "False";
+		const char* sMain = (list[i] == main      ) ? "True" : "False";
 
 		cout << "Screen "  << i << endl
 			 << "Bounds: " << list[i]->GetBounds() << endl
