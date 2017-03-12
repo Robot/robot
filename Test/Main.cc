@@ -52,7 +52,7 @@ int main (int argc, const char* argv[])
 	#endif
 #endif
 
-	cout << (Process::IsSys64Bit() ? " 64\n" : " 32\n")
+	cout << (System::Is64Bit() ? " 64\n" : " 32\n")
 		 << "------------------------------\n"
 		 << "(C) 2010-2017 Robot Developers\n\n"
 
