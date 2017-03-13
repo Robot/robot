@@ -45,15 +45,24 @@ public:
 	static bool			 IsCompositing		(void);
 	static void			SetCompositing		(bool enabled);
 
-	static uint32		GetCpuCount			(void);
-	static uintptr		GetRamCount			(void);
+	static bool			AdjustPrivilege		(const char* privilege,
+											 bool enable = true);
 
 private:
-	static void			InitializeMemory	(void);
+	static void			Initialize			(void);
 
 private:
 	System&				operator =			(const System&  system);
 	System&				operator =			(      System&& system);
+
+private:
+	static bool			mInitialized;		// Class initialized
+	static bool			mIs64Bit;			// System is 64-Bit
+
+	static uintptr		mMinAddress;		// Minimum address
+	static uintptr		mMaxAddress32;		// Maximum address (32-Bit)
+	static uintptr		mMaxAddress64;		// Maximum address (64-Bit)
+	static uintptr		mPageSize;			// Size of a single page
 };
 
 ROBOT_NS_END
