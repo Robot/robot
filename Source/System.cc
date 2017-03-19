@@ -120,8 +120,116 @@ bool System::IsUserAdmin (void)
 #endif
 #ifdef ROBOT_OS_WIN
 
-	// NYI: Not yet implemented
-	return false;
+	// Based on the following implementation:
+	// http://support.microsoft.com/kb/118626
+
+	//----------------------------------------------------------------------------//
+
+	#define ACCESS_READ  1
+	#define ACCESS_WRITE 2
+
+	GENERIC_MAPPING genericMapping =
+	{
+		ACCESS_READ,  ACCESS_WRITE, 0,
+		ACCESS_READ | ACCESS_WRITE
+	};
+
+	BOOL result = FALSE;
+
+	HANDLE token    = nullptr;
+	HANDLE tokenImp = nullptr;
+	PSID   adminSID = nullptr;
+
+	DWORD status;
+	SID_IDENTIFIER_AUTHORITY
+		systemAuthoritySID =
+		SECURITY_NT_AUTHORITY;
+
+	SECURITY_DESCRIPTOR adminSD;
+	PACL  adminACL     = nullptr;
+	DWORD adminACLSize = 0;
+
+	PRIVILEGE_SET ps;
+	DWORD psSize = sizeof (PRIVILEGE_SET);
+	HANDLE processHeap = GetProcessHeap();
+
+	//----------------------------------------------------------------------------//
+
+	// Attempt to open the thread access token
+	if (!OpenThreadToken (GetCurrentThread(),
+		TOKEN_DUPLICATE | TOKEN_QUERY, TRUE, &token))
+	{
+		// Check for errors obtaining a token
+		if (GetLastError() != ERROR_NO_TOKEN)
+			return false;
+
+		// Attempt to open the process access token
+		if (!OpenProcessToken (GetCurrentProcess(),
+			TOKEN_DUPLICATE | TOKEN_QUERY, &token))
+			return false;
+	}
+
+	// AccessCheck requires impersonation-level token
+	if (!DuplicateToken (token, SecurityImpersonation,
+		&tokenImp)) goto exit;
+
+	//----------------------------------------------------------------------------//
+
+	// Create well-known SID that represents the admin group
+	if (!AllocateAndInitializeSid (&systemAuthoritySID, 2,
+		SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS,
+		0, 0, 0, 0, 0, 0, &adminSID)) goto exit;
+
+	// Initialize the admin security descriptor
+	if (!InitializeSecurityDescriptor (&adminSD,
+		SECURITY_DESCRIPTOR_REVISION)) goto exit;
+
+	adminACLSize =
+		// Compute size needed for the ACL struct
+		sizeof (ACL) + sizeof (ACCESS_ALLOWED_ACE)
+		+ GetLengthSid (adminSID) - sizeof (DWORD);
+
+	adminACL = (PACL) HeapAlloc
+		// Allocate mem for ACL struct
+		(processHeap, 0, adminACLSize);
+	if (adminACL == nullptr) goto exit;
+
+	// Initialize the ACL struct
+	if (!InitializeAcl (adminACL,
+		adminACLSize, ACL_REVISION))
+		goto exit;
+
+	// Add the ACE to the previously initialized ACL
+	if (!AddAccessAllowedAce (adminACL, ACL_REVISION,
+		ACCESS_READ | ACCESS_WRITE, adminSID))
+		goto exit;
+
+	// Attach ACL to our security descriptor
+	if (!SetSecurityDescriptorDacl (&adminSD,
+		TRUE, adminACL, FALSE)) goto exit;
+
+	//----------------------------------------------------------------------------//
+
+	// Setup security descriptor so it passes validation
+	SetSecurityDescriptorGroup (&adminSD, adminSID, FALSE);
+	SetSecurityDescriptorOwner (&adminSD, adminSID, FALSE);
+	if (!IsValidSecurityDescriptor (&adminSD)) goto exit;
+
+	// Perform an access check to determine the result
+	if (!AccessCheck (&adminSD, tokenImp, ACCESS_READ,
+		&genericMapping, &ps, &psSize, &status, &result))
+		{ result = FALSE; goto exit; }
+
+	//----------------------------------------------------------------------------//
+
+exit:
+	if (adminACL) HeapFree    (processHeap, 0, adminACL);
+	if (adminSID) FreeSid     (adminSID);
+	if (tokenImp) CloseHandle (tokenImp);
+	if (token   ) CloseHandle (token   );
+
+	// Return check result
+	return result != FALSE;
 
 #endif
 }
