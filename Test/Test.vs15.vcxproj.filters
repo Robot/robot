@@ -23,6 +23,9 @@
     <ClCompile Include="Mouse.cc">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Overlay.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
     <ClCompile Include="Process.cc">
       <Filter>Tests</Filter>
     </ClCompile>

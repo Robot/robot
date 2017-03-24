@@ -44,6 +44,7 @@
     <ClCompile Include="Main.cc" />
     <ClCompile Include="Memory.cc" />
     <ClCompile Include="Mouse.cc" />
+    <ClCompile Include="Overlay.cc" />
     <ClCompile Include="Process.cc" />
     <ClCompile Include="Screen.cc" />
     <ClCompile Include="Targa.cc" />
