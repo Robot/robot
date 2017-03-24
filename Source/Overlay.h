@@ -13,16 +13,20 @@
 
 #pragma once
 
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "Types.h"
+ROBOT_NS_BEGIN
 
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
 
-#include "Window.h"
-#include "Screen.h"
-#include "Overlay.h"
 
-#include "Timer.h"
-#include "Clipboard.h"
+//----------------------------------------------------------------------------//
+// Classes                                                                    //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+class ROBOT_EXPORT Overlay
+{
+	// TODO:
+};
+
+ROBOT_NS_END

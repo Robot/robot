@@ -11,18 +11,32 @@
 // Prefaces                                                                   //
 //----------------------------------------------------------------------------//
 
-#pragma once
-
-#include "Keyboard.h"
-#include "Mouse.h"
-
-#include "Process.h"
-#include "Module.h"
-#include "Memory.h"
-
-#include "Window.h"
-#include "Screen.h"
 #include "Overlay.h"
+#ifdef ROBOT_OS_LINUX
 
-#include "Timer.h"
-#include "Clipboard.h"
+	// TODO:
+
+#endif
+#ifdef ROBOT_OS_MAC
+
+	// TODO:
+
+#endif
+#ifdef ROBOT_OS_WIN
+
+	// TODO:
+
+#endif
+ROBOT_NS_BEGIN
+
+
+
+//----------------------------------------------------------------------------//
+// Functions                                                          Overlay //
+//----------------------------------------------------------------------------//
+
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO:
+
+ROBOT_NS_END

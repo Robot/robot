@@ -44,6 +44,9 @@
     <ClInclude Include="Mouse.h">
       <Filter>Native</Filter>
     </ClInclude>
+    <ClInclude Include="Overlay.h">
+      <Filter>Native</Filter>
+    </ClInclude>
     <ClInclude Include="Point.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -98,6 +101,9 @@
       <Filter>Native</Filter>
     </ClCompile>
     <ClCompile Include="Mouse.cc">
+      <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlay.cc">
       <Filter>Native</Filter>
     </ClCompile>
     <ClCompile Include="Point.cc">
