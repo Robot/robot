@@ -32,6 +32,9 @@
     <ClCompile Include="Screen.cc">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="System.cc">
+      <Filter>Tests</Filter>
+    </ClCompile>
     <ClCompile Include="Timer.cc">
       <Filter>Tests</Filter>
     </ClCompile>

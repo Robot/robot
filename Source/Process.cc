@@ -15,6 +15,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "Window.h"
+#include "System.h"
 
 #include <algorithm>
 using std::sort;
@@ -40,14 +41,12 @@ using std::regex_match;
 	using std:: fstream;
 	using std:: getline;
 
-	#include <sys/utsname.h>
 	// Path to proc directory
 	#define PROC_PATH "/proc/"
 
 #endif
 #ifdef ROBOT_OS_MAC
 
-	#include <sys/utsname.h>
 	#include <mach/task.h>
 	#include <mach/mach_vm.h>
 
@@ -380,8 +379,8 @@ bool Process::Open (int32 pid)
 		// Store the ProcID
 		mData->ProcID = pid;
 
-		// Check if system 64-Bit
-		if (Process::IsSys64Bit())
+		// If system is 64-Bit
+		if (System::Is64Bit())
 		{
 			BOOL is32Bit = TRUE;
 			// Set whether process is 64-Bit
@@ -1086,36 +1085,7 @@ int32 Process::GetCurrentPID (void)
 
 bool Process::IsSys64Bit (void)
 {
-	// Initialize only once
-	static int8 is64Bit = -1;
-
-	if (is64Bit == -1)
-	{
-	#if defined (ROBOT_OS_MAC) || \
-		defined (ROBOT_OS_LINUX)
-
-		utsname unameData;
-		uname (&unameData);
-
-		is64Bit = !strcmp (unameData.
-			machine, "x86_64") ? 1:0;
-
-	#endif
-	#ifdef ROBOT_OS_WIN
-
-		SYSTEM_INFO info;
-		// Retrieve the system info
-		GetNativeSystemInfo (&info);
-
-		is64Bit =
-			info.wProcessorArchitecture ==
-			PROCESSOR_ARCHITECTURE_AMD64 ?
-			1 : 0;
-
-	#endif
-	}
-
-	return is64Bit == 1;
+	return System::Is64Bit();
 }
 
 

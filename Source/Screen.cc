@@ -12,6 +12,8 @@
 //----------------------------------------------------------------------------//
 
 #include "Screen.h"
+#include "System.h"
+
 #ifdef ROBOT_OS_LINUX
 
 	#include <X11/Xlib.h>
@@ -124,45 +126,6 @@ ROBOT_NS_BEGIN
 
 #endif
 #ifdef ROBOT_OS_WIN
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	#ifndef DWM_EC_DISABLECOMPOSITION
-	#define DWM_EC_DISABLECOMPOSITION 0
-	#endif
-	#ifndef DWM_EC_ENABLECOMPOSITION
-	#define DWM_EC_ENABLECOMPOSITION  1
-	#endif
-
-	typedef HRESULT (WINAPI *DWMENABLECOMPOSITION   ) (UINT  enabled);
-	typedef HRESULT (WINAPI *DWMISCOMPOSITIONENABLED) (BOOL* enabled);
-
-	static DWMENABLECOMPOSITION    gDwmEnableComposition    = nullptr;
-	static DWMISCOMPOSITIONENABLED gDwmIsCompositionEnabled = nullptr;
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	static void InitializeDWM (void)
-	{
-		// Initialize DWM functions once
-		static bool initialized = false;
-
-		if (!initialized)
-		{
-			initialized = true;
-			// Attempt to load windows DWMAPI DLL library
-			HMODULE d = LoadLibrary (TEXT ("Dwmapi.dll"));
-			if (d != nullptr)
-			{
-				// Attempt to load the DWM Aero functionality
-				gDwmEnableComposition = (DWMENABLECOMPOSITION)
-					GetProcAddress (d, "DwmEnableComposition");
-
-				gDwmIsCompositionEnabled = (DWMISCOMPOSITIONENABLED)
-					GetProcAddress (d, "DwmIsCompositionEnabled");
-			}
-		}
-	}
 
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -684,35 +647,14 @@ Bounds Screen::GetTotalUsable (void) { return mTotalUsable; }
 
 bool Screen::IsCompositing (void)
 {
-#if defined (ROBOT_OS_MAC) || \
-	defined (ROBOT_OS_LINUX)
-
-	return true;
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	InitializeDWM(); BOOL enabled = FALSE;
-	if (gDwmIsCompositionEnabled != nullptr)
-		gDwmIsCompositionEnabled (&enabled);
-	return enabled != FALSE;
-
-#endif
+	return System::IsCompositing();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Screen::SetCompositing (bool enabled)
 {
-#ifdef ROBOT_OS_WIN
-
-	InitializeDWM();
-	if (gDwmEnableComposition != nullptr)
-		gDwmEnableComposition (enabled ?
-			DWM_EC_ENABLECOMPOSITION :
-			DWM_EC_DISABLECOMPOSITION);
-
-#endif
+	return System::SetCompositing (enabled);
 }
 
 ROBOT_NS_END

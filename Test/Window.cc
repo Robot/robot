@@ -614,11 +614,8 @@ static bool TestGetList2 (void)
 bool TestWindow (void)
 {
 	cout << "TEST WINDOW\n"
-		 << "------------------------------\n";
-
-	VERIFY (Window::IsAxEnabled());
-
-	cout << "  0: All     \n"
+		 << "------------------------------\n"
+		 << "  0: All     \n"
 		 << "  1: Invalid \n"
 		 << "  2: Select1 \n"
 		 << "  3: Select2 \n"

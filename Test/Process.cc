@@ -110,8 +110,8 @@ static bool TestSelect (void)
 
 #endif
 
-	int32 pid1 = atoi (input1); VERIFY (pid1 > 0); VERIFY (p1.Open (pid1));
-	int32 pid2 = atoi (input2); VERIFY (pid2 > 0); VERIFY (p2.Open (pid2));
+	auto pid1 = atoi (input1); VERIFY (pid1 > 0); VERIFY (p1.Open (pid1));
+	auto pid2 = atoi (input2); VERIFY (pid2 > 0); VERIFY (p2.Open (pid2));
 
 	VERIFY (p1.IsValid()); VERIFY (!p1.HasExited());
 	VERIFY (p2.IsValid()); VERIFY (!p2.HasExited());
@@ -193,7 +193,7 @@ static bool TestCurrent (void)
 	cout << "Input this application's PID: ";
 	char input[32] = { 0 };
 	cin.getline (input, 32);
-	int32 pid = atoi (input);
+	auto pid = atoi (input);
 
 	VERIFY (pid > 0);
 	Process p1 (pid);

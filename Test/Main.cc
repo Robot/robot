@@ -52,7 +52,7 @@ int main (int argc, const char* argv[])
 	#endif
 #endif
 
-	cout << (Process::IsSys64Bit() ? " 64\n" : " 32\n")
+	cout << (System::Is64Bit() ? " 64\n" : " 32\n")
 		 << "------------------------------\n"
 		 << "(C) 2010-2017 Robot Developers\n\n"
 
@@ -68,15 +68,16 @@ int main (int argc, const char* argv[])
 		cout << "MAIN MENU\n"
 			 << "------------------------------\n"
 			 << "   1: Types    \n"
-			 << "   2: Timer    \n"
-			 << "   3: Keyboard \n"
-			 << "   4: Mouse    \n"
-			 << "   5: Process  \n"
-			 << "   6: Memory   \n"
+			 << "   2: System   \n"
+			 << "   3: Timer    \n"
+			 << "   4: Keyboard \n"
+			 << "   5: Mouse    \n"
+			 << "   6: Process  \n"
 			 << "   7: Window   \n"
-			 << "   8: Screen   \n"
-			 << "   9: Overlay  \n"
-			 << "  10: Clipboard\n\n";
+			 << "   8: Memory   \n"
+			 << "   9: Screen   \n"
+			 << "  10: Overlay  \n"
+			 << "  11: Clipboard\n\n";
 
 		// Ask the user to make a selection
 		cout << "Enter component(s) to test: ";
@@ -91,16 +92,17 @@ int main (int argc, const char* argv[])
 			switch (selection)
 			{
 				case  1: result = TestTypes    (); break;
-				case  2: result = TestTimer    (); break;
-				case  3: result = TestKeyboard (); break;
-				case  4: result = TestMouse    (); break;
-				case  5: result = TestProcess  (); break;
+				case  2: result = TestSystem   (); break;
+				case  3: result = TestTimer    (); break;
+				case  4: result = TestKeyboard (); break;
+				case  5: result = TestMouse    (); break;
+				case  6: result = TestProcess  (); break;
 				case  7: result = TestWindow   (); break;
-				case  8: result = TestScreen   (); break;
-				case  9: result = TestOverlay  (); break;
-				case 10: result = TestClipboard(); break;
+				case  9: result = TestScreen   (); break;
+				case 10: result = TestOverlay  (); break;
+				case 11: result = TestClipboard(); break;
 
-				case 6:
+				case 8:
 					cout <<   uppercase;
 					result = TestMemory();
 					cout << nouppercase;

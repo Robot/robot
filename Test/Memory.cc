@@ -469,9 +469,9 @@ static bool TestParams (void)
 	VERIFY (m.GetProcess() == p);
 
 	cout << "Please verify the following\n" << hex
-		 << "Min VM: 0x" << m.GetMinAddress() << "\n"
-		 << "Max VM: 0x" << m.GetMaxAddress() << "\n"
-		 << "PgSize: 0x" << m.GetPageSize  () << "\n\n" << dec;
+		 << "Min VM: 0x" << setw (12) << setfill ('0') << m.GetMinAddress() << "\n"
+		 << "Max VM: 0x" << setw (12) << setfill ('0') << m.GetMaxAddress() << "\n"
+		 << "PgSize: 0x" << setw (12) << setfill ('0') << m.GetPageSize  () << "\n\n" << dec;
 
 	//----------------------------------------------------------------------------//
 
@@ -1703,7 +1703,7 @@ bool TestMemory (void)
 	while (stream >> selection)
 	{
 		// Check for valid selection requirements
-		if ((selection == 0 || selection >= 9) &&
+		if ((selection == 0 || selection >= 8) &&
 			p2.GetName().substr (0, 4) != "Peon")
 		{
 			cout << "This test requires selecting Peon!\n\n";

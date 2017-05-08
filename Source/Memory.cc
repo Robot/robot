@@ -14,6 +14,7 @@
 #include <cassert>
 #include "Process.h"
 #include "Memory.h"
+#include "System.h"
 
 #include <algorithm>
 using std::search;
@@ -31,9 +32,8 @@ using std::unordered_map;
 	#include <cstring>
 	#include <fstream>
 	using std::ios;
-	using std::ifstream;
-	using std:: fstream;
-	using std:: getline;
+	using std::fstream;
+	using std::getline;
 
 	#include <unistd.h>
 	#include <fcntl.h>
@@ -108,13 +108,6 @@ ROBOT_NS_BEGIN
 //----------------------------------------------------------------------------//
 // Locals                                                                     //
 //----------------------------------------------------------------------------//
-
-////////////////////////////////////////////////////////////////////////////////
-
-static uintptr gMinVM    = 0;	// Minimum VM address
-static uintptr gMaxVM_32 = 0;	// Maximum VM address (32-Bit)
-static uintptr gMaxVM_64 = 0;	// Maximum VM address (64-Bit)
-static uintptr gPageSize = 0;	// Size of single page
 
 #ifdef ROBOT_OS_LINUX
 
@@ -1173,26 +1166,23 @@ uintptr Memory::GetPtrSize (void) const
 
 uintptr Memory::GetMinAddress (void) const
 {
-	InitializeVM();
-	return gMinVM;
+	return System::GetMinAddress();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uintptr Memory::GetMaxAddress (void) const
 {
-	InitializeVM();
-	// Depends on architecture
-	return mData->Proc.Is64Bit() ?
-		   gMaxVM_64 : gMaxVM_32;
+	return mData->Proc.Is64Bit () ?
+		System::GetMaxAddress64() :
+		System::GetMaxAddress32();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 uintptr Memory::GetPageSize (void) const
 {
-	InitializeVM();
-	return gPageSize;
+	return System::GetPageSize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1602,67 +1592,6 @@ bool Memory::SysWrite (uintptr address, const
 	return status;
 
 #endif
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Memory::InitializeVM (void)
-{
-	// Initialize system info once
-	static bool initialized = false;
-
-	if (initialized == false)
-	{
-		initialized = true;
-
-	#if defined (ROBOT_OS_MAC) || \
-		defined (ROBOT_OS_LINUX)
-
-		gMinVM    = 0x000000001000;
-		gMaxVM_32 = 0x0000C0000000; // 3G
-
-		#ifdef ROBOT_ARCH_64
-			gMaxVM_64 = 0x7FFFFFFF0000;
-		#else
-			// This shouldn't be used
-			gMaxVM_64 = 0x0000C0000000;
-		#endif
-
-		#ifdef ROBOT_OS_LINUX
-
-			// Adjust minimum VM value
-			ifstream file (PROC_PATH
-				"sys/vm/mmap_min_addr");
-			if (file) file >> gMinVM;
-
-		#endif
-
-		gPageSize = sysconf (_SC_PAGESIZE);
-
-	#endif
-	#ifdef ROBOT_OS_WIN
-
-		SYSTEM_INFO info;
-		// Retrieve the system info
-		GetNativeSystemInfo (&info);
-
-		gMinVM = (uintptr)
-			info.lpMinimumApplicationAddress + 0;
-
-		gMaxVM_64 = (uintptr)
-			info.lpMaximumApplicationAddress + 1;
-
-		// Always use full low 32-Bit value
-		gMaxVM_32 = gMaxVM_64 & 0xFFFFFFFF;
-
-		gPageSize = (uintptr) info.dwPageSize;
-
-	#endif
-
-		assert ((gMinVM    % gPageSize) == 0);
-		assert ((gMaxVM_32 % gPageSize) == 0);
-		assert ((gMaxVM_64 % gPageSize) == 0);
-	}
 }
 
 ROBOT_NS_END
