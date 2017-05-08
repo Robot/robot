@@ -97,7 +97,7 @@ public:
 	static Window		GetActive		(void);
 	static void			SetActive		(const Window& window);
 
-	static bool			IsAxEnabled		(bool options = false);
+	static bool			IsAxEnabled		(bool options = false); // #Deprecated
 
 private:
 	static WindowList	GetList			(const char* title, int32 pid);

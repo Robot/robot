@@ -76,8 +76,8 @@ public:
 	static Bounds		GetTotalBounds	(void);
 	static Bounds		GetTotalUsable	(void);
 
-	static bool			 IsCompositing	(void);
-	static void			SetCompositing	(bool enabled);
+	static bool			 IsCompositing	(void);         // #Deprecated
+	static void			SetCompositing	(bool enabled); // #Deprecated
 
 private:
 	Bounds				mBounds;		// Screen total  bounds

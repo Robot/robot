@@ -81,50 +81,6 @@ static bool TestInvalid (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static bool TestAero (void)
-{
-#if defined (ROBOT_OS_LINUX) || \
-	defined (ROBOT_OS_MAC  )
-
-	VERIFY (Screen::IsCompositing());
-
-	Screen::SetCompositing (false);
-	VERIFY (Screen::IsCompositing());
-
-	Screen::SetCompositing (true );
-	VERIFY (Screen::IsCompositing());
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	cout << "Composition status: "
-		 << (Screen::IsCompositing() ?
-			 "enabled" : "disabled");
-	getchar();
-
-	Screen::SetCompositing (false);
-
-	cout << "Composition status: "
-		 << (Screen::IsCompositing() ?
-			 "enabled" : "disabled");
-	getchar();
-
-	Screen::SetCompositing (true );
-
-	cout << "Composition status: "
-		 << (Screen::IsCompositing() ?
-			 "enabled" : "disabled");
-	getchar();
-
-	cout << endl;
-
-#endif
-
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 static bool TestSync (void)
 {
 	VERIFY (Screen::Synchronize());
@@ -150,9 +106,9 @@ static bool TestSync (void)
 		if (i == 0) { VERIFY (list[i] == main); }
 		       else { VERIFY (list[i] != main); }
 
-		const char* sPort =  list[i]->IsPortrait () ? "true" : "false";
-		const char* sLand =  list[i]->IsLandscape() ? "true" : "false";
-		const char* sMain = (list[i] == main      ) ? "true" : "false";
+		const char* sPort =  list[i]->IsPortrait () ? "True" : "False";
+		const char* sLand =  list[i]->IsLandscape() ? "True" : "False";
+		const char* sMain = (list[i] == main      ) ? "True" : "False";
 
 		cout << "Screen "  << i << endl
 			 << "Bounds: " << list[i]->GetBounds() << endl
@@ -397,10 +353,9 @@ bool TestScreen (void)
 		 << "------------------------------\n"
 		 << "  0: All    \n"
 		 << "  1: Invalid\n"
-		 << "  2: Aero   \n"
-		 << "  3: Sync   \n"
-		 << "  4: Grab   \n"
-		 << "  5: Perf   \n\n";
+		 << "  2: Sync   \n"
+		 << "  3: Grab   \n"
+		 << "  4: Perf   \n\n";
 
 	// Ask the user to make a selection
 	cout << "Enter component(s) to test: ";
@@ -415,7 +370,6 @@ bool TestScreen (void)
 		if (selection == 0)
 		{
 			return TestInvalid()
-				&& TestAero   ()
 				&& TestSync   ()
 				&& TestGrab   ()
 				&& TestPerf   ();
@@ -424,10 +378,9 @@ bool TestScreen (void)
 		switch (selection)
 		{
 			case 1: if (!TestInvalid()) return false; break;
-			case 2: if (!TestAero   ()) return false; break;
-			case 3: if (!TestSync   ()) return false; break;
-			case 4: if (!TestGrab   ()) return false; break;
-			case 5: if (!TestPerf   ()) return false; break;
+			case 2: if (!TestSync   ()) return false; break;
+			case 3: if (!TestGrab   ()) return false; break;
+			case 4: if (!TestPerf   ()) return false; break;
 		}
 	}
 

@@ -19,6 +19,7 @@
 #include "Process.h"
 #include "Module.h"
 #include "Memory.h"
+#include "System.h"
 
 #include "Window.h"
 #include "Screen.h"

@@ -85,7 +85,7 @@ public:
 	static Process		GetCurrent		(void);
 	static int32		GetCurrentPID	(void);
 
-	static bool			IsSys64Bit		(void);
+	static bool			IsSys64Bit		(void); // #Deprecated
 
 public:
 	bool				operator ==		(const Process& process) const;

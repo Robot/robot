@@ -12,6 +12,7 @@
 //----------------------------------------------------------------------------//
 
 #include "Window.h"
+#include "System.h"
 #include "Process.h"
 using std::string;
 
@@ -1839,70 +1840,7 @@ void Window::SetActive (const Window& window)
 
 bool Window::IsAxEnabled (bool options)
 {
-#ifdef ROBOT_OS_LINUX
-
-	return true;
-
-#endif
-#ifdef ROBOT_OS_MAC
-
-	// Statically load all required functions one time
-	static dispatch_once_t once;
-	dispatch_once (&once, ^{
-		// Open the framework
-		void* handle = dlopen
-			("/System/Library/Frameworks/Application"
-			 "Services.framework/ApplicationServices", RTLD_LAZY);
-
-		// Validate the handle
-		if (handle != nullptr)
-		{
-			*(void**) (&gAXIsProcessTrustedWithOptions) =
-				dlsym (handle, "AXIsProcessTrustedWithOptions");
-
-			gkAXTrustedCheckOptionPrompt = (CFStringRef*)
-				dlsym (handle, "kAXTrustedCheckOptionPrompt");
-		}
-	});
-
-	// Check for new OSX 10.9 function
-	if (gAXIsProcessTrustedWithOptions)
-	{
-		// Check whether to show prompt
-		auto displayPrompt = options ?
-			kCFBooleanTrue : kCFBooleanFalse;
-
-		// Convert display prompt value into a dictionary
-		const void* k[] = { *gkAXTrustedCheckOptionPrompt };
-		const void* v[] = { displayPrompt };
-		CFDictionaryRef o = CFDictionaryCreate
-			(nullptr, k, v, 1, nullptr, nullptr);
-
-		// Determine whether the process is actually trusted
-		bool result = (*gAXIsProcessTrustedWithOptions) (o);
-
-		// Free memory
-		CFRelease (o);
-		return result;
-	}
-
-	else
-	{
-		// Ignore deprecated warnings
-		#pragma clang diagnostic push
-		#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-		// Check whether we have accessibility access
-		return AXAPIEnabled() || AXIsProcessTrusted();
-		#pragma clang diagnostic pop
-	}
-
-#endif
-#ifdef ROBOT_OS_WIN
-
-	return true;
-
-#endif
+	return System::IsAxEnabled (options);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -175,8 +175,6 @@ private:
 	bool				SysWrite		(uintptr address, const void* data,
 										 uintptr length, uintptr* bytes);
 
-	static void			InitializeVM	(void);
-
 private:
 	struct Data;
 	std::shared_ptr<Data> mData;		// Shared information
