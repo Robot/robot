@@ -4,27 +4,18 @@
 	</a>
 </p>
 
-<h1 align="center">
-	Native System Automation
-</h1>
+<h1 align="center">Native System Automation</h1>
 
 <p align="center">
 	<a target="_blank" href="http://getrobot.net">
-		<img src="https://img.shields.io/badge/built_with-ROBOT-C86414.svg?style=flat-square" alt="Built with Robot" />
+		<img src="https://img.shields.io/badge/Built_with-ROBOT-C86414.svg?style=flat-square" alt="Built with Robot" />
 	</a>
-
-	<img src="https://img.shields.io/badge/version-2.0.0-C86414.svg?style=flat-square" alt="Version 2.0.0" />
-
-	<a target="_blank" href="https://gitter.im/robot/robot">
-		<img src="https://img.shields.io/badge/chat_on-GITTER-C86414.svg?style=flat-square" alt="Chat on Gitter" />
-	</a>
-
+	<img src="https://img.shields.io/badge/Version-2.0.0-C86414.svg?style=flat-square" alt="Version 2.0.0" />
 	<a target="_blank" href="http://getrobot.net/api/global.html">
-		<img src="https://img.shields.io/badge/docs-API-C86414.svg?style=flat-square" alt="Docs API" />
+		<img src="https://img.shields.io/badge/Docs-API-C86414.svg?style=flat-square" alt="Docs API" />
 	</a>
-
 	<a target="_blank" href="https://opensource.org/licenses/Zlib">
-		<img src="https://img.shields.io/badge/license-ZLIB-C86414.svg?style=flat-square" alt="ZLIB Licensed" />
+		<img src="https://img.shields.io/badge/License-ZLIB-C86414.svg?style=flat-square" alt="ZLIB Licensed" />
 	</a>
 </p>
 
