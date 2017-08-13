@@ -46,6 +46,7 @@
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="Overlay.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Range.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="Memory.cc" />
     <ClCompile Include="Module.cc" />
     <ClCompile Include="Mouse.cc" />
+    <ClCompile Include="Overlay.cc" />
     <ClCompile Include="Point.cc" />
     <ClCompile Include="Process.cc" />
     <ClCompile Include="Range.cc" />

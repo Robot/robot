@@ -76,7 +76,8 @@ int main (int argc, const char* argv[])
 			 << "   7: Window   \n"
 			 << "   8: Memory   \n"
 			 << "   9: Screen   \n"
-			 << "  10: Clipboard\n\n";
+			 << "  10: Overlay  \n"
+			 << "  11: Clipboard\n\n";
 
 		// Ask the user to make a selection
 		cout << "Enter component(s) to test: ";
@@ -98,7 +99,8 @@ int main (int argc, const char* argv[])
 				case  6: result = TestProcess  (); break;
 				case  7: result = TestWindow   (); break;
 				case  9: result = TestScreen   (); break;
-				case 10: result = TestClipboard(); break;
+				case 10: result = TestOverlay  (); break;
+				case 11: result = TestClipboard(); break;
 
 				case 8:
 					cout <<   uppercase;
