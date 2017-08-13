@@ -669,6 +669,164 @@ static bool TestImage2 (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static bool TestImage3 (void)
+{
+	Image i1, i2;
+	VERIFY (!i2.Copy (i1, -2, -2, 8, 10));
+	VERIFY (!i2.Copy (i1, -1, -1, 4,  3));
+
+	//----------------------------------------------------------------------------//
+
+	i2.Create (5, 7); auto data = i2.GetData();
+	for (uint32 i = 0; i < i2.GetLength(); ++i)
+		data[i] = Color (i, i, i, 255).GetARGB();
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i1.GetWidth () ==  0);
+	VERIFY (i1.GetHeight() ==  0);
+	VERIFY (i1.GetLength() ==  0);
+
+	VERIFY (i2.Copy (i1));
+	VERIFY (i1.GetWidth () ==  5);
+	VERIFY (i1.GetHeight() ==  7);
+	VERIFY (i1.GetLength() == 35);
+	data = i1.GetData();
+
+	for (uint32 i = 0; i < i2.GetLength(); ++i)
+		VERIFY (data[i] == Color (i, i, i, 255).GetARGB());
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (!i2.Copy (i1,         -3, -2, -5,  4 ));
+	VERIFY (!i2.Copy (i1, Bounds ( 5,  3,  4, -3)));
+	VERIFY (!i2.Copy (i2,         -2, -2,  8, 10 ));
+	VERIFY (!i2.Copy (i2, Bounds (-1, -1,  4,  3)));
+
+	VERIFY (i1 == i2);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, -2, -2, 8, 10));
+	VERIFY (i1.GetWidth () ==  8);
+	VERIFY (i1.GetHeight() == 10);
+	VERIFY (i1.GetLength() == 80);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0x00000000); VERIFY (data[ 1] == 0x00000000);
+	VERIFY (data[ 2] == 0x00000000); VERIFY (data[ 3] == 0x00000000);
+	VERIFY (data[ 4] == 0x00000000); VERIFY (data[ 5] == 0x00000000);
+	VERIFY (data[ 6] == 0x00000000); VERIFY (data[ 7] == 0x00000000);
+	VERIFY (data[ 8] == 0x00000000); VERIFY (data[ 9] == 0x00000000);
+	VERIFY (data[10] == 0x00000000); VERIFY (data[11] == 0x00000000);
+	VERIFY (data[12] == 0x00000000); VERIFY (data[13] == 0x00000000);
+	VERIFY (data[14] == 0x00000000); VERIFY (data[15] == 0x00000000);
+	VERIFY (data[16] == 0x00000000); VERIFY (data[17] == 0x00000000);
+	VERIFY (data[18] == 0xFF000000); VERIFY (data[19] == 0xFF010101);
+	VERIFY (data[20] == 0xFF020202); VERIFY (data[21] == 0xFF030303);
+	VERIFY (data[22] == 0xFF040404); VERIFY (data[23] == 0x00000000);
+	VERIFY (data[24] == 0x00000000); VERIFY (data[25] == 0x00000000);
+	VERIFY (data[26] == 0xFF050505); VERIFY (data[27] == 0xFF060606);
+	VERIFY (data[28] == 0xFF070707); VERIFY (data[29] == 0xFF080808);
+	VERIFY (data[30] == 0xFF090909); VERIFY (data[31] == 0x00000000);
+	VERIFY (data[32] == 0x00000000); VERIFY (data[33] == 0x00000000);
+	VERIFY (data[34] == 0xFF0A0A0A); VERIFY (data[35] == 0xFF0B0B0B);
+	VERIFY (data[36] == 0xFF0C0C0C); VERIFY (data[37] == 0xFF0D0D0D);
+	VERIFY (data[38] == 0xFF0E0E0E); VERIFY (data[39] == 0x00000000);
+	VERIFY (data[40] == 0x00000000); VERIFY (data[41] == 0x00000000);
+	VERIFY (data[42] == 0xFF0F0F0F); VERIFY (data[43] == 0xFF101010);
+	VERIFY (data[44] == 0xFF111111); VERIFY (data[45] == 0xFF121212);
+	VERIFY (data[46] == 0xFF131313); VERIFY (data[47] == 0x00000000);
+	VERIFY (data[48] == 0x00000000); VERIFY (data[49] == 0x00000000);
+	VERIFY (data[50] == 0xFF141414); VERIFY (data[51] == 0xFF151515);
+	VERIFY (data[52] == 0xFF161616); VERIFY (data[53] == 0xFF171717);
+	VERIFY (data[54] == 0xFF181818); VERIFY (data[55] == 0x00000000);
+	VERIFY (data[56] == 0x00000000); VERIFY (data[57] == 0x00000000);
+	VERIFY (data[58] == 0xFF191919); VERIFY (data[59] == 0xFF1A1A1A);
+	VERIFY (data[60] == 0xFF1B1B1B); VERIFY (data[61] == 0xFF1C1C1C);
+	VERIFY (data[62] == 0xFF1D1D1D); VERIFY (data[63] == 0x00000000);
+	VERIFY (data[64] == 0x00000000); VERIFY (data[65] == 0x00000000);
+	VERIFY (data[66] == 0xFF1E1E1E); VERIFY (data[67] == 0xFF1F1F1F);
+	VERIFY (data[68] == 0xFF202020); VERIFY (data[69] == 0xFF212121);
+	VERIFY (data[70] == 0xFF222222); VERIFY (data[71] == 0x00000000);
+	VERIFY (data[72] == 0x00000000); VERIFY (data[73] == 0x00000000);
+	VERIFY (data[74] == 0x00000000); VERIFY (data[75] == 0x00000000);
+	VERIFY (data[76] == 0x00000000); VERIFY (data[77] == 0x00000000);
+	VERIFY (data[78] == 0x00000000); VERIFY (data[79] == 0x00000000);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, Bounds (-1, -1, 4, 3), 0xFFFFFFFF));
+	VERIFY (i1.GetWidth () ==  4);
+	VERIFY (i1.GetHeight() ==  3);
+	VERIFY (i1.GetLength() == 12);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0xFFFFFFFF); VERIFY (data[ 1] == 0xFFFFFFFF);
+	VERIFY (data[ 2] == 0xFFFFFFFF); VERIFY (data[ 3] == 0xFFFFFFFF);
+	VERIFY (data[ 4] == 0xFFFFFFFF); VERIFY (data[ 5] == 0xFF000000);
+	VERIFY (data[ 6] == 0xFF010101); VERIFY (data[ 7] == 0xFF020202);
+	VERIFY (data[ 8] == 0xFFFFFFFF); VERIFY (data[ 9] == 0xFF050505);
+	VERIFY (data[10] == 0xFF060606); VERIFY (data[11] == 0xFF070707);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, 3, 5, 3, 3, 0xFF808080));
+	VERIFY (i1.GetWidth () == 3);
+	VERIFY (i1.GetHeight() == 3);
+	VERIFY (i1.GetLength() == 9);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0xFF1C1C1C); VERIFY (data[ 1] == 0xFF1D1D1D);
+	VERIFY (data[ 2] == 0xFF808080); VERIFY (data[ 3] == 0xFF212121);
+	VERIFY (data[ 4] == 0xFF222222); VERIFY (data[ 5] == 0xFF808080);
+	VERIFY (data[ 6] == 0xFF808080); VERIFY (data[ 7] == 0xFF808080);
+	VERIFY (data[ 8] == 0xFF808080);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, Bounds (1, 3, 3, 2)));
+	VERIFY (i1.GetWidth () == 3);
+	VERIFY (i1.GetHeight() == 2);
+	VERIFY (i1.GetLength() == 6);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0xFF101010); VERIFY (data[ 1] == 0xFF111111);
+	VERIFY (data[ 2] == 0xFF121212); VERIFY (data[ 3] == 0xFF151515);
+	VERIFY (data[ 4] == 0xFF161616); VERIFY (data[ 5] == 0xFF171717);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, 3, -1, 4, 3, 0xFF000000));
+	VERIFY (i1.GetWidth () ==  4);
+	VERIFY (i1.GetHeight() ==  3);
+	VERIFY (i1.GetLength() == 12);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0xFF000000); VERIFY (data[ 1] == 0xFF000000);
+	VERIFY (data[ 2] == 0xFF000000); VERIFY (data[ 3] == 0xFF000000);
+	VERIFY (data[ 4] == 0xFF030303); VERIFY (data[ 5] == 0xFF040404);
+	VERIFY (data[ 6] == 0xFF000000); VERIFY (data[ 7] == 0xFF000000);
+	VERIFY (data[ 8] == 0xFF080808); VERIFY (data[ 9] == 0xFF090909);
+	VERIFY (data[10] == 0xFF000000); VERIFY (data[11] == 0xFF000000);
+
+	//----------------------------------------------------------------------------//
+
+	VERIFY (i2.Copy (i1, Bounds (-1, 5, 3, 2), 0x00000000));
+	VERIFY (i1.GetWidth () == 3);
+	VERIFY (i1.GetHeight() == 2);
+	VERIFY (i1.GetLength() == 6);
+	data = i1.GetData();
+
+	VERIFY (data[ 0] == 0x00000000); VERIFY (data[ 1] == 0xFF191919);
+	VERIFY (data[ 2] == 0xFF1A1A1A); VERIFY (data[ 3] == 0x00000000);
+	VERIFY (data[ 4] == 0xFF1E1E1E); VERIFY (data[ 5] == 0xFF1F1F1F);
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 static bool TestRange (void)
 {
 	Range r1;
@@ -1319,6 +1477,7 @@ bool TestTypes (void)
 		&& TestColor ()
 		&& TestImage1()
 		&& TestImage2()
+		&& TestImage3()
 		&& TestRange ()
 		&& TestBounds();
 }

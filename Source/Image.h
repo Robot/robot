@@ -14,8 +14,11 @@
 #pragma once
 
 #include "Global.h"
+#include "Color.h"
+
 ROBOT_NS_BEGIN
 	class Color;
+	class Bounds;
 	class Size;
 	class Point;
 
@@ -66,6 +69,17 @@ public:
 
 	bool		Swap			(const char* sw);
 	bool		Flip			(bool h, bool v);
+
+	bool		Copy			(Image& image) const;
+
+	bool		Copy			(Image& image,
+								 const Bounds& bounds,
+								 const Color & fill = 0) const;
+
+	bool		Copy			(Image& image,
+								 int32 x, int32 y,
+								 int32 w, int32 h,
+								 const Color & fill = 0) const;
 
 private:
 	void		Flip			(void);

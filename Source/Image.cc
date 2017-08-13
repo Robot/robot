@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------//
 
 #include "Image.h"
-#include "Color.h"
+#include "Bounds.h"
 #include "Size.h"
 #include "Point.h"
 
@@ -262,6 +262,74 @@ bool Image::Flip (bool h, bool v)
 	if ( h &&  v) Flip ();
 	if ( h && !v) FlipH();
 	if (!h &&  v) FlipV();
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Image::Copy (Image& image) const
+{
+	return Copy (image, 0, 0,
+			mWidth, mHeight);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Image::Copy (Image& image,
+		   const Bounds& bounds,
+		   const Color & fill) const
+{
+	return Copy (image,
+		bounds.X, bounds.Y,
+		bounds.W, bounds.H,
+		fill);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Image::Copy (Image& image,
+			  int32 x, int32 y,
+			  int32 w, int32 h,
+			  const Color& fill) const
+{
+	// Check the validity of this image
+	if (mData == nullptr) return false;
+
+	// Check whether the size is valid
+	if (w <= 0 || h <= 0) return false;
+
+	// Ensure the output image is different
+	if (mData == image.mData) return false;
+
+	// Create the image
+	image.Create (w, h);
+	uint32* data = image.GetData();
+	uint32  argb = fill .GetARGB();
+
+	// Quickly copy entire image
+	if (x == 0 && w == mWidth &&
+		y == 0 && h == mHeight)
+		memcpy (data, mData, mLength * sizeof (uint32));
+
+	else
+	{
+		// Iterate through and copy all the pixel data
+		for (int32 yy = 0, oy = y; yy < h; ++yy, ++oy)
+		for (int32 xx = 0, ox = x; xx < w; ++xx, ++ox)
+		{
+			// Perform a boundary check
+			if (ox < 0 || ox >= mWidth ||
+				oy < 0 || oy >= mHeight)
+				data[xx + (yy * w)] = argb;
+
+			else
+			{
+				 data[xx + (yy * w     )] =
+				mData[ox + (oy * mWidth)];
+			}
+		}
+	}
+
 	return true;
 }
 
