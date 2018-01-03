@@ -1798,7 +1798,7 @@ void Window::SetActive (const Window& window)
 
 	// Attempt to raise the specified window object
 	if (AXUIElementPerformAction (window.mData->AxID,
-				  kAXRaiseAction) == kAXErrorSuccess)
+				  kAXRaiseAction) != kAXErrorSuccess)
 	{
 		pid_t pid = 0;
 		// Attempt to retrieve the PID of the window
