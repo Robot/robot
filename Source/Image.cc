@@ -153,6 +153,49 @@ void Image::Destroy (void)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Find source from target (this=target, image=source)
+// If found, returns relative coordinates(Point) from target image
+// If not found, returns {-1,-1}
+Point Image::Find(const Image & image)
+{
+	if (!IsValid() || !image.IsValid())
+		return{ -1, -1 };
+
+	const auto targetWidth = GetWidth();
+	const auto targetHeight = GetHeight();
+	const auto sourceWidth = image.GetWidth();
+	const auto sourceHeight = image.GetHeight();
+
+	if (targetWidth >= sourceWidth && targetHeight >= sourceHeight)
+	{
+		bool mismatch;
+		for (int y = 0; y < targetHeight - sourceHeight; y++)
+		{
+			for (int x = 0; x < targetWidth - sourceWidth; x++)
+			{
+				mismatch = false;
+				for (int y2 = 0; !mismatch && y2 < sourceHeight; y2++)
+				{
+					for (int x2 = 0; !mismatch && x2 < sourceWidth; x2++)
+					{
+						auto nCol1 = GetPixel(x + x2, y + y2);
+						auto nCol2 = image.GetPixel(x2, y2);
+						if (nCol1 != nCol2)
+							mismatch = true;
+					}
+				}
+
+				if (mismatch == false) // == found
+					return{ x, y };
+			}
+		}
+	}
+
+	return{ -1, -1 };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Color Image::GetPixel (const Point& point) const
 {
 	return GetPixel (point.X, point.Y);
