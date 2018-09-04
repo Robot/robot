@@ -20,6 +20,15 @@
 using std::memcpy;
 using std::memcmp;
 
+#ifdef ROBOT_OS_WIN
+
+	#include <string>
+	#include <Windows.h>
+	#include <gdiplus.h>
+	#pragma comment(lib, "gdiplus.lib")
+
+#endif
+
 ROBOT_NS_BEGIN
 
 
@@ -149,6 +158,84 @@ void Image::Destroy (void)
 		delete[] mData;
 
 	RESET (*this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool Image::Load(const char *filename)
+{
+#ifdef ROBOT_OS_WIN
+
+	auto hwnd = GetDesktopWindow();
+	auto hDesktopDC = GetDC(hwnd);
+	auto hMemoryDC = ::CreateCompatibleDC(hDesktopDC);
+
+	// For convert filename to WCHAR
+	int size = 0;
+
+	// Compute size of resulting string
+	size = MultiByteToWideChar(CP_UTF8, 0, filename, (int)strlen(filename), nullptr, 0);
+
+	std::wstring filenameW(size, 0);
+
+	// Convert UTF8 string to wide-string
+	size = MultiByteToWideChar(CP_UTF8, 0, filename, (int)strlen(filename), &filenameW[0], size);
+
+	// Initialize gdi+
+	Gdiplus::GdiplusStartupInput si;
+	ULONG_PTR gdiplusToken;
+	GdiplusStartup(&gdiplusToken, &si, NULL);
+
+	// Load image file
+	Gdiplus::Image* pGdiImage = new Gdiplus::Image(filenameW.c_str());
+
+	// Converting to bitmap
+	HBITMAP hBitmap;
+	Gdiplus::Bitmap* pGdiBitmap = static_cast<Gdiplus::Bitmap*>(pGdiImage);
+	pGdiBitmap->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBitmap);
+
+	Create(pGdiImage->GetWidth(), pGdiImage->GetHeight());
+
+	bool bFail = true;
+	HDC hCompatibleDC = nullptr;
+	HGDIOBJ hOldObj = nullptr;
+	do
+	{
+		HDC hCompatibleDC = CreateCompatibleDC(hMemoryDC);
+		if (!hCompatibleDC)
+			break;		
+	
+		BITMAPINFO bmi;
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biBitCount = 0;
+		if (!GetDIBits(hCompatibleDC, hBitmap, 0, 0, nullptr, (LPBITMAPINFO)&bmi, DIB_RGB_COLORS))
+			break;
+
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biHeight = -bmi.bmiHeader.biHeight;
+
+		hOldObj = SelectObject(hCompatibleDC, hBitmap);
+		if (!(GetDIBits(hCompatibleDC, hBitmap, 0, -bmi.bmiHeader.biHeight, GetData(), (LPBITMAPINFO)&bmi, DIB_RGB_COLORS)))
+			break;
+
+		bFail = false;
+	} while (false);
+
+	if (hOldObj)
+		SelectObject(hCompatibleDC, hOldObj);
+	DeleteDC(hCompatibleDC);
+
+	// Shutdown gdi+
+	delete pGdiImage;
+	Gdiplus::GdiplusShutdown(gdiplusToken);
+
+	return (bFail == false);
+
+#endif
+
+	// #TODO implement function for MacOS & Linux
+
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
