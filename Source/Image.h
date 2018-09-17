@@ -46,6 +46,8 @@ public:
 	bool		Create			(uint16 w, uint16 h);
 	void		Destroy			(void);
 
+	bool		Load			(const char* filename);
+
 	uint16		GetWidth		(void) const { return mWidth;  }
 	uint16		GetHeight		(void) const { return mHeight; }
 	uint32		GetLength		(void) const { return mLength; }
