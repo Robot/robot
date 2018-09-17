@@ -173,12 +173,9 @@ bool Image::Load(const char *filename)
 	// For convert filename to WCHAR
 	int size = 0;
 
-	// Compute size of resulting string
-	size = MultiByteToWideChar(CP_UTF8, 0, filename, (int)strlen(filename), nullptr, 0);
-
-	std::wstring filenameW(size, 0);
-
 	// Convert UTF8 string to wide-string
+	size = MultiByteToWideChar(CP_UTF8, 0, filename, (int)strlen(filename), nullptr, 0);
+	std::wstring filenameW(size, 0);
 	size = MultiByteToWideChar(CP_UTF8, 0, filename, (int)strlen(filename), &filenameW[0], size);
 
 	// Initialize gdi+
@@ -194,18 +191,29 @@ bool Image::Load(const char *filename)
 	Gdiplus::Bitmap* pGdiBitmap = static_cast<Gdiplus::Bitmap*>(pGdiImage);
 	pGdiBitmap->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBitmap);
 
-	Create(pGdiImage->GetWidth(), pGdiImage->GetHeight());
+	RESET(*this);
+	if (Create(pGdiImage->GetWidth(), pGdiImage->GetHeight()) == false)
+	{
+		delete pGdiImage;
+		Gdiplus::GdiplusShutdown(gdiplusToken);
+		return false;
+	}
 
 	bool bFail = true;
 	HDC hCompatibleDC = nullptr;
 	HGDIOBJ hOldObj = nullptr;
 	do
 	{
-		HDC hCompatibleDC = CreateCompatibleDC(hMemoryDC);
+		struct BITMAPINFO3
+		{
+			BITMAPINFOHEADER bmiHeader;
+			RGBQUAD bmiColors[260];
+		} bmi;
+
+		hCompatibleDC = CreateCompatibleDC(hMemoryDC);
 		if (!hCompatibleDC)
-			break;		
-	
-		BITMAPINFO bmi;
+			break;
+
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 		bmi.bmiHeader.biBitCount = 0;
 		if (!GetDIBits(hCompatibleDC, hBitmap, 0, 0, nullptr, (LPBITMAPINFO)&bmi, DIB_RGB_COLORS))
@@ -223,10 +231,14 @@ bool Image::Load(const char *filename)
 
 	if (hOldObj)
 		SelectObject(hCompatibleDC, hOldObj);
-	DeleteDC(hCompatibleDC);
+	if (hCompatibleDC)
+		DeleteDC(hCompatibleDC);
+	if (hMemoryDC)
+		DeleteDC(hMemoryDC);
+	if (pGdiImage)
+		delete pGdiImage;
 
 	// Shutdown gdi+
-	delete pGdiImage;
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
 	return (bFail == false);
