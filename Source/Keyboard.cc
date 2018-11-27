@@ -72,7 +72,7 @@ ROBOT_NS_BEGIN
 #ifdef ROBOT_OS_WIN
 
 	#define SET_KEY_STATE( keycode )								\
-		result[keycode] = GetAsyncKeyState (keycode) != 0;
+		result[keycode] = GetKeyState (keycode) != 0;
 
 #endif
 
@@ -692,7 +692,7 @@ bool Keyboard::GetState (Key keycode)
 #ifdef ROBOT_OS_WIN
 
 	// Check if keycode is currently pressed
-	return GetAsyncKeyState (keycode) != 0;
+	return GetKeyState (keycode) != 0;
 
 #endif
 }
