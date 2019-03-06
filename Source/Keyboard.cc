@@ -386,6 +386,7 @@ void Keyboard::Press (Key keycode) const
 	// Attach the keycode
 	input.ki.wVk = keycode;
 	input.ki.dwFlags = 0;
+	input.ki.wScan = MapVirtualKey(keycode, MAPVK_VK_TO_VSC);
 
 	// Send the prepared key input event
 	SendInput (1, &input, sizeof (INPUT));
@@ -436,6 +437,7 @@ void Keyboard::Release (Key keycode) const
 	// Attach the keycode
 	input.ki.wVk = keycode;
 	input.ki.dwFlags = KEYEVENTF_KEYUP;
+	input.ki.wScan = MapVirtualKey(keycode, MAPVK_VK_TO_VSC);
 
 	// Send the prepared key input event
 	SendInput (1, &input, sizeof (INPUT));
