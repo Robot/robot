@@ -135,7 +135,7 @@ bool Image::Create (uint16 w, uint16 h)
 
 		// Allocate memory
 		mData = new uint32
-			[mLimit = mLength];
+			[mLimit = mLength]();
 	}
 
 	return true;
