@@ -569,9 +569,7 @@ void Mouse::SetPos (uint32 x, uint32 y)
 	if (!IsXTestAvailable()) return;
 
 	// Move default mouse pointer
-	XWarpPointer (gDisplay, None,
-		XDefaultRootWindow (gDisplay),
-		0, 0, 0, 0, x, y);
+	XTestFakeMotionEvent (gDisplay, -1, x, y,  CurrentTime);
 
 	// Flush output buffer
 	XSync (gDisplay, False);
